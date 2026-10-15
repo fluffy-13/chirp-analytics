@@ -31,8 +31,9 @@ pytest -q tests
 - **Fonts:** put Inter (`Inter-Regular`, `-SemiBold`, `-Bold`) in `fonts/`. Falls back to Arial/DejaVu.
 - **Image hosting:** create a *public* Supabase Storage bucket `ig-posts`; Instagram downloads the
   image from that URL. Or set `IMAGE_HOST_BASE_URL` if you host files yourself.
-- **Instagram:** needs a Business/Creator account linked to a Facebook Page, a Meta app with
-  `instagram_business_content_publish`, and a long-lived token (expires every 60 days — refresh it).
+- **Instagram:** a professional (Business or Creator) account and a Meta app using *Instagram API with
+  Instagram Login* (no Facebook Page needed). The token is long-lived but expires after 60 days — refresh it.
+  Facebook-Login tokens also work; the publisher picks the right API host from the token.
 - **Scheduling:** `.github/workflows/daily-post.yml` runs daily; add the keys as repo secrets.
 
 ## xG model

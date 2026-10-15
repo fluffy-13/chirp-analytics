@@ -37,7 +37,10 @@ def host_image(path):
 def _graph(method, endpoint, **params):
     if not (IG_ACCESS_TOKEN and IG_USER_ID):
         raise PublishError("IG_ACCESS_TOKEN and IG_USER_ID must be set")
-    url = f"https://graph.facebook.com/{GRAPH_API_VERSION}/{endpoint}"
+    # Instagram-Login tokens (IGAA..., IGQV...) use graph.instagram.com;
+    # Facebook-Login tokens (EAA...) use graph.facebook.com
+    host = "graph.instagram.com" if IG_ACCESS_TOKEN.startswith("IG") else "graph.facebook.com"
+    url = f"https://{host}/{GRAPH_API_VERSION}/{endpoint}"
     params["access_token"] = IG_ACCESS_TOKEN
     resp = requests.request(method, url, params=params if method == "GET" else None,
                             data=params if method != "GET" else None, timeout=30)
