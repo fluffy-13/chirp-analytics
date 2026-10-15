@@ -2,6 +2,7 @@
 import json
 import logging
 import re
+import unicodedata
 
 from config import GEMINI_API_KEY, GEMINI_MODEL, IG_HANDLE
 
@@ -99,9 +100,12 @@ def fallback_copy(post):
     p = post["player"]
     last = post["player_name"].split()[-1] if post["player_name"] else "He"
     hook = f"{last} tilted the ice for {post['team_abbrev']}."
-    caption = (f"{post['player_name']} posted {post['headline_value']} {post['headline_label'].lower()} "
-               f"in {post['matchup']}. {p['iCF']} shot attempts and {p['iHD']} from the home-plate area "
-               f"tell the story. Who was the best skater in this one?")
+    label = {"GAME SCORE": "Game Score", "INDIVIDUAL xG": "individual xG"}.get(
+        post["headline_label"], post["headline_label"])
+    caption = (f"{post['player_name']} posted a {post['headline_value']} {label} "
+               f"in {post['matchup']}: {p['iCF']} shot attempts, {p['SOG']} on goal"
+               + (f", {p['iHD']} from the home-plate area" if p["iHD"] else "")
+               + ". Who was the best skater in this one?")
     return {"hook": hook[:HOOK_MAX], "caption": caption, "hashtags": []}
 
 
@@ -127,11 +131,16 @@ def generate_copy(post, attempts=2):
     return fallback_copy(post)
 
 
+def _ascii(text):
+    """Montréal -> Montreal (hashtags break on accented letters)."""
+    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+
+
 def build_caption(copy, post):
-    team_tag = "#" + re.sub(r"[^A-Za-z0-9]", "", post["team"])
+    team_tag = "#" + re.sub(r"[^A-Za-z0-9]", "", _ascii(post["team"]))
     tags = ["#NHL", "#HockeyAnalytics", team_tag]
     for t in copy.get("hashtags", []):
-        t = "#" + re.sub(r"[^A-Za-z0-9_]", "", t.lstrip("#"))
+        t = "#" + re.sub(r"[^A-Za-z0-9_]", "", _ascii(t.lstrip("#")))
         if len(t) > 1 and t.lower() not in {x.lower() for x in tags}:
             tags.append(t)
     footnote = ("xG = our shot-quality model, trained on 237k NHL shots from the last two seasons. "

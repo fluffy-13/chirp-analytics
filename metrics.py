@@ -264,8 +264,8 @@ def build_post(game, p):
     else:
         headline = (f"{p['game_score']:.2f}", "GAME SCORE")
 
-    bullets = [f"{p['iCF']} shot attempts, {p['SOG']} on goal, "
-               f"{p['iHD']} from the home-plate area"]
+    shots = f"{p['iCF']} shot attempts, {p['SOG']} on goal"
+    bullets = [f"{shots}, {p['iHD']} from the home-plate area" if p["iHD"] else shots]
     on_ice_total = p["CF"] + p["CA"]
     if game["has_on_ice"] and on_ice_total >= 8:
         pct = 100 * p["CF"] / on_ice_total

@@ -68,6 +68,7 @@ jobs:
           } > /tmp/preview/README.md
           git checkout -q --orphan previews-tmp
           git rm -rqf .
+          git clean -fdxq
           cp /tmp/preview/* .
           git add -A
           git -c user.name="nhl-bot" -c user.email="nhl-bot@users.noreply.github.com" commit -qm "Preview from run ${{ github.run_id }}"
