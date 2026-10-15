@@ -20,12 +20,12 @@ def host_image(path):
     path = Path(path)
     if SUPABASE_URL and SUPABASE_SERVICE_KEY:
         url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{path.name}"
-        resp = requests.post(url, data=path.read_bytes(), timeout=30, headers={
-            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-            "apikey": SUPABASE_SERVICE_KEY,
-            "Content-Type": "image/jpeg",
-            "x-upsert": "true",
-        })
+        headers = {"apikey": SUPABASE_SERVICE_KEY, "Content-Type": "image/jpeg", "x-upsert": "true"}
+        if SUPABASE_SERVICE_KEY.startswith("eyJ"):
+            # legacy service_role JWT; new sb_secret_ keys go in `apikey` only and the
+            # gateway builds the Authorization header itself
+            headers["Authorization"] = f"Bearer {SUPABASE_SERVICE_KEY}"
+        resp = requests.post(url, data=path.read_bytes(), timeout=30, headers=headers)
         if resp.status_code >= 400:
             raise PublishError(f"Supabase upload failed: {resp.status_code} {resp.text[:200]}")
         return f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{path.name}"

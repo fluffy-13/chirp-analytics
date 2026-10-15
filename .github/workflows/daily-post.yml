@@ -33,7 +33,7 @@ jobs:
           IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
           IG_USER_ID: ${{ secrets.IG_USER_ID }}
           IG_HANDLE: ${{ vars.IG_HANDLE || '@chirpanalytics' }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: https://cxmkjvnrovgkeslypmix.supabase.co   # watcher-collection project, ig-posts bucket
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
           ARGS=""
