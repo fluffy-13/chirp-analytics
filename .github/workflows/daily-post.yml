@@ -54,3 +54,21 @@ jobs:
           git config user.email "nhl-bot@users.noreply.github.com"
           git add state/posted.json 2>/dev/null || exit 0
           git diff --cached --quiet || (git commit -m "Record posted game" && git push)
+      - name: Push preview to the previews branch
+        if: always()
+        run: |
+          shopt -s nullglob
+          files=(output_posts/*)
+          if [ ${#files[@]} -eq 0 ]; then echo "no card this run"; exit 0; fi
+          mkdir -p /tmp/preview && cp output_posts/* /tmp/preview/
+          {
+            echo "# Latest card — run ${{ github.run_id }} ($(date -u +%Y-%m-%dT%H:%MZ))"
+            for f in /tmp/preview/*.jpg; do echo "![card]($(basename "$f"))"; done
+            echo; echo '```'; cat /tmp/preview/*.txt; echo '```'
+          } > /tmp/preview/README.md
+          git checkout -q --orphan previews-tmp
+          git rm -rqf .
+          cp /tmp/preview/* .
+          git add -A
+          git -c user.name="nhl-bot" -c user.email="nhl-bot@users.noreply.github.com" commit -qm "Preview from run ${{ github.run_id }}"
+          git push -qf origin HEAD:previews
