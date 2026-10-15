@@ -42,7 +42,8 @@ jobs:
           # (until then they are dry runs). Manual runs publish only when the box is ticked.
           if { [ "${{ github.event_name }}" = "schedule" ] && [ "${{ vars.PUBLISH_ENABLED }}" = "true" ]; } \
              || [ "${{ inputs.publish }}" = "true" ]; then ARGS="$ARGS --publish"; fi
-          python main.py $ARGS
+          set -o pipefail
+          python main.py $ARGS 2>&1 | tee run.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -58,13 +59,16 @@ jobs:
         if: always()
         run: |
           shopt -s nullglob
-          files=(output_posts/*)
-          if [ ${#files[@]} -eq 0 ]; then echo "no card this run"; exit 0; fi
-          mkdir -p /tmp/preview && cp output_posts/* /tmp/preview/
+          mkdir -p /tmp/preview
+          cp output_posts/* /tmp/preview/ 2>/dev/null || true
+          cp run.log /tmp/preview/run.log 2>/dev/null || true
+          files=(/tmp/preview/*)
+          if [ ${#files[@]} -eq 0 ]; then echo "nothing to preview"; exit 0; fi
           {
             echo "# Latest card — run ${{ github.run_id }} ($(date -u +%Y-%m-%dT%H:%MZ))"
             for f in /tmp/preview/*.jpg; do echo "![card]($(basename "$f"))"; done
-            echo; echo '```'; cat /tmp/preview/*.txt; echo '```'
+            echo; echo '```'; cat /tmp/preview/*.txt 2>/dev/null; echo '```'
+            echo; echo '## Run log'; echo '```'; tail -40 /tmp/preview/run.log 2>/dev/null; echo '```'
           } > /tmp/preview/README.md
           git checkout -q --orphan previews-tmp
           git rm -rqf .
