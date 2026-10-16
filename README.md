@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## VAN 2 @ FLA 3 (OT) — 2026-10-15
+`game-2026020112` · rendered 2026-10-16 17:43 UTC · mode: preview
+
+<img src="game-2026020112/2026-10-15_2026020112_1_game.jpg" width="260"> <img src="game-2026020112/2026-10-15_2026020112_2_away.jpg" width="260"> <img src="game-2026020112/2026-10-15_2026020112_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Florida completely dominated Vancouver at 5v5.
+
+The Panthers controlled 62% of the 5v5 expected goals and generated 53 shot attempts to Vancouver's 25. Brady Tkachuk led the charge with a 3.18 Game Score behind 3 goals on 0.58 individual xG. Can Vancouver bounce back after getting outshot 39 to 18?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #VancouverCanucks #FloridaPanthers #PuckTracking
+```
+</details>
+
 ## SEA 3 @ TBL 4 (OT) — 2026-10-15
 `game-2026020111` · rendered 2026-10-16 17:43 UTC · mode: preview
 

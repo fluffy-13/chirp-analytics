@@ -1,0 +1,7 @@
+Florida completely dominated Vancouver at 5v5.
+
+The Panthers controlled 62% of the 5v5 expected goals and generated 53 shot attempts to Vancouver's 25. Brady Tkachuk led the charge with a 3.18 Game Score behind 3 goals on 0.58 individual xG. Can Vancouver bounce back after getting outshot 39 to 18?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #VancouverCanucks #FloridaPanthers #PuckTracking
