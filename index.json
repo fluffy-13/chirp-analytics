@@ -1,5 +1,17 @@
 [
  {
+  "key": "game-2026020110",
+  "title": "PHI 1 @ DET 2 \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "Detroit controlled the ice against Philadelphia.\n\nThe Detroit Red Wings dominated the expected-goals battle with a 3.46 to 2.18 advantage and a 62% share at 5v5. Lucas Raymond led the way with a 1.57 Game Score, driving the offense alongside Dylan Larkin and Moritz Seider. Did Philadelphia's defense do enough to keep this close?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n\n#NHL #HockeyAnalytics #PhiladelphiaFlyers #DetroitRedWings #RedWings #Flyers #Hockey",
+  "files": [
+   "game-2026020110/2026-10-15_2026020110_1_game.jpg",
+   "game-2026020110/2026-10-15_2026020110_2_away.jpg",
+   "game-2026020110/2026-10-15_2026020110_3_home.jpg"
+  ],
+  "at": "2026-10-16 17:44 UTC"
+ },
+ {
   "key": "game-2026020113",
   "title": "NYR 1 @ NJD 7 \u2014 2026-10-15",
   "mode": "preview",

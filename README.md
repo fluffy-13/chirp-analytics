@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## PHI 1 @ DET 2 — 2026-10-15
+`game-2026020110` · rendered 2026-10-16 17:44 UTC · mode: preview
+
+<img src="game-2026020110/2026-10-15_2026020110_1_game.jpg" width="260"> <img src="game-2026020110/2026-10-15_2026020110_2_away.jpg" width="260"> <img src="game-2026020110/2026-10-15_2026020110_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Detroit controlled the ice against Philadelphia.
+
+The Detroit Red Wings dominated the expected-goals battle with a 3.46 to 2.18 advantage and a 62% share at 5v5. Lucas Raymond led the way with a 1.57 Game Score, driving the offense alongside Dylan Larkin and Moritz Seider. Did Philadelphia's defense do enough to keep this close?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #PhiladelphiaFlyers #DetroitRedWings #RedWings #Flyers #Hockey
+```
+</details>
+
 ## NYR 1 @ NJD 7 — 2026-10-15
 `game-2026020113` · rendered 2026-10-16 17:44 UTC · mode: preview
 
