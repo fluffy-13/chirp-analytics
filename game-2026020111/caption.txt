@@ -1,0 +1,7 @@
+Tampa Bay edges Seattle in an overtime thriller
+
+Tampa Bay took control at 5v5 with a 51% share of expected goals and controlled the overall flow with 35 shots on goal to 27. Brandon Hagel led the charge with 2 goals, 0 assists, 6 shots on goal, and a 2.24 Game Score. Ryan Winterton and Jared McCann kept Seattle close, but the underlying metrics ultimately favored the Lightning. Did the overtime result reflect the true balance of play?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #SeattleKraken #TampaBayLightning #GoBolts #SeaKraken #NHLStats #NHLHockey

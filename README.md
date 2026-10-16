@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## SEA 3 @ TBL 4 (OT) — 2026-10-15
+`game-2026020111` · rendered 2026-10-16 17:43 UTC · mode: preview
+
+<img src="game-2026020111/2026-10-15_2026020111_1_game.jpg" width="260"> <img src="game-2026020111/2026-10-15_2026020111_2_away.jpg" width="260"> <img src="game-2026020111/2026-10-15_2026020111_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Tampa Bay edges Seattle in an overtime thriller
+
+Tampa Bay took control at 5v5 with a 51% share of expected goals and controlled the overall flow with 35 shots on goal to 27. Brandon Hagel led the charge with 2 goals, 0 assists, 6 shots on goal, and a 2.24 Game Score. Ryan Winterton and Jared McCann kept Seattle close, but the underlying metrics ultimately favored the Lightning. Did the overtime result reflect the true balance of play?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #SeattleKraken #TampaBayLightning #GoBolts #SeaKraken #NHLStats #NHLHockey
+```
+</details>
+
 ## NYI 1 @ OTT 2 (SO) — 2026-10-15
 `game-2026020109` · rendered 2026-10-16 17:43 UTC · mode: preview
 
