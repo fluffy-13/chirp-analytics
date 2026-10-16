@@ -1,0 +1,7 @@
+Chicago steals one in OT despite Winnipeg driving the play.
+
+The Blackhawks beat the Jets 4-3 in overtime on 2026-10-15 despite Winnipeg holding a 52% to 48% edge in 5v5 share of expected goals and 56 to 34 in 5v5 shot attempts. However, Chicago edged the total all-situations xG battle 3.46 to 3.20 to secure the win. Neal Pionk starred for the Jets with 1 goal, 2 assists, 4 shots on goal, 0.49 individual xG, and a Game Score of 3.30. Can a team really dominate the shot-attempt metrics and still drop the extra point?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #WinnipegJets #ChicagoBlackhawks #NHLStats
