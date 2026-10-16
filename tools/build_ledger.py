@@ -33,7 +33,7 @@ def main(start, end):
                 log.exception("Skipping %s", g["id"])
         d += timedelta(days=1)
     led.save(f"Ledger backfill {start}..{end} ({n} games)")
-    log.info("Ledger: %d games, %d players", n, len(led.data["players"]))
+    log.info("Season store: %d games written", n)
 
 
 if __name__ == "__main__":

@@ -8,6 +8,7 @@
   python main.py make-sample                   # Make.com setup: send a sample payload
   python main.py buffer-check                  # Buffer setup: list channels + schema (posts nothing)
   python main.py intro --post standings        # one-off season-so-far posts: standings|finishing|goalies
+  python main.py awards|rookies|fantasy        # features through yesterday (or --date YYYY-MM-DD)
 
 Add --fixtures DIR to run offline on saved API JSON. Where posts go is POST_MODE
 (preview by default — nothing is posted), or override with --mode preview|buffer|make|graph.
@@ -24,7 +25,7 @@ log = logging.getLogger("main")
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check",
-                                            "intro"])
+                                            "intro", "awards", "rookies", "fantasy"])
     ap.add_argument("--date", default=None, help="game night YYYY-MM-DD (games; default yesterday ET)")
     ap.add_argument("--game-id", default=None)
     ap.add_argument("--end", default=None, help="week ending YYYY-MM-DD (weekly; a Sunday)")
@@ -119,6 +120,9 @@ def _run(args):
                 return 1
         elif args.command == "weekly":
             pipeline.run_weekly(source, state, end=args.end, mode=args.mode, force=args.force)
+        elif args.command in ("awards", "rookies", "fantasy"):
+            pipeline.run_feature(args.command, source, state, as_of=args.date, mode=args.mode,
+                                 force=args.force)
     except Exception:
         log.exception("%s failed", args.command)
         return 1  # non-zero so GitHub Actions flags the failure (and emails you)
