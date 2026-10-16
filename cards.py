@@ -82,6 +82,11 @@ def _pct(v):
     return "–" if v is None else f"{v:.0f}%"
 
 
+def _num(v):
+    """2 decimals with a true minus sign."""
+    return f"{v:.2f}".replace("-", "−")
+
+
 def _signed(v):
     return f"+{v:.2f}" if v > 0 else f"{v:.2f}".replace("-", "−")
 
@@ -302,7 +307,7 @@ def render_team_slide(game, side):
         d.text((M, y), _ellipsize(d, p["name"], name_f, 640), fill=C["text"], font=name_f)
         d.text((M, y + 46), f"{p['position']}  ·  {_skater_line(p)}  ·  {p['toi']} TOI",
                fill=C["body"], font=F("regular", 24))
-        d.text((W - M, y + 6), f"{p['game_score']:.2f}", fill=color, font=F("bold", 52), anchor="ra")
+        d.text((W - M, y + 6), _num(p["game_score"]), fill=color, font=F("bold", 52), anchor="ra")
         y += 104
 
     # goalies
@@ -351,7 +356,7 @@ def render_weekly_cover(week):
     cards = []
     if week["players_top"]:
         p = week["players_top"][0]
-        cards.append(("TOP SKATER", p["name"], f"{p['team_abbrev']}  ·  {p['game_score']:.2f} Game Score",
+        cards.append(("TOP SKATER", p["name"], f"{p['team_abbrev']}  ·  {_num(p['game_score'])} Game Score",
                       p["color"]))
     if week["teams_top"]:
         t = week["teams_top"][0]
@@ -359,7 +364,7 @@ def render_weekly_cover(week):
                       t["color"]))
     if week["players_bottom"]:
         p = week["players_bottom"][0]
-        cards.append(("COLDEST SKATER", p["name"], f"{p['team_abbrev']}  ·  {p['game_score']:.2f} Game Score",
+        cards.append(("COLDEST SKATER", p["name"], f"{p['team_abbrev']}  ·  {_num(p['game_score'])} Game Score",
                       p["color"]))
     y = 500
     for label, title, sub, color in cards:
@@ -415,7 +420,7 @@ def render_weekly_carousel(week):
         return [{"rank": i, "main": p["name"],
                  "tag": f"{p['team_abbrev']}  ·  {p['position']}", "tag_color": p["color"],
                  "cols": [str(p["gp"]), f"{p['G']}-{p['A']}"],
-                 "value": f"{p['game_score']:.2f}", "value_color": color}
+                 "value": _num(p["game_score"]), "value_color": color}
                 for i, p in enumerate(players, 1)]
 
     def team_rows(teams, color):
