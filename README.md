@@ -2,6 +2,31 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Rookie watch — 2026-10-15
+`rookies-2026-10-15` · rendered 2026-10-16 23:03 UTC · mode: preview
+
+<img src="rookies-2026-10-15/rookies_2026-10-15_1.jpg" width="260"> <img src="rookies-2026-10-15/rookies_2026-10-15_2.jpg" width="260"> <img src="rookies-2026-10-15/rookies_2026-10-15_3.jpg" width="260"> <img src="rookies-2026-10-15/rookies_2026-10-15_4.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Rookie watch 🆕 through October 15
+
+🥇 Michael Brandsegg-Nygård (DET): 2-3-5, 6.99 Game Score
+🥈 Trevor Connelly (VGK): 5.81
+🥉 Cole Hutson (WSH): 4.72
+
+🔥 Hottest over the last two weeks: Michael Brandsegg-Nygård (6.99)
+
+Who's your Calder pick? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #NHLRookies #CalderTrophy #Prospects
+```
+</details>
+
 ## NYI 1 @ OTT 2 (SO) — 2026-10-15
 `game-2026020109` · rendered 2026-10-16 22:40 UTC · mode: preview
 
