@@ -1,0 +1,14 @@
+[
+ {
+  "key": "game-2026020108",
+  "title": "BUF 5 @ TOR 4 (OT) \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "Toronto won the xG battle, but Buffalo took the overtime win.\n\nToronto edged the 5v5 share of expected goals at 56% to 44%, yet Buffalo managed 35 shots on goal to Toronto's 30. Jack Quinn led the way with 2 goals, 2 assists, and a Game Score of 4.10 to power the Sabres past the Maple Leafs. Did Toronto deserve a better fate with their 2.98 expected goals?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n\n#NHL #HockeyAnalytics #BuffaloSabres #TorontoMapleLeafs #Sabres #Leafs #SabresVsLeafs",
+  "files": [
+   "game-2026020108/2026-10-15_2026020108_1_game.jpg",
+   "game-2026020108/2026-10-15_2026020108_2_away.jpg",
+   "game-2026020108/2026-10-15_2026020108_3_home.jpg"
+  ],
+  "at": "2026-10-16 17:43 UTC"
+ }
+]

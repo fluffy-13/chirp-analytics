@@ -1,0 +1,7 @@
+Toronto won the xG battle, but Buffalo took the overtime win.
+
+Toronto edged the 5v5 share of expected goals at 56% to 44%, yet Buffalo managed 35 shots on goal to Toronto's 30. Jack Quinn led the way with 2 goals, 2 assists, and a Game Score of 4.10 to power the Sabres past the Maple Leafs. Did Toronto deserve a better fate with their 2.98 expected goals?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #BuffaloSabres #TorontoMapleLeafs #Sabres #Leafs #SabresVsLeafs

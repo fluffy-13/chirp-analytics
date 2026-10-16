@@ -1,38 +1,21 @@
-# Latest card — run 38938720887 (2026-10-16T17:19Z)
-![card](2026-10-15_2026020116_matt-boldy.jpg)
+# Chirp Analytics previews
+
+Newest first. Slides and caption exactly as they would post.
+
+## BUF 5 @ TOR 4 (OT) — 2026-10-15
+`game-2026020108` · rendered 2026-10-16 17:43 UTC · mode: preview
+
+<img src="game-2026020108/2026-10-15_2026020108_1_game.jpg" width="260"> <img src="game-2026020108/2026-10-15_2026020108_2_away.jpg" width="260"> <img src="game-2026020108/2026-10-15_2026020108_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
 
 ```
-Matt Boldy put up a 4.52 Game Score while logging 24:51 time on ice on 2026-10-15 as STL scored 4 and MIN scored 5. He finished well above expectation by scoring 3 goals on 0.65 individual xG, while team shot attempts were 24-10 in his team's favour (71% CF) at 5v5 while he was on the ice. Can Boldy maintain this high level of play driver performance?
+Toronto won the xG battle, but Buffalo took the overtime win.
 
-xG = our shot-quality model, trained on 237k NHL shots from the last two seasons. Data: NHL play-by-play.
+Toronto edged the 5v5 share of expected goals at 56% to 44%, yet Buffalo managed 35 shots on goal to Toronto's 30. Jack Quinn led the way with 2 goals, 2 assists, and a Game Score of 4.10 to power the Sabres past the Maple Leafs. Did Toronto deserve a better fate with their 2.98 expected goals?
 
-#NHL #HockeyAnalytics #MinnesotaWild #MattBoldy #NHLAnalytics #AdvancedStats```
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
 
-## Run log
+#NHL #HockeyAnalytics #BuffaloSabres #TorontoMapleLeafs #Sabres #Leafs #SabresVsLeafs
 ```
-2026-10-16 17:19:16,117 INFO pipeline: Spotlight: Matt Boldy (MIN) Game Score 4.52, ixG 0.65
-2026-10-16 17:19:16,435 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:18,235 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:18,236 INFO content_generator: Gemini model gemini-3.8-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:18,236 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:18,649 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:18,649 INFO content_generator: Gemini model gemini-flash-latest unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:18,650 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:19,014 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:19,015 INFO content_generator: Gemini model gemini-3.6-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:19,015 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:19,304 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:19,305 INFO content_generator: Gemini model gemini-3.5-flash-lite unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:19,305 WARNING content_generator: Gemini call failed (attempt 1): No Gemini model available: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'sta
-2026-10-16 17:19:34,332 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:34,761 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:34,762 INFO content_generator: Gemini model gemini-3.8-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:34,762 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:39,170 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent "HTTP/1.1 503 Service Unavailable"
-2026-10-16 17:19:39,170 INFO content_generator: Gemini model gemini-flash-latest unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 17:19:39,170 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 17:19:49,002 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent "HTTP/1.1 200 OK"
-2026-10-16 17:19:49,012 INFO content_generator: Using Gemini model gemini-3.6-flash
-2026-10-16 17:19:49,038 INFO renderer: Card saved: /home/runner/work/chirp-analytics/chirp-analytics/output_posts/2026-10-15_2026020116_matt-boldy.jpg
-2026-10-16 17:19:49,039 INFO pipeline: Dry run — card and caption written to /home/runner/work/chirp-analytics/chirp-analytics/output_posts
-```
+</details>
