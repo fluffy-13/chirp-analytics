@@ -1,5 +1,18 @@
 [
  {
+  "key": "intro-goalies",
+  "title": "Intro: goalies stealing games",
+  "mode": "buffer",
+  "caption": "Goalies stealing games, and goalies giving them away. \ud83e\uddf1\ud83e\udd45\n\nGSAx = expected goals faced minus goals allowed. It rewards stopping the hard ones.\n\n\ud83e\uddf1 Linus Ullmark: +7.23 GSAx, .949. The Ottawa Senators are 6-2-0 with 46.2% of 5v5 xG.\n\ud83e\uddf1 Jake Oettinger: +6.45.\n\ud83d\udea8 Kevin Lankinen: 29 goals on 17.60 expected (\u221211.40).\n\ud83d\udea8 Dustin Wolf: \u22128.30, and the Calgary Flames are 1-6-0.\n\nSwipe for the top and bottom 10 \u27a1\ufe0f\n\nData: NHL play-by-play through October 15, min. 3 games.\n\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.\n\n#NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats",
+  "files": [
+   "intro-goalies/intro_goalies_1.jpg",
+   "intro-goalies/intro_goalies_2.jpg",
+   "intro-goalies/intro_goalies_3.jpg",
+   "intro-goalies/intro_goalies_4.jpg"
+  ],
+  "at": "2026-10-16 23:39 UTC"
+ },
+ {
   "key": "intro-finishing",
   "title": "Intro: hot hands vs. snakebitten",
   "mode": "buffer",
@@ -80,19 +93,6 @@
    "game-2026020109/2026-10-15_2026020109_5_home_impact.jpg"
   ],
   "at": "2026-10-16 22:40 UTC"
- },
- {
-  "key": "intro-goalies",
-  "title": "Intro: goalies stealing games",
-  "mode": "buffer",
-  "caption": "Goalies stealing games, and goalies giving them away. \ud83e\uddf1\ud83e\udd45\n\nGSAx = expected goals faced minus goals allowed. It rewards stopping the hard ones.\n\n\ud83e\uddf1 Linus Ullmark: +7.23 GSAx, .949. The Ottawa Senators are 6-2-0 with 46.2% of 5v5 xG.\n\ud83e\uddf1 Jake Oettinger: +6.45.\n\ud83d\udea8 Kevin Lankinen: 29 goals on 17.60 expected (\u221211.40).\n\ud83d\udea8 Dustin Wolf: \u22128.30, and the Calgary Flames are 1-6-0.\n\nSwipe for the top and bottom 10 \u27a1\ufe0f\n\nData: NHL play-by-play through October 15, min. 3 games.\n\n#NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats",
-  "files": [
-   "intro-goalies/intro_goalies_1.jpg",
-   "intro-goalies/intro_goalies_2.jpg",
-   "intro-goalies/intro_goalies_3.jpg",
-   "intro-goalies/intro_goalies_4.jpg"
-  ],
-  "at": "2026-10-16 22:16 UTC"
  },
  {
   "key": "game-2026020116",

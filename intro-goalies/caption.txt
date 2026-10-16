@@ -11,4 +11,6 @@ Swipe for the top and bottom 10 ➡️
 
 Data: NHL play-by-play through October 15, min. 3 games.
 
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
 #NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats
