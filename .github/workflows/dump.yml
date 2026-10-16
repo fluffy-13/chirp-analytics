@@ -1,0 +1,32 @@
+name: Dump raw game data (dev)
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Game night YYYY-MM-DD"
+        required: true
+      max_games:
+        description: "Max games"
+        default: "4"
+
+permissions:
+  contents: write
+
+jobs:
+  dump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests
+      - run: python tools/dump_games.py "${{ inputs.date }}" /tmp/dump "${{ inputs.max_games }}"
+      - name: Push to the fixtures branch
+        run: |
+          cd /tmp/dump
+          git init -q -b fixtures
+          git add -A
+          git -c user.name=nhl-bot -c user.email=nhl-bot@users.noreply.github.com commit -qm "Raw data for ${{ inputs.date }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" fixtures
