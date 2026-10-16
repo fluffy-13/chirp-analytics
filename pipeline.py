@@ -100,8 +100,13 @@ def post_game(source, score_game, state, mode=None, bundle=None):
     game = analyze_game(bundle)
     paths = render_game_carousel(game)
     caption = build_game_caption(generate_game_copy(game), game)
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    alts = [f"Game breakdown: {_title(game)}. Expected goals {a['abbrev']} {a['xg']:.2f}, "
+            f"{h['abbrev']} {h['xg']:.2f}.",
+            f"{a['name']} team breakdown", f"{h['name']} team breakdown"]
     result = publish_carousel(paths, caption, key=f"game-{game['game_id']}", title=_title(game),
-                              meta={"game_id": game["game_id"], "date": game["date"]}, mode=mode)
+                              meta={"game_id": game["game_id"], "date": game["date"],
+                                    "alt_texts": alts}, mode=mode)
     state.record("games", game["game_id"], {"title": _title(game), "media_id": result["media_id"],
                                             "permalink": result.get("permalink"),
                                             "mode": result.get("mode")})
@@ -237,8 +242,11 @@ def run_weekly(source, state, end=None, mode=None, force=False, min_gp=2):
     paths = render_weekly_carousel(week)
     caption = build_weekly_caption(week)
     title = f"Weekly report — {_range_label(week['start'], week['end'])}"
+    alts = [f"Weekly analytics report, {title}", "Top 10 skaters by Game Score",
+            "Bottom 10 skaters by Game Score", "Top 10 teams by 5v5 expected goals share",
+            "Bottom 10 teams by 5v5 expected goals share"]
     result = publish_carousel(paths, caption, key=f"week-{key}", title=title,
-                              meta={"week_end": key}, mode=mode)
+                              meta={"week_end": key, "alt_texts": alts}, mode=mode)
     state.record("weeks", key, {"title": title, "media_id": result["media_id"],
                                 "mode": result.get("mode"), "games": week["games"]})
     return result

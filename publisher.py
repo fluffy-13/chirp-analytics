@@ -4,6 +4,7 @@ Routes (POST_MODE):
   preview -> save slides + caption to the `previews` branch; nothing is posted
   make    -> hand image URLs + caption to a Make.com scenario that posts them
   graph   -> Instagram Graph API directly (needs a Meta developer app token)
+  buffer  -> Buffer's API (no Meta developer app or Facebook Page needed)
 """
 import json
 import logging
@@ -232,14 +233,17 @@ def publish_carousel(image_paths, caption, key, title, meta=None, mode=None):
     folder = "posts/" + key.replace(":", "-")
     urls = [host_image(p, folder=folder) for p in image_paths]
     log.info("Hosted %d slides under %s", len(urls), folder)
-    if mode == "make":
+    if mode == "buffer":
+        from buffer_client import create_post
+        result = create_post(urls, caption, alt_texts=(meta or {}).get("alt_texts"))
+    elif mode == "make":
         if not MAKE_WEBHOOK_URL:
             raise PublishError("POST_MODE=make but MAKE_WEBHOOK_URL is not set")
         result = carousel_via_make(urls, caption, key, meta)
     elif mode == "graph":
         result = carousel_via_graph(urls, caption)
     else:
-        raise PublishError(f"Unknown POST_MODE {mode!r} (use preview, make or graph)")
+        raise PublishError(f"Unknown POST_MODE {mode!r} (use preview, buffer, make or graph)")
     try:  # keep a record of what went out alongside the previews
         save_preview(image_paths, caption, key, title, mode=mode)
     except Exception as exc:

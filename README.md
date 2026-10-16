@@ -17,12 +17,15 @@ sheet and rejected if they contain any number or claim that isn't in it (templat
 |---|---|---|
 | `live.yml` | 11:50, 18:40, 23:50 ET daily | polls every 2 min while games are on; posts each final |
 | `weekly.yml` | Mondays 09:40 ET | last Monday–Sunday week |
-| `run.yml` | manual | `games` for a date, `weekly`, `live`, or `make-sample`, with a mode override |
+| `run.yml` | manual | `games` for a date, `weekly`, `live`, `buffer-check`, or `make-sample`, with a mode override |
 | `dump.yml` | manual (dev) | saves a night's raw NHL JSON to the `fixtures` branch |
 
 **Where posts go** is the repo variable `POST_MODE`:
 - `preview` (default) — nothing is posted; slides + captions land on the **`previews` branch**
   (open its README on GitHub to see every carousel).
+- `buffer` — Buffer's API (`BUFFER_API_KEY`). No Meta developer app or Facebook Page needed:
+  connect @chirpanalytics inside Buffer with Instagram login. Run the manual workflow with
+  `buffer-check` first (lists channels and schema, posts nothing; log lands in `previews/logs/`).
 - `make` — Make.com scenario via `MAKE_WEBHOOK_URL` (payload: `type`, `image_urls`, `caption`, `key`).
 - `graph` — Instagram Graph API directly (`IG_ACCESS_TOKEN`, `IG_USER_ID`).
 
@@ -37,7 +40,8 @@ posted twice, even if runs overlap. A game that fails 4 times is skipped and the
 | `metrics.py` | per-game analysis: team totals, 5v5 shares, xG timeline, goalies (GSAx), three stars; weekly aggregation |
 | `cards.py` | game / team / weekly slides (1080×1350 JPEG) |
 | `content_generator.py` | Gemini captions with number/claim checking, template fallback |
-| `publisher.py` | preview / Make / Graph publishing, single image or carousel, Supabase image hosting |
+| `publisher.py` | preview / Buffer / Make / Graph publishing, single image or carousel, Supabase image hosting |
+| `buffer_client.py` | Buffer GraphQL client: find the Instagram channel, publish now, confirm it went live |
 | `git_store.py` | small files on a git branch without touching the checkout |
 | `xg_model.py` + `xg_model.json` | trained xG model (pure Python at runtime) |
 | `nhl_fetcher.py` | NHL API client with retries; `FixtureSource` for offline runs |

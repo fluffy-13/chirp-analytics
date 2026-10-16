@@ -33,7 +33,12 @@ IG_HANDLE = _env("IG_HANDLE", "@chirpanalytics")
 # preview: render + save to the `previews` branch only (nothing is posted)
 # make:    hand image URLs + caption to a Make.com scenario (MAKE_WEBHOOK_URL)
 # graph:   post directly with the Instagram Graph API (IG_ACCESS_TOKEN + IG_USER_ID)
+# buffer:  post through Buffer's API (BUFFER_API_KEY), Instagram connected inside Buffer
 POST_MODE = (_env("POST_MODE", "preview") or "preview").lower()
+
+# --- Posting through Buffer (no Meta developer app or Facebook Page needed) --
+BUFFER_API_KEY = _env("BUFFER_API_KEY")
+BUFFER_CHANNEL_ID = _env("BUFFER_CHANNEL_ID")  # optional; found automatically otherwise
 
 # --- Posting through Make.com (no Meta developer app needed) ----------------
 # A Make scenario: Custom webhook -> Instagram for Business "Create a Photo Post".

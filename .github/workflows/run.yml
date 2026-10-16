@@ -6,7 +6,7 @@ on:
       command:
         description: "What to run"
         type: choice
-        options: [games, weekly, live, make-sample]
+        options: [games, weekly, live, buffer-check, make-sample]
         default: games
       date:
         description: "games: game night YYYY-MM-DD (blank = yesterday)"
@@ -20,7 +20,7 @@ on:
       mode:
         description: "Where posts go (default = the POST_MODE repo variable, else preview)"
         type: choice
-        options: [default, preview, make, graph]
+        options: [default, preview, buffer, make, graph]
         default: default
       force:
         description: "Re-post even if already posted"
@@ -56,6 +56,8 @@ jobs:
           SUPABASE_URL: https://cxmkjvnrovgkeslypmix.supabase.co
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+          BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
+          BUFFER_CHANNEL_ID: ${{ vars.BUFFER_CHANNEL_ID }}
         run: |
           ARGS="${{ inputs.command }}"
           [ -n "${{ inputs.date }}" ] && ARGS="$ARGS --date ${{ inputs.date }}"
