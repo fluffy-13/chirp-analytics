@@ -1,0 +1,13 @@
+2026-10-16 21:37:32,476 ERROR main: Buffer check failed
+Traceback (most recent call last):
+  File "/home/runner/work/chirp-analytics/chirp-analytics/main.py", line 74, in _run
+    buffer_client.check()
+  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 151, in check
+    chans = list_channels()
+            ^^^^^^^^^^^^^^^
+  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 46, in list_channels
+    for org in _gql(ORGS)["account"]["organizations"]:
+               ^^^^^^^^^^
+  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 24, in _gql
+    raise BufferError("BUFFER_API_KEY is not set")
+buffer_client.BufferError: BUFFER_API_KEY is not set
