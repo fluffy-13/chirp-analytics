@@ -1,0 +1,29 @@
+name: Tracker data (dev)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  gather:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python tools/tracker_data.py /tmp/trackers --goals
+      - name: Save to the fixtures branch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from git_store import GitBranchStore
+          root = Path("/tmp/trackers")
+          files = {f"trackers/{p.relative_to(root)}": p.read_bytes() for p in root.rglob("*") if p.is_file()}
+          GitBranchStore("fixtures").write(files, "Tracker data")
+          PY
