@@ -7,8 +7,10 @@ import json
 from datetime import date as Date
 from pathlib import Path
 
+import logos
 from cards import (BAD, GOOD, M, W, H, C, F, _canvas, _ellipsize, _fit, _footer, _header,
-                   _panel, _save, _signed, _num)
+                   _panel, _save, _short_name, _signed, _num, cover_canvas)
+from content_generator import DISCLOSURE
 from metrics import team_color
 
 ROOT = Path(__file__).resolve().parent
@@ -86,23 +88,34 @@ def _sub_header(d, data, accent):
             color=accent)
 
 
-def _cover(data, accent, kicker, title, tagline, cards):
-    img, d = _canvas(accent=accent)
+def _cover(data, accent, kicker, title, tagline, cards, pair):
+    """Same look as the game covers: blend of the two featured teams' colours with their logos as
+    watermarks, title over the blend, callouts in an opaque panel.
+    cards: [(label, name, sub, color, logo_abbrev or None)]; pair: (left_abbrev, right_abbrev)."""
+    left, right = pair
+    p_top, p_bot = 420, 1150
+    img, d = cover_canvas(team_color(None, left), team_color(None, right), left, right,
+                          (p_top, p_bot), accent=accent)
     _sub_header(d, data, accent)
-    d.text((M, 136), kicker, fill=C["muted"], font=F("bold", 56))
-    d.text((M, 200), title, fill=C["text"], font=_fit(d, title, "bold", 116, W - 2 * M, 70))
-    d.text((M, 340), tagline, fill=accent, font=_fit(d, tagline, "bold", 50, W - 2 * M, 30))
-    y = 448
-    h = 198 if len(cards) <= 3 else 170
-    for label, name, sub, color in cards:
-        _panel(d, [M - 24, y, W - M + 24, y + h])
-        d.rectangle([M - 24, y + 24, M - 16, y + h - 24], fill=color)
-        d.text((M + 8, y + 26), label, fill=C["muted"], font=F("semibold", 24))
-        d.text((M + 8, y + 62), _ellipsize(d, name, F("bold", 52), W - 2 * M - 20), fill=C["text"],
-               font=F("bold", 52))
-        d.text((M + 8, y + 132), _ellipsize(d, sub, F("regular", 30), W - 2 * M - 20),
-               fill=C["body"], font=F("regular", 30))
-        y += h + 24
+    d.text((M, 108), "Chirp Analytics", fill=C["text"], font=F("bold", 30))
+    d.text((M, 176), kicker, fill=C["text"], font=F("bold", 52))
+    d.text((M, 236), title, fill=C["text"], font=_fit(d, title, "bold", 112, W - 2 * M, 70))
+    y = p_top + 34
+    d.text((M, y), tagline, fill=accent, font=_fit(d, tagline, "bold", 44, W - 2 * M, 28))
+    y += 82
+    row_h = (p_bot - 24 - y) / len(cards)
+    for i, (label, name, sub, color, ab) in enumerate(cards):
+        if i:
+            d.line([(M, y - 12), (W - M, y - 12)], fill=C["panel_border"], width=2)
+        lw = logos.paste(img, ab, (W - M, y + row_h / 2 - 12), height=row_h - 70, max_w=170,
+                         anchor="rm") if ab else 0
+        maxw = W - 2 * M - (lw + 24 if lw else 0)
+        d.text((M, y + 4), label, fill=C["muted"], font=F("semibold", 24))
+        nf = _fit(d, name, "bold", 52, maxw, 34)
+        d.text((M, y + 38), name, fill=C["text"], font=nf)
+        d.text((M, y + 108), _ellipsize(d, sub, F("regular", 29), maxw), fill=C["body"],
+               font=F("regular", 29))
+        y += row_h
     d.text((W - M, H - 120), "SWIPE  →", fill=accent, font=F("bold", 30), anchor="ra")
     _footer(d)
     return img
@@ -225,9 +238,13 @@ def _standings_list(data, teams, first_rank, title):
         if rank % 2 == 1:
             d.rounded_rectangle([M - 20, y - 6, W - M + 20, y + row_h - 8], radius=10, fill="#161A21")
         d.text((M, y + 6), str(rank), fill=C["muted"], font=F("bold", 30))
-        d.rectangle([M + 50, y + 8, M + 56, y + 40], fill=t["color"])
+        nx = M + 66
+        if logos.paste(img, t["abbrev"], (M + 76, y + 24), height=42, max_w=50, anchor="mm"):
+            nx = M + 112
+        else:
+            d.rectangle([M + 50, y + 8, M + 56, y + 40], fill=t["color"])
         name_f = F("bold", 30)
-        d.text((M + 66, y + 6), _ellipsize(d, t["name"], name_f, cols[0] - M - 150), fill=C["text"],
+        d.text((nx, y + 6), _ellipsize(d, t["name"], name_f, cols[0] - nx - 84), fill=C["text"],
                font=name_f)
         d.text((cols[0], y + 8), t["record"], fill=C["body"], font=F("regular", 28), anchor="ma")
         gd = int(t["goal_diff"])
@@ -245,12 +262,13 @@ def standings_post(data):
     best, worst = s[0], s[-1]
     cover = _cover(data, C["accent"], "THE REAL", "STANDINGS", "Who's actually driving play?", [
         ("BEST AT 5-ON-5", best["name"], f"{best['xg5_pct']:.1f}% of 5v5 xG  ·  record {best['record']}",
-         best["color"]),
+         best["color"], best["abbrev"]),
         ("WORST AT 5-ON-5", worst["name"],
-         f"{worst['xg5_pct']:.1f}% of 5v5 xG  ·  record {worst['record']}", worst["color"]),
+         f"{worst['xg5_pct']:.1f}% of 5v5 xG  ·  record {worst['record']}", worst["color"],
+         worst["abbrev"]),
         ("SAMPLE", f"{data['games']} games, {len(data['teams'])} teams",
-         "Every shot run through our expected-goals model", C["muted"]),
-    ])
+         "Every shot run through our expected-goals model", C["muted"], None),
+    ], (best["abbrev"], worst["abbrev"]))
     njd, car, uta, vgk = (_team(data, a) for a in ("NJD", "CAR", "UTA", "VGK"))
     sea, bos, phi = (_team(data, a) for a in ("SEA", "BOS", "PHI"))
     explainer = _explainer(data, C["accent"], "WHAT IT TELLS US", [
@@ -289,6 +307,7 @@ def standings_post(data):
         "Swipe for all 32 teams ➡️\n\n"
         f"Data: NHL play-by-play through {_long_date(data['through'])}. xG = expected goals, from our "
         "model trained on 237k NHL shots.\n\n"
+        f"{DISCLOSURE}\n\n"
         "#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals")
     alts = ["The real standings: 5v5 expected goals share leaders and laggards",
             "Scatter plot of every team's points percentage against 5v5 expected goals share",
@@ -331,10 +350,15 @@ def _bars_slide(data, accent, title, subtitle, rows, scale, legend, header_cols)
         if i % 2 == 1:
             d.rounded_rectangle([M - 20, y - 8, W - M + 20, y + row_h - 12], radius=12, fill="#161A21")
         d.text((M, y + 16), str(i), fill=accent, font=F("bold", 34))
+        nx = M + 54
+        if r.get("logo") and logos.paste(img, r["logo"], (M + 80, y + 38), height=50, max_w=56,
+                                         anchor="mm"):
+            nx = M + 120
         name_f = F("bold", 30)
-        d.text((M + 54, y + 2), _ellipsize(d, r["name"], name_f, bx0 - M - 80), fill=C["text"],
+        d.text((nx, y + 2), _short_name(d, r["name"], name_f, bx0 - nx - 20), fill=C["text"],
                font=name_f)
-        d.text((M + 54, y + 42), r["tag"], fill=r["tag_color"], font=F("semibold", 22))
+        d.text((nx, y + 42), _ellipsize(d, r["tag"], F("semibold", 22), bx0 - nx - 20),
+               fill=r["tag_color"], font=F("semibold", 22))
         # actual (filled) on top, expected (outline) below
         num_f = F("semibold", 22)
         ya, ye = y + 10, y + 44
@@ -352,7 +376,8 @@ def _bars_slide(data, accent, title, subtitle, rows, scale, legend, header_cols)
 
 
 def _skater_rows(players, color):
-    return [{"name": p["name"], "tag": f"{p['team']}  ·  {_pos(p['pos'])}  ·  {int(p['gp'])} GP",
+    return [{"name": p["name"], "logo": p["team"],
+             "tag": f"{p['team']}  ·  {_pos(p['pos'])}  ·  {int(p['gp'])} GP",
              "tag_color": p["color"], "actual": p["G"], "actual_label": f"{int(p['G'])} G",
              "expected": p["ixG"], "expected_label": f"{p['ixG']:.2f} xG",
              "value": _signed(p["gax"]), "value_color": color} for p in players]
@@ -372,12 +397,12 @@ def finishing_post(data):
     scale = max(max(p["G"], p["ixG"]) for p in hot + cold) * 1.12
     cover = _cover(data, "#FF9F43", "HOT HANDS VS.", "SNAKEBITTEN", "Goals vs. expected goals", [
         ("RED HOT", kap["name"], f"{int(kap['G'])} goals on {kap['ixG']:.2f} expected  ·  "
-         f"{_signed(kap['gax'])}", kap["color"]),
+         f"{_signed(kap['gax'])}", kap["color"], kap["team"]),
         ("BLUE-LINE SNIPER", bou["name"], f"{int(bou['G'])} goals on {bou['ixG']:.2f} expected, "
-         "from the blue line", bou["color"]),
+         "from the blue line", bou["color"], bou["team"]),
         ("DUE FOR GOALS", jh["name"], f"{int(jh['G'])} goals on {jh['ixG']:.2f} expected  ·  "
-         f"#{ixg_rank} in xG", jh["color"]),
-    ])
+         f"#{ixg_rank} in xG", jh["color"], jh["team"]),
+    ], (kap["team"], jh["team"]))
     s_hot = _bars_slide(data, GOOD, "RUNNING HOT", f"Most goals above expected (min. {SKATER_MIN_GP} games)",
                         _skater_rows(hot, GOOD), scale, ("GOALS", "EXPECTED"), ["PLAYER", "G − xG"])
     s_cold = _bars_slide(data, BAD, "SNAKEBITTEN", f"Furthest below expected (min. {SKATER_MIN_GP} games)",
@@ -408,6 +433,7 @@ def finishing_post(data):
         "Over a few games most of these gaps are streaks, not skill. Our bet: the cold list starts "
         "scoring.\n\n"
         f"Data: NHL play-by-play through {_long_date(data['through'])}, min. {SKATER_MIN_GP} games.\n\n"
+        f"{DISCLOSURE}\n\n"
         "#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey")
     alts = ["Hot hands and snakebitten shooters: goals versus expected goals",
             "Top 10 skaters in goals above expected",
@@ -418,7 +444,7 @@ def finishing_post(data):
 
 # ---------------------------------------------------------- post 3: goalies ---
 def _goalie_rows(goalies, color):
-    return [{"name": g["name"],
+    return [{"name": g["name"], "logo": g["team"],
              "tag": f"{g['team']}  ·  {int(g['gp'])} GP  ·  {g['sv_pct']:.3f}".replace(" 0.", " ."),
              "tag_color": g["color"], "actual": g["goals_against"],
              "actual_label": f"{int(g['goals_against'])} GA",
@@ -436,12 +462,12 @@ def goalies_post(data):
     scale = max(max(g["goals_against"], g["xga"]) for g in best + worst) * 1.12
     cover = _cover(data, C["stat"], "GOALIES", "STEALING GAMES", "Goals saved above expected", [
         ("THE BRICK WALL", ull["name"], f"{_signed(ull['gsax'])} GSAx  ·  {ull['sv_pct']:.3f} SV%"
-         .replace(" 0.", " ."), ull["color"]),
+         .replace(" 0.", " ."), ull["color"], "OTT"),
         ("CARRYING OTTAWA", f"{ott['name']}: {ott['record']}",
-         f"despite only {ott['xg5_pct']:.1f}% of 5v5 expected goals", ott["color"]),
+         f"despite only {ott['xg5_pct']:.1f}% of 5v5 expected goals", ott["color"], None),
         ("ROUGH START", lan["name"], f"{int(lan['goals_against'])} goals on {lan['xga']:.2f} expected  ·  "
-         f"{lan['sv_pct']:.3f} SV%".replace(" 0.", " ."), lan["color"]),
-    ])
+         f"{lan['sv_pct']:.3f} SV%".replace(" 0.", " ."), lan["color"], "VAN"),
+    ], ("OTT", "VAN"))
     s_best = _bars_slide(data, GOOD, "STEALING GAMES",
                          f"Most goals saved above expected (min. {GOALIE_MIN_GP} games)",
                          _goalie_rows(best, GOOD), scale, ("ALLOWED", "EXPECTED"), ["GOALIE", "GSAx"])
@@ -473,6 +499,7 @@ def goalies_post(data):
         f"🚨 {wolf['name']}: {_signed(wolf['gsax'])}, and the {cgy['name']} are {cgy['record']}.\n\n"
         "Swipe for the top and bottom 10 ➡️\n\n"
         f"Data: NHL play-by-play through {_long_date(data['through'])}, min. {GOALIE_MIN_GP} games.\n\n"
+        f"{DISCLOSURE}\n\n"
         "#NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats")
     alts = ["Goalies stealing games: goals saved above expected leaders",
             "Top 10 goalies in goals saved above expected",

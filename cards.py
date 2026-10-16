@@ -581,38 +581,43 @@ def cover_headline(game, copy=None):
     return ""
 
 
-def render_cover_slide(game, headline=""):
-    """Slide 1: reads at grid size. Team-colour blend, logo watermarks, opaque score panel."""
-    a, h = game["teams"]["away"], game["teams"]["home"]
-    away_c, home_c = _distinct(a["color"], h["color"])
-    base = _cover_background(a["color"], h["color"]).convert("RGBA")
-    # giant logo watermarks
-    for t, xy, anchor in ((a, (-120, 40), "lt"), (h, (W + 120, H - 40), "rb")):
-        mark = logos.logo(t["abbrev"], height=620, max_w=760, opacity=0.16)
+def cover_canvas(left_color, right_color, left_abbrev=None, right_abbrev=None, panel=(240, 950),
+                 accent=C["accent"]):
+    """Shared cover look: diagonal colour blend, giant logo watermarks, dark fades top and
+    bottom, and an opaque panel. Returns (RGB image, draw)."""
+    base = _cover_background(left_color, right_color).convert("RGBA")
+    for ab, xy, anchor in ((left_abbrev, (-120, 40), "lt"), (right_abbrev, (W + 120, H - 40), "rb")):
+        mark = logos.logo(ab, height=620, max_w=760, opacity=0.16) if ab else None
         if mark is not None:
             x = xy[0] if anchor[0] == "l" else xy[0] - mark.width
             y = xy[1] if anchor[1] == "t" else xy[1] - mark.height
             base.alpha_composite(mark, (int(x), int(y)))
-    # darken the top and bottom so the header and footer read
     fade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     fd = ImageDraw.Draw(fade)
     r, g, b = _hex_rgb(C["bg"])
     for i in range(260):
-        alpha = int(235 * (i / 260) ** 1.6)
-        fd.line([(0, H - 260 + i), (W, H - 260 + i)], fill=(r, g, b, alpha))
+        fd.line([(0, H - 260 + i), (W, H - 260 + i)], fill=(r, g, b, int(235 * (i / 260) ** 1.6)))
     for i in range(170):
         fd.line([(0, i), (W, i)], fill=(r, g, b, int(200 * (1 - i / 170) ** 1.4)))
     base.alpha_composite(fade)
-    # opaque panel
-    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    od = ImageDraw.Draw(overlay)
-    p_top, p_bot = 240, 950
-    od.rounded_rectangle([M - 24, p_top, W - M + 24, p_bot], radius=28, fill=(*_hex_rgb(C["bg"]), 232),
-                         outline=(*_hex_rgb(C["panel_border"]), 255), width=2)
-    base.alpha_composite(overlay)
+    if panel:
+        overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ImageDraw.Draw(overlay).rounded_rectangle(
+            [M - 24, panel[0], W - M + 24, panel[1]], radius=28, fill=(*_hex_rgb(C["bg"]), 232),
+            outline=(*_hex_rgb(C["panel_border"]), 255), width=2)
+        base.alpha_composite(overlay)
     img = base.convert("RGB")
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, W, 14], fill=C["accent"])
+    d.rectangle([0, 0, W, 14], fill=accent)
+    return img, d
+
+
+def render_cover_slide(game, headline=""):
+    """Slide 1: reads at grid size. Team-colour blend, logo watermarks, opaque score panel."""
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    away_c, home_c = _distinct(a["color"], h["color"])
+    p_top, p_bot = 240, 950
+    img, d = cover_canvas(a["color"], h["color"], a["abbrev"], h["abbrev"], (p_top, p_bot))
     status = {"OT": "FINAL · OT", "SO": "FINAL · SHOOTOUT"}.get(game["outcome"], "FINAL")
     _header(d, f"{_game_label(game)}  //  {status}", _pretty_date(game["date"]))
     d.text((M, 110), "Chirp Analytics", fill=C["text"], font=F("bold", 30))
