@@ -29,10 +29,15 @@ def test_make_route_used_and_confirmed(monkeypatch, tmp_path):
     assert sent["json"]["image_url"] == "https://cdn.test/card.jpg" and sent["json"]["sample"] is False
 
 
-def test_make_plain_accepted(monkeypatch):
+def test_make_unconfirmed_is_a_failure(monkeypatch):
+    """A bare 'Accepted' must not be recorded as posted."""
     monkeypatch.setattr(publisher, "MAKE_WEBHOOK_URL", "https://hook.make.test/abc")
     monkeypatch.setattr(publisher.requests, "post", lambda *a, **k: FakeResp())
-    assert publisher.publish_via_make("u", "c")["media_id"] == "via-make"
+    try:
+        publisher.publish_via_make("u", "c")
+    except publisher.PublishError:
+        return
+    raise AssertionError("expected PublishError")
 
 
 def test_make_error_raises(monkeypatch):

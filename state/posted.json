@@ -1,15 +1,4 @@
 {
-  "posted_game_ids": [
-    2026020116
-  ],
-  "history": [
-    {
-      "game_id": 2026020116,
-      "player": "Matt Boldy",
-      "date": "2026-10-15",
-      "media_id": "via-make",
-      "permalink": null,
-      "posted_at": "2026-10-16T12:54:02+00:00"
-    }
-  ]
+  "posted_game_ids": [],
+  "history": []
 }

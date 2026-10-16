@@ -94,13 +94,14 @@ def _post_to_make(payload, timeout=200):
 
 def publish_via_make(image_url, caption, post=None):
     body = _post_to_make(_make_payload(image_url, caption, post))
-    media_id = body.get("media_id") or body.get("id")
-    if not media_id:
-        log.warning("Make accepted the post but sent no media id back; add a Webhook response "
-                    "module to the scenario to confirm posts")
-    log.info("Handed to Make: media_id=%s", media_id or "unconfirmed")
-    return {"media_id": media_id or "via-make", "permalink": body.get("permalink"),
-            "image_url": image_url}
+    media_id = str(body.get("media_id") or body.get("id") or "").strip()
+    if not media_id or media_id in ("None", "null"):
+        # A bare "Accepted" only means Make queued it; Instagram may still have refused.
+        raise PublishError(
+            "Make did not confirm an Instagram post id. Check the scenario's History in Make. "
+            "(The scenario needs a Webhook response module returning {\"media_id\": ...}.)")
+    log.info("Instagram post confirmed via Make: media_id=%s", media_id)
+    return {"media_id": media_id, "permalink": body.get("permalink"), "image_url": image_url}
 
 
 def send_make_sample():
