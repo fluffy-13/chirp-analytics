@@ -133,8 +133,13 @@ def tonight_row(game, bundle, pid):
                                                                 if e["goalie"]}}
 
 
+MIN_HISTORY = 500  # games; below this the career log wasn't seeded, so don't show "career" numbers
+
+
 def sync(source, clog, season, tonight_gid, fetch_goalies=False):
     """Top up the career log from this season's NHL game log (fixes any missed nights)."""
+    if len(clog.games) < MIN_HISTORY:
+        raise RuntimeError(f"career log for {clog.pid} not seeded (run tools/backfill_trackers.py)")
     entries = source._get(f"{NHL_WEB_API}/player/{clog.pid}/game-log/{season}/2").get("gameLog", [])
     for e in entries:
         gid = str(e["gameId"])
