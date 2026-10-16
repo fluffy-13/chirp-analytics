@@ -7,6 +7,7 @@
   python main.py weekly --end 2026-10-18
   python main.py make-sample                   # Make.com setup: send a sample payload
   python main.py buffer-check                  # Buffer setup: list channels + schema (posts nothing)
+  python main.py intro --post standings        # one-off season-so-far posts: standings|finishing|goalies
 
 Add --fixtures DIR to run offline on saved API JSON. Where posts go is POST_MODE
 (preview by default — nothing is posted), or override with --mode preview|buffer|make|graph.
@@ -22,13 +23,16 @@ log = logging.getLogger("main")
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check"])
+    ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check",
+                                            "intro"])
     ap.add_argument("--date", default=None, help="game night YYYY-MM-DD (games; default yesterday ET)")
     ap.add_argument("--game-id", default=None)
     ap.add_argument("--end", default=None, help="week ending YYYY-MM-DD (weekly; a Sunday)")
     ap.add_argument("--mode", choices=["preview", "buffer", "make", "graph"], default=None)
     ap.add_argument("--force", action="store_true", help="re-post even if already posted")
     ap.add_argument("--fixtures", help="directory of saved API JSON for offline runs")
+    ap.add_argument("--post", choices=["standings", "finishing", "goalies"],
+                    help="intro: which season-so-far post")
     ap.add_argument("--max-runtime", type=float, default=5.6, help="live: hours before exiting")
     args = ap.parse_args(argv)
 
@@ -87,6 +91,17 @@ def _run(args):
             return 1
 
     import pipeline
+    if args.command == "intro":
+        if not args.post:
+            log.error("intro needs --post standings|finishing|goalies")
+            return 1
+        try:
+            pipeline.run_intro(args.post, pipeline.State(), mode=args.mode, force=args.force)
+            return 0
+        except Exception:
+            log.exception("intro failed")
+            return 1
+
     source = FixtureSource(args.fixtures) if args.fixtures else LiveSource()
     state = pipeline.State()
     try:

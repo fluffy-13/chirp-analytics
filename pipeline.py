@@ -39,6 +39,7 @@ class State:
         self.data.setdefault("games", {})
         self.data.setdefault("weeks", {})
         self.data.setdefault("failures", {})
+        self.data.setdefault("intros", {})
 
     def refresh(self):
         """Merge in anything another run recorded since we loaded (never lose an entry)."""
@@ -46,7 +47,7 @@ class State:
         if not raw:
             return
         fresh = json.loads(raw)
-        for k in ("games", "weeks"):
+        for k in ("games", "weeks", "intros"):
             merged = dict(fresh.get(k, {}))
             merged.update(self.data.get(k, {}))
             self.data[k] = merged
@@ -249,4 +250,24 @@ def run_weekly(source, state, end=None, mode=None, force=False, min_gp=2):
                               meta={"week_end": key, "alt_texts": alts}, mode=mode)
     state.record("weeks", key, {"title": title, "media_id": result["media_id"],
                                 "mode": result.get("mode"), "games": week["games"]})
+    return result
+
+
+# -------------------------------------------------------------------- intros ---
+INTRO_TITLES = {"standings": "Intro: the real standings", "finishing": "Intro: hot hands vs. snakebitten",
+                "goalies": "Intro: goalies stealing games"}
+
+
+def run_intro(which, state, mode=None, force=False):
+    """One-off season-so-far post, from the approved data snapshot."""
+    from intro_cards import render_intro
+    if state.done("intros", which) and not force:
+        log.info("Intro %s already posted", which)
+        return None
+    paths, caption, alts = render_intro(which)
+    result = publish_carousel(paths, caption, key=f"intro-{which}", title=INTRO_TITLES[which],
+                              meta={"intro": which, "alt_texts": alts}, mode=mode)
+    state.record("intros", which, {"title": INTRO_TITLES[which], "media_id": result["media_id"],
+                                   "permalink": result.get("permalink"), "mode": result.get("mode")})
+    log.info("Posted %s (%s)", INTRO_TITLES[which], result.get("mode"))
     return result

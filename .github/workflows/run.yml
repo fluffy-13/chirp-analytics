@@ -6,7 +6,7 @@ on:
       command:
         description: "What to run"
         type: choice
-        options: [games, weekly, live, buffer-check, make-sample]
+        options: [games, weekly, live, intro, buffer-check, make-sample]
         default: games
       date:
         description: "games: game night YYYY-MM-DD (blank = yesterday)"
@@ -16,6 +16,9 @@ on:
         required: false
       end:
         description: "weekly: week ending YYYY-MM-DD, a Sunday (blank = last week)"
+        required: false
+      post:
+        description: "intro: standings, finishing or goalies"
         required: false
       mode:
         description: "Where posts go (default = the POST_MODE repo variable, else preview)"
@@ -63,5 +66,6 @@ jobs:
           [ -n "${{ inputs.date }}" ] && ARGS="$ARGS --date ${{ inputs.date }}"
           [ -n "${{ inputs.game_id }}" ] && ARGS="$ARGS --game-id ${{ inputs.game_id }}"
           [ -n "${{ inputs.end }}" ] && ARGS="$ARGS --end ${{ inputs.end }}"
+          [ -n "${{ inputs.post }}" ] && ARGS="$ARGS --post ${{ inputs.post }}"
           [ "${{ inputs.force }}" = "true" ] && ARGS="$ARGS --force"
           python main.py $ARGS
