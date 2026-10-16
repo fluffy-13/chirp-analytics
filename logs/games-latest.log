@@ -1,9 +1,5 @@
-2026-10-16 22:19:29,667 INFO cards: Rendered carousel for 2026020109: 2026-10-15_2026020109_1_game.jpg, 2026-10-15_2026020109_2_away.jpg, 2026-10-15_2026020109_3_away_impact.jpg, 2026-10-15_2026020109_4_home.jpg, 2026-10-15_2026020109_5_home_impact.jpg
-2026-10-16 22:19:30,061 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 22:19:30,573 INFO content_generator: Gemini model gemini-3.8-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
-2026-10-16 22:19:30,573 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 22:19:30,699 INFO content_generator: Gemini model gemini-flash-latest unavailable (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '), trying the next one
-2026-10-16 22:19:30,699 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 22:19:38,502 INFO content_generator: Using Gemini model gemini-3.6-flash
-2026-10-16 22:19:41,358 INFO publisher: Preview saved: game-2026020109
-2026-10-16 22:19:43,079 INFO pipeline: Posted NYI 1 @ OTT 2 (SO) — 2026-10-15 (preview)
+2026-10-16 22:39:55,401 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 22:40:23,032 INFO content_generator: Using Gemini model gemini-3.8-flash
+2026-10-16 22:40:23,351 INFO cards: Rendered carousel for 2026020109: 2026-10-15_2026020109_0_cover.jpg, 2026-10-15_2026020109_1_game.jpg, 2026-10-15_2026020109_2_away.jpg, 2026-10-15_2026020109_3_away_impact.jpg, 2026-10-15_2026020109_4_home.jpg, 2026-10-15_2026020109_5_home_impact.jpg
+2026-10-16 22:40:26,372 INFO publisher: Preview saved: game-2026020109
+2026-10-16 22:40:27,861 INFO pipeline: Posted NYI 1 @ OTT 2 (SO) — 2026-10-15 (preview)
