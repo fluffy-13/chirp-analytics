@@ -89,6 +89,7 @@ def _post_to_make(payload, timeout=200):
         body = {}
     if isinstance(body, dict) and body.get("error"):
         raise PublishError(f"Make scenario reported an error: {body['error']}")
+    log.info("Make replied %s: %s", resp.status_code, resp.text[:300])
     return body if isinstance(body, dict) else {}
 
 
