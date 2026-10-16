@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## NYR 1 @ NJD 7 — 2026-10-15
+`game-2026020113` · rendered 2026-10-16 17:44 UTC · mode: preview
+
+<img src="game-2026020113/2026-10-15_2026020113_1_game.jpg" width="260"> <img src="game-2026020113/2026-10-15_2026020113_2_away.jpg" width="260"> <img src="game-2026020113/2026-10-15_2026020113_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Devils crush Rangers in 7-1 blowout
+
+The New Jersey Devils dominated the New York Rangers by securing a 7-1 victory while posting 5v5 shares of expected goals at 73% and out-attempting the opposition 54 to 30. Luke Hughes led the charge as the first star with 2 goals and 5 shots on goal, anchoring a relentless offensive attack. How did the Rangers defense collapse so completely?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #NewYorkRangers #NewJerseyDevils #NJDevils #NYRangers #XG
+```
+</details>
+
 ## VAN 2 @ FLA 3 (OT) — 2026-10-15
 `game-2026020112` · rendered 2026-10-16 17:43 UTC · mode: preview
 
