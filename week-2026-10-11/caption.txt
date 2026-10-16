@@ -1,0 +1,17 @@
+The week in analytics: OCT 5–11 (47 games).
+
+Top skaters by Game Score:
+1. Auston Matthews (TOR) 7.85
+2. Sebastian Aho (CAR) 7.02
+3. Brandon Hagel (TBL) 6.53
+
+Best 5v5 teams by share of expected goals:
+1. Carolina Hurricanes 68.1%
+2. Vegas Golden Knights 63.3%
+3. Utah Mammoth 62.6%
+
+Swipe for the full top and bottom 10s. Who's due for a bounce-back?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #NHLStats #FancyStats

@@ -2,6 +2,34 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Weekly report — OCT 5–11
+`week-2026-10-11` · rendered 2026-10-16 17:46 UTC · mode: preview
+
+<img src="week-2026-10-11/week_2026-10-11_1_cover.jpg" width="260"> <img src="week-2026-10-11/week_2026-10-11_2_skaters_top.jpg" width="260"> <img src="week-2026-10-11/week_2026-10-11_3_skaters_bottom.jpg" width="260"> <img src="week-2026-10-11/week_2026-10-11_4_teams_top.jpg" width="260"> <img src="week-2026-10-11/week_2026-10-11_5_teams_bottom.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+The week in analytics: OCT 5–11 (47 games).
+
+Top skaters by Game Score:
+1. Auston Matthews (TOR) 7.85
+2. Sebastian Aho (CAR) 7.02
+3. Brandon Hagel (TBL) 6.53
+
+Best 5v5 teams by share of expected goals:
+1. Carolina Hurricanes 68.1%
+2. Vegas Golden Knights 63.3%
+3. Utah Mammoth 62.6%
+
+Swipe for the full top and bottom 10s. Who's due for a bounce-back?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #NHLStats #FancyStats
+```
+</details>
+
 ## CGY 2 @ VGK 6 — 2026-10-15
 `game-2026020118` · rendered 2026-10-16 17:45 UTC · mode: preview
 
