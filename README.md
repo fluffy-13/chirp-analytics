@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## UTA 4 @ EDM 2 — 2026-10-15
+`game-2026020117` · rendered 2026-10-16 17:45 UTC · mode: preview
+
+<img src="game-2026020117/2026-10-15_2026020117_1_game.jpg" width="260"> <img src="game-2026020117/2026-10-15_2026020117_2_away.jpg" width="260"> <img src="game-2026020117/2026-10-15_2026020117_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Utah takes down Edmonton 4-2 behind 55 percent 5v5 xG share
+
+Utah controlled the flow at 5v5 with a 55% expected goals share and capitalized perfectly on the power play by going 2 for 2. Leon Draisaitl led the three stars with a Game Score of 2.23 and 1 goal, but Edmonton could not overcome Utah's 14 high-danger chances compared to their own 9. Did special teams decide the outcome of this matchup?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #UtahMammoth #EdmontonOilers #DataHockey
+```
+</details>
+
 ## STL 4 @ MIN 5 — 2026-10-15
 `game-2026020116` · rendered 2026-10-16 17:45 UTC · mode: preview
 
