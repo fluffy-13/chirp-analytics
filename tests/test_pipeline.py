@@ -111,7 +111,7 @@ def test_live_posts_when_final_and_stops(env):
     assert calls["n"] == 3  # posted on the very next poll after going final, then exited
     index = json.loads((tmp / "previews" / "index.json").read_text())
     assert {e["key"] for e in index} == {f"game-{MIN_GAME}", f"game-{SO_GAME}"}
-    assert len(index[0]["files"]) == 3
+    assert len(index[0]["files"]) == 5
 
 
 def test_live_waits_for_shift_data_then_gives_up_waiting(env):

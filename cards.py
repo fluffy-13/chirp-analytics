@@ -329,11 +329,180 @@ def render_team_slide(game, side):
     return img
 
 
-def render_game_carousel(game):
+# -------------------------------------------------------------- impact slide ---
+# Game Score parts, in stacking order (labels shown in the legend)
+PARTS = [("scoring", "GOALS + ASSISTS", "#00FF88"),
+         ("shots", "SHOTS", "#58A6FF"),
+         ("play5", "5V5 SHOT ATTEMPTS", "#B392F0"),
+         ("goals5", "5V5 GOALS ON ICE", "#E3B341"),
+         ("other", "BLOCKS · FO · PEN.", "#8B949E")]
+DESERVED_XG = 0.4     # on-ice 5v5 xG +/- that counts as winning the chances
+DESERVED_IXG = 0.5    # or this much individual xG
+OUTCHANCED_XG = -0.4
+
+
+def impact_flag(p):
+    """Process vs. results: no points despite winning the chances, or points despite losing them."""
+    pts = p["G"] + p["A"]
+    if pts == 0 and (p.get("xg_pm5", 0) >= DESERVED_XG or p["ixG"] >= DESERVED_IXG):
+        return "DESERVED MORE", C["stat"]
+    if pts > 0 and p.get("xg_pm5", 0) <= OUTCHANCED_XG:
+        return "OUTCHANCED", "#E3B341"
+    return None
+
+
+def _arrow(d, x, y, up, color, size=10):
+    if up:
+        d.polygon([(x, y + size), (x + size, y + size), (x + size / 2, y)], fill=color)
+    else:
+        d.polygon([(x, y), (x + size, y), (x + size / 2, y + size)], fill=color)
+
+
+def render_impact_slide(game, side, context=None):
+    """Every skater's Game Score split into what drove it, with season context."""
+    context = context or {}
+    t = game["teams"][side]
+    opp = game["teams"]["home" if side == "away" else "away"]
+    color = t["color"]
+    img, d = _canvas(accent=color)
+    _header(d, "PLAYER IMPACT", _pretty_date(game["date"]), color=color)
+
+    res = "W" if t["won"] else ("OTL" if game["outcome"] in ("OT", "SO") else "L")
+    where = "@" if not t["is_home"] else "vs"
+    extra = {"OT": " (OT)", "SO": " (SO)"}.get(game["outcome"], "")
+    title = t["common_name"].upper()
+    tf = _fit(d, title, "bold", 72, 600, 44)
+    d.text((M, 96), title, fill=color, font=tf)
+    d.text((W - M, 112), f"{res}  {t['score']}–{t['opp_score']}{extra}  {where} {opp['abbrev']}",
+           fill=C["text"], font=F("bold", 40), anchor="ra")
+    d.text((M, 186), "Every skater's Game Score, split into what drove it", fill=C["muted"],
+           font=F("regular", 24))
+
+    # legend
+    lf = F("semibold", 17)
+    x, y = M, 232
+    for _, label, c in PARTS:
+        d.rounded_rectangle([x, y + 2, x + 18, y + 18], radius=4, fill=c)
+        d.text((x + 25, y), label, fill=C["body"], font=lf)
+        x += 25 + d.textlength(label, font=lf) + 22
+    has_ctx = any(p["player_id"] in context for p in game["players"] if p["team_side"] == side)
+
+    skaters = sorted((p for p in game["players"] if p["team_side"] == side),
+                     key=lambda p: p["game_score"], reverse=True)
+    goalies = [g for g in game["goalies"] if g["team_side"] == side]
+    name_x, xg_x, bx0, bx1, gs_x = M, M + 438, M + 470, W - M - 120, W - M - 26
+
+    hy = 274
+    hf = F("semibold", 18)
+    d.text((name_x, hy), "SKATER", fill=C["faint"], font=hf)
+    d.text((xg_x, hy), "5V5 xG±", fill=C["faint"], font=hf, anchor="ra")
+    d.text((gs_x + 26, hy), "GAME SCORE", fill=C["faint"], font=hf, anchor="ra")
+    if has_ctx:
+        mid = (bx0 + bx1) / 2
+        d.text((mid + 14, hy), "= HIS SEASON AVG", fill=C["faint"], font=hf, anchor="ma")
+        lw = d.textlength("= HIS SEASON AVG", font=hf)
+        tx = mid + 14 - lw / 2 - 16
+        d.line([(tx, hy - 2), (tx, hy + 20)], fill="#FFFFFF", width=3)
+
+    # bar scale: shared across rows, zero placed so the biggest negative and positive both fit
+    neg = max([-sum(v for v in p["gs_parts"].values() if v < 0) for p in skaters] + [0.5])
+    pos = max([sum(v for v in p["gs_parts"].values() if v > 0) for p in skaters] + [1.5])
+    avgs = [context[p["player_id"]]["avg"] for p in skaters if p["player_id"] in context]
+    neg = max([neg] + [-a for a in avgs])
+    pos = max([pos] + avgs)
+    ppu = (bx1 - bx0) / (neg + pos)
+    zero = bx0 + neg * ppu
+
+    top = 308
+    bottom = 1150 - 40 * max(0, len(goalies) - 1)
+    row_h = min(48, (bottom - top) / max(len(skaters), 1))
+    d.line([(zero, top - 6), (zero, top + row_h * len(skaters) - 4)], fill="#3A414C", width=2)
+    y = top
+    for i, p in enumerate(skaters):
+        if i % 2 == 0:
+            d.rounded_rectangle([M - 20, y, W - M + 20, y + row_h - 4], radius=8, fill="#161A21")
+        cy = y + (row_h - 4) / 2
+        # name + flag
+        pos_s = {"L": "LW", "R": "RW"}.get(p["position"], p["position"])
+        d.text((name_x, cy), pos_s, fill=C["muted"], font=F("semibold", 18), anchor="lm")
+        flag = impact_flag(p)
+        name_f = F("bold", 24)
+        max_name = xg_x - name_x - 46 - 100
+        fw = 0
+        if flag:
+            ff = F("bold", 14)
+            fw = d.textlength(flag[0], font=ff) + 16
+        name = _ellipsize(d, p["name"], name_f, max_name - fw - (8 if flag else 0) + 60)
+        d.text((name_x + 40, cy), name, fill=C["text"], font=name_f, anchor="lm")
+        if flag:
+            fx = name_x + 40 + d.textlength(name, font=name_f) + 10
+            d.rounded_rectangle([fx, cy - 11, fx + fw, cy + 11], radius=6, outline=flag[1], width=2)
+            d.text((fx + fw / 2, cy), flag[0], fill=flag[1], font=ff, anchor="mm")
+        # 5v5 xG +/- (process)
+        xpm = p.get("xg_pm5", 0)
+        xc = GOOD if xpm >= DESERVED_XG else BAD if xpm <= OUTCHANCED_XG else C["body"]
+        d.text((xg_x, cy), _signed(xpm), fill=xc, font=F("semibold", 22), anchor="rm")
+        # stacked bar
+        bh = 16
+        right, left = zero, zero
+        for key, _, c in PARTS:
+            v = p["gs_parts"].get(key, 0)
+            w = abs(v) * ppu
+            if w < 1:
+                continue
+            if v > 0:
+                d.rectangle([right, cy - bh / 2, right + w, cy + bh / 2], fill=c)
+                right += w
+            else:
+                d.rectangle([left - w, cy - bh / 2, left, cy + bh / 2], fill=c)
+                left -= w
+        ctx = context.get(p["player_id"])
+        if ctx:
+            ax = zero + ctx["avg"] * ppu
+            d.line([(ax, cy - bh / 2 - 6), (ax, cy + bh / 2 + 6)], fill="#FFFFFF", width=3)
+        # value + trend
+        gs = p["game_score"]
+        gc = GOOD if gs >= 1.0 else BAD if gs < 0 else C["text"]
+        d.text((gs_x, cy), _num(gs), fill=gc, font=F("bold", 28), anchor="rm")
+        if ctx and ctx.get("trend"):
+            hot = ctx["trend"] == "hot"
+            _arrow(d, gs_x + 10, cy - 6, hot, GOOD if hot else BAD, 12)
+        y += row_h
+
+    # goalies
+    y = max(y + 8, 1150 - 40 * max(0, len(goalies) - 1))
+    for g in goalies:
+        d.text((name_x, y), "G", fill=C["muted"], font=F("semibold", 18))
+        d.text((name_x + 40, y - 4), _ellipsize(d, g["name"], F("bold", 24), 330), fill=C["text"],
+               font=F("bold", 24))
+        gs_col = GOOD if g["gsax"] > 0.5 else BAD if g["gsax"] < -0.5 else C["body"]
+        d.text((W - M, y - 2), _goalie_line(g), fill=gs_col, font=F("regular", 24), anchor="ra")
+        y += 40
+
+    # how to read it
+    fy = 1226
+    nf = F("regular", 18)
+    line1 = "5v5 xG± = expected goals for minus against with him on the ice at 5-on-5."
+    d.text((M, fy), line1, fill=C["muted"], font=nf)
+    if has_ctx:
+        ax = M + d.textlength(line1, font=nf) + 22
+        _arrow(d, ax, fy + 4, True, GOOD, 11)
+        _arrow(d, ax + 15, fy + 4, False, BAD, 11)
+        d.text((ax + 34, fy), "= hot / cold run", fill=C["muted"], font=nf)
+    d.text((M, fy + 26), "DESERVED MORE: no points, but won his chances.    "
+           "OUTCHANCED: had points, but lost his chances.", fill=C["muted"], font=nf)
+    _footer(d)
+    return img
+
+
+def render_game_carousel(game, context=None):
+    """game, away team, away player impact, home team, home player impact."""
     gid, day = game["game_id"], game["date"][:10]
     paths = [_save(render_game_slide(game), f"{day}_{gid}_1_game.jpg"),
              _save(render_team_slide(game, "away"), f"{day}_{gid}_2_away.jpg"),
-             _save(render_team_slide(game, "home"), f"{day}_{gid}_3_home.jpg")]
+             _save(render_impact_slide(game, "away", context), f"{day}_{gid}_3_away_impact.jpg"),
+             _save(render_team_slide(game, "home"), f"{day}_{gid}_4_home.jpg"),
+             _save(render_impact_slide(game, "home", context), f"{day}_{gid}_5_home_impact.jpg")]
     log.info("Rendered carousel for %s: %s", gid, ", ".join(p.name for p in paths))
     return paths
 

@@ -18,6 +18,7 @@ from cards import render_game_carousel, render_weekly_carousel, _range_label
 from config import OUTPUT_DIR, POST_MODE, TIMEZONE
 from content_generator import (build_game_caption, build_weekly_caption, generate_game_copy)
 from git_store import default_store
+from ledger import Ledger
 from metrics import aggregate_week, analyze_game
 from nhl_fetcher import FINAL_STATES, GAME_TYPES, load_game
 from publisher import publish_carousel
@@ -99,12 +100,17 @@ def post_game(source, score_game, state, mode=None, bundle=None):
     """Build and publish one game's carousel. Returns the publish result."""
     bundle = bundle or load_game(source, score_game)
     game = analyze_game(bundle)
-    paths = render_game_carousel(game)
+    ledger = _ledger(state)
+    context = ledger.context(game) if ledger else None
+    paths = render_game_carousel(game, context)
     caption = build_game_caption(generate_game_copy(game), game)
     a, h = game["teams"]["away"], game["teams"]["home"]
     alts = [f"Game breakdown: {_title(game)}. Expected goals {a['abbrev']} {a['xg']:.2f}, "
             f"{h['abbrev']} {h['xg']:.2f}.",
-            f"{a['name']} team breakdown", f"{h['name']} team breakdown"]
+            f"{a['name']} team breakdown",
+            f"{a['name']} player impact: every skater's Game Score split into what drove it",
+            f"{h['name']} team breakdown",
+            f"{h['name']} player impact: every skater's Game Score split into what drove it"]
     result = publish_carousel(paths, caption, key=f"game-{game['game_id']}", title=_title(game),
                               meta={"game_id": game["game_id"], "date": game["date"],
                                     "alt_texts": alts}, mode=mode)
@@ -112,7 +118,21 @@ def post_game(source, score_game, state, mode=None, bundle=None):
                                             "permalink": result.get("permalink"),
                                             "mode": result.get("mode")})
     log.info("Posted %s (%s)", _title(game), result.get("mode"))
+    if ledger:
+        try:
+            ledger.add(game)
+            ledger.save(f"Ledger: {_title(game)}")
+        except Exception:  # season context is a nice-to-have; never fail a posted game over it
+            log.exception("Could not update the ledger for %s", game["game_id"])
     return result
+
+
+def _ledger(state):
+    try:
+        return Ledger(state.store)
+    except Exception:
+        log.exception("Could not load the ledger; posting without season context")
+        return None
 
 
 def finished_games(source, day):
