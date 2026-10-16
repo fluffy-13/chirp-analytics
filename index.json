@@ -1,5 +1,19 @@
 [
  {
+  "key": "game-2026020109",
+  "title": "NYI 1 @ OTT 2 (SO) \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "Ottawa took the quality while New York controlled 5v5 volume.\n\nOttawa Senators won the expected-goals battle with 3.23 xG to New York Islanders' 1.83 xG, fueled by a 12 to 6 edge in high-danger chances. New York controlled 5v5 play with a 56% xG share and 45 shot attempts, but Linus Ullmark shut the door with +0.83 goals saved above expected and 20 saves on 21 shots. Did Ottawa deserve the shootout victory, or did the Islanders outplay them at 5v5?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n\n#NHL #HockeyAnalytics #NewYorkIslanders #OttawaSenators #Sens #Isles #Stats",
+  "files": [
+   "game-2026020109/2026-10-15_2026020109_1_game.jpg",
+   "game-2026020109/2026-10-15_2026020109_2_away.jpg",
+   "game-2026020109/2026-10-15_2026020109_3_away_impact.jpg",
+   "game-2026020109/2026-10-15_2026020109_4_home.jpg",
+   "game-2026020109/2026-10-15_2026020109_5_home_impact.jpg"
+  ],
+  "at": "2026-10-16 22:19 UTC"
+ },
+ {
   "key": "intro-goalies",
   "title": "Intro: goalies stealing games",
   "mode": "buffer",
@@ -158,18 +172,6 @@
    "game-2026020111/2026-10-15_2026020111_1_game.jpg",
    "game-2026020111/2026-10-15_2026020111_2_away.jpg",
    "game-2026020111/2026-10-15_2026020111_3_home.jpg"
-  ],
-  "at": "2026-10-16 17:43 UTC"
- },
- {
-  "key": "game-2026020109",
-  "title": "NYI 1 @ OTT 2 (SO) \u2014 2026-10-15",
-  "mode": "preview",
-  "caption": "Sens edge Islanders in a shootout battle\n\nOttawa dominated the underlying shot quality with 3.23 expected goals to 1.83, while Linus Ullmark delivered a .952 save percentage to lock it down. Ridly Greig led the way with 1.56 Game Score and a crucial goal to power the Ottawa attack. Did the right team win this shootout thriller?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n\n#NHL #HockeyAnalytics #NewYorkIslanders #OttawaSenators #GoSensGo #Islanders #NHLStats #NHLHockey",
-  "files": [
-   "game-2026020109/2026-10-15_2026020109_1_game.jpg",
-   "game-2026020109/2026-10-15_2026020109_2_away.jpg",
-   "game-2026020109/2026-10-15_2026020109_3_home.jpg"
   ],
   "at": "2026-10-16 17:43 UTC"
  },
