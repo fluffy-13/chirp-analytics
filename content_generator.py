@@ -28,14 +28,19 @@ SCHEMA = {
 }
 
 
+def _n(count, word):
+    return f"{count} {word}{'' if count == 1 else 's'}"
+
+
 def fact_sheet(post):
     p = post["player"]
     lines = [
         f"Game: {post['matchup']} on {post['date']}",
         f"Player: {post['player_name']} ({post['position']}, {post['team']})",
         f"Headline stat: {post['headline_value']} {post['headline_label']}",
-        f"HIS OWN (individual) stats: {p['G']} goals, {p['A']} assists, {p['SOG']} shots on goal, "
-        f"{p['iCF']} shot attempts, {p['iHD']} attempts from the home-plate area, "
+        f"HIS OWN (individual) stats: {_n(p['G'], 'goal')}, {_n(p['A'], 'assist')}, "
+        f"{_n(p['SOG'], 'shot')} on goal, {_n(p['iCF'], 'shot attempt')}, "
+        f"{_n(p['iHD'], 'attempt')} from the home-plate area, "
         f"{p['ixG']:.2f} individual xG, {p['toi']} time on ice, Game Score {p['game_score']:.2f}",
     ]
     on_ice = p["CF"] + p["CA"]
