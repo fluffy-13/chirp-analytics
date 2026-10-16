@@ -344,9 +344,11 @@ OUTCHANCED_XG = -0.4
 def impact_flag(p):
     """Process vs. results: no points despite winning the chances, or points despite losing them."""
     pts = p["G"] + p["A"]
-    if pts == 0 and (p.get("xg_pm5", 0) >= DESERVED_XG or p["ixG"] >= DESERVED_IXG):
+    xpm = p.get("xg_pm5", 0)
+    # won his chances, or got plenty of looks himself without his line losing the chances
+    if pts == 0 and (xpm >= DESERVED_XG or (p["ixG"] >= DESERVED_IXG and xpm >= 0)):
         return "DESERVED MORE", C["stat"]
-    if pts > 0 and p.get("xg_pm5", 0) <= OUTCHANCED_XG:
+    if pts > 0 and xpm <= OUTCHANCED_XG:
         return "OUTCHANCED", "#E3B341"
     return None
 
@@ -427,12 +429,12 @@ def render_impact_slide(game, side, context=None):
         d.text((name_x, cy), pos_s, fill=C["muted"], font=F("semibold", 18), anchor="lm")
         flag = impact_flag(p)
         name_f = F("bold", 24)
-        max_name = xg_x - name_x - 46 - 100
+        avail = (xg_x - 92) - (name_x + 40)   # leave room for the xG± number
         fw = 0
         if flag:
             ff = F("bold", 14)
             fw = d.textlength(flag[0], font=ff) + 16
-        name = _ellipsize(d, p["name"], name_f, max_name - fw - (8 if flag else 0) + 60)
+        name = _ellipsize(d, p["name"], name_f, avail - (fw + 10 if flag else 0))
         d.text((name_x + 40, cy), name, fill=C["text"], font=name_f, anchor="lm")
         if flag:
             fx = name_x + 40 + d.textlength(name, font=name_f) + 10
