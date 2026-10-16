@@ -1,0 +1,14 @@
+Waiver wire 🧲 under-the-radar adds for categories leagues (G, A, PPP, SOG, HIT, BLK), based on the last two weeks:
+
+1. Gabe Perreault (NYR, RW): Ice time +3:22 (now 16:55)
+2. Frank Nazar (CHI, C): 0.75 goals a game
+3. J.T. Miller (NYR, C): PP time +1:42 (now 2:20)
+4. Maxim Shabanov (MIN, RW): 0.43 PP points a game
+5. Nick Seeler (PHI, D): Ice time +2:56 (now 20:14)
+
+Swipe for all 10. Check availability in your league first. Who are you adding? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#FantasyHockey #NHL #WaiverWire #FantasyHockeyAdvice #HockeyAnalytics
