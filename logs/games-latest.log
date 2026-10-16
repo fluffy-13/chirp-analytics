@@ -1,0 +1,8 @@
+2026-10-16 21:44:20,527 INFO cards: Rendered carousel for 2026020116: 2026-10-15_2026020116_1_game.jpg, 2026-10-15_2026020116_2_away.jpg, 2026-10-15_2026020116_3_home.jpg
+2026-10-16 21:44:21,029 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 21:45:13,347 INFO content_generator: Using Gemini model gemini-3.8-flash
+2026-10-16 21:45:14,920 INFO publisher: Hosted 3 slides under posts/game-2026020116
+2026-10-16 21:45:25,902 INFO buffer_client: Buffer accepted post 6ad29aeb52adf2bfae6298d0 (status sending)
+2026-10-16 21:45:36,031 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/Dekh6NJCWnP/
+2026-10-16 21:45:37,556 INFO publisher: Preview saved: game-2026020116
+2026-10-16 21:45:38,871 INFO pipeline: Posted STL 4 @ MIN 5 — 2026-10-15 (buffer)
