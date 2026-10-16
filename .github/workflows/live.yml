@@ -1,0 +1,41 @@
+name: Game night (live)
+
+# Polls every 2 minutes while games are on and posts each game's carousel as soon as it's
+# final (typically 5-10 minutes after the horn). Three staggered starts cover matinees,
+# the evening slate and late West-coast games; overlapping runs queue instead of doubling up.
+on:
+  schedule:
+    - cron: "50 15 * * *"   # 11:50 ET (EDT) — weekend/holiday matinees
+    - cron: "40 22 * * *"   # 18:40 ET — evening slate
+    - cron: "50 3 * * *"    # 23:50 ET — late games
+  workflow_dispatch:
+
+concurrency:
+  group: game-night
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # state + previews branches
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Watch games and post
+        env:
+          POST_MODE: ${{ vars.POST_MODE || 'preview' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_HANDLE: ${{ vars.IG_HANDLE || '@chirpanalytics' }}
+          SUPABASE_URL: https://cxmkjvnrovgkeslypmix.supabase.co
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+        run: python main.py live --max-runtime 5.6

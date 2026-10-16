@@ -1,102 +1,69 @@
-"""Daily pipeline: fetch last night's games → compute metrics → pick spotlight → copy → card → publish.
+"""Chirp Analytics command line.
 
-  python main.py                       # dry run for yesterday (renders card + caption, no post)
-  python main.py --publish             # post to Instagram
-  python main.py --date 2026-10-14     # a specific night
-  python main.py --fixtures tests/fixtures   # offline run on saved JSON
+  python main.py live                          # game night: post each game 5-10 min after it ends
+  python main.py games --date 2026-10-15       # every finished game on a date (skips posted ones)
+  python main.py games --date 2026-10-15 --game-id 2026020116 --force
+  python main.py weekly                        # last Monday-Sunday week
+  python main.py weekly --end 2026-10-18
+  python main.py make-sample                   # Make.com setup: send a sample payload
+
+Add --fixtures DIR to run offline on saved API JSON. Where posts go is POST_MODE
+(preview by default — nothing is posted), or override with --mode preview|make|graph.
 """
 import argparse
-import json
 import logging
 import sys
-from datetime import datetime, timezone
 
-from config import STATE_FILE
-from content_generator import build_caption, generate_copy
-from metrics import analyze_game, build_post, pick_spotlight
-from nhl_fetcher import FixtureSource, LiveSource, completed_games, default_target_date, load_game
-from renderer import render_card
+from nhl_fetcher import FixtureSource, LiveSource, default_target_date
 
-log = logging.getLogger("pipeline")
-
-
-def load_state():
-    if STATE_FILE.exists():
-        return json.loads(STATE_FILE.read_text())
-    return {"posted_game_ids": [], "history": []}
-
-
-def save_state(state):
-    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
-    STATE_FILE.write_text(json.dumps(state, indent=2))
-
-
-def run(date, source, publish=False):
-    state = load_state()
-    games = [g for g in completed_games(source, date) if g["id"] not in state["posted_game_ids"]]
-    if not games:
-        log.info("No new completed games for %s", date)
-        return None
-
-    analyses = []
-    for g in games:
-        try:
-            analyses.append(analyze_game(load_game(source, g)))
-        except Exception:
-            log.exception("Skipping game %s", g.get("id"))
-    if not analyses:
-        raise RuntimeError("Every game failed to load")
-
-    game, player = pick_spotlight(analyses)
-    post = build_post(game, player)
-    log.info("Spotlight: %s (%s) Game Score %.2f, ixG %.2f",
-             post["player_name"], post["team_abbrev"], player["game_score"], player["ixG"])
-
-    copy = generate_copy(post)
-    image_path = render_card(post, copy["hook"])
-    caption = build_caption(copy, post)
-    image_path.with_suffix(".txt").write_text(caption)
-
-    if not publish:
-        log.info("Dry run — card and caption written to %s", image_path.parent)
-        return {"image": str(image_path), "caption": caption}
-
-    from publisher import publish as ig_publish
-    result = ig_publish(image_path, caption, post)
-    state["posted_game_ids"].append(post["game_id"])
-    state["history"].append({
-        "game_id": post["game_id"], "player": post["player_name"], "date": date,
-        "media_id": result["media_id"], "permalink": result["permalink"],
-        "posted_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-    })
-    save_state(state)
-    return result
+log = logging.getLogger("main")
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--date", default=default_target_date(), help="YYYY-MM-DD (default: yesterday ET)")
-    ap.add_argument("--publish", action="store_true", help="actually post to Instagram")
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument("command", choices=["live", "games", "weekly", "make-sample"])
+    ap.add_argument("--date", default=None, help="game night YYYY-MM-DD (games; default yesterday ET)")
+    ap.add_argument("--game-id", default=None)
+    ap.add_argument("--end", default=None, help="week ending YYYY-MM-DD (weekly; a Sunday)")
+    ap.add_argument("--mode", choices=["preview", "make", "graph"], default=None)
+    ap.add_argument("--force", action="store_true", help="re-post even if already posted")
     ap.add_argument("--fixtures", help="directory of saved API JSON for offline runs")
-    ap.add_argument("--make-sample", action="store_true",
-                    help="send a sample payload to the Make webhook (scenario setup only)")
+    ap.add_argument("--max-runtime", type=float, default=5.6, help="live: hours before exiting")
     args = ap.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-    if args.make_sample:
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+
+    if args.command == "make-sample":
         from publisher import send_make_sample
         try:
             send_make_sample()
+            return 0
         except Exception:
             log.exception("Sending the Make sample failed")
             return 1
-        return 0
+
+    import pipeline
     source = FixtureSource(args.fixtures) if args.fixtures else LiveSource()
+    state = pipeline.State()
     try:
-        run(args.date, source, publish=args.publish)
+        if args.command == "live":
+            gave_up = pipeline.run_live(source, state, mode=args.mode,
+                                        max_runtime=args.max_runtime * 3600)
+            if gave_up:
+                log.error("Gave up on games after repeated failures: %s", gave_up)
+                return 1
+        elif args.command == "games":
+            failed = pipeline.run_games(source, args.date or default_target_date(), state,
+                                        mode=args.mode, game_id=args.game_id, force=args.force)
+            if failed:
+                log.error("These games failed: %s", failed)
+                return 1
+        elif args.command == "weekly":
+            pipeline.run_weekly(source, state, end=args.end, mode=args.mode, force=args.force)
     except Exception:
-        log.exception("Pipeline failed")
-        return 1  # non-zero so cron / GitHub Actions flags the failure
+        log.exception("%s failed", args.command)
+        return 1  # non-zero so GitHub Actions flags the failure (and emails you)
     return 0
 
 

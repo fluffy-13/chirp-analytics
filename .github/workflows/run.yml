@@ -1,0 +1,65 @@
+name: Run manually
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "What to run"
+        type: choice
+        options: [games, weekly, live, make-sample]
+        default: games
+      date:
+        description: "games: game night YYYY-MM-DD (blank = yesterday)"
+        required: false
+      game_id:
+        description: "games: only this game id (optional)"
+        required: false
+      end:
+        description: "weekly: week ending YYYY-MM-DD, a Sunday (blank = last week)"
+        required: false
+      mode:
+        description: "Where posts go (default = the POST_MODE repo variable, else preview)"
+        type: choice
+        options: [default, preview, make, graph]
+        default: default
+      force:
+        description: "Re-post even if already posted"
+        type: boolean
+        default: false
+
+concurrency:
+  group: manual-${{ inputs.command }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest -q tests
+      - name: Run
+        env:
+          POST_MODE: ${{ inputs.mode != 'default' && inputs.mode || vars.POST_MODE || 'preview' }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_HANDLE: ${{ vars.IG_HANDLE || '@chirpanalytics' }}
+          SUPABASE_URL: https://cxmkjvnrovgkeslypmix.supabase.co
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+        run: |
+          ARGS="${{ inputs.command }}"
+          [ -n "${{ inputs.date }}" ] && ARGS="$ARGS --date ${{ inputs.date }}"
+          [ -n "${{ inputs.game_id }}" ] && ARGS="$ARGS --game-id ${{ inputs.game_id }}"
+          [ -n "${{ inputs.end }}" ] && ARGS="$ARGS --end ${{ inputs.end }}"
+          [ "${{ inputs.force }}" = "true" ] && ARGS="$ARGS --force"
+          python main.py $ARGS

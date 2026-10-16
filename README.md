@@ -1,46 +1,55 @@
 # Chirp Analytics
 
-Every morning: pull last night's finished games → compute real analytics from play-by-play and
-shift charts → pick the night's best skater by Game Score → Gemini writes the hook + caption
-(fact-checked against the data) → render a 1080×1350 JPEG → publish to Instagram.
+Automated NHL analytics for Instagram (@chirpanalytics).
+
+- **Every game, 5–10 minutes after the final horn:** a 3-slide carousel — the game breakdown
+  (score, expected-goals flow chart, shot/chance/power-play/faceoff comparison, three stars)
+  and a breakdown for each team (xG, 5v5 shares, top performers, goalie with goals saved above
+  expected).
+- **Every Monday:** the weekly report — top and bottom 10 skaters (total Game Score) and top and
+  bottom 10 teams (share of 5v5 expected goals).
+
+Every number comes from the NHL's public play-by-play. Captions are written by Gemini from a fact
+sheet and rejected if they contain any number or claim that isn't in it (template fallback).
+
+## How it runs
+| Workflow | When | What |
+|---|---|---|
+| `live.yml` | 11:50, 18:40, 23:50 ET daily | polls every 2 min while games are on; posts each final |
+| `weekly.yml` | Mondays 09:40 ET | last Monday–Sunday week |
+| `run.yml` | manual | `games` for a date, `weekly`, `live`, or `make-sample`, with a mode override |
+| `dump.yml` | manual (dev) | saves a night's raw NHL JSON to the `fixtures` branch |
+
+**Where posts go** is the repo variable `POST_MODE`:
+- `preview` (default) — nothing is posted; slides + captions land on the **`previews` branch**
+  (open its README on GitHub to see every carousel).
+- `make` — Make.com scenario via `MAKE_WEBHOOK_URL` (payload: `type`, `image_urls`, `caption`, `key`).
+- `graph` — Instagram Graph API directly (`IG_ACCESS_TOKEN`, `IG_USER_ID`).
+
+What has been posted lives on the **`state` branch** (`posted.json`), so a game or week is never
+posted twice, even if runs overlap. A game that fails 4 times is skipped and the run is marked failed
+(GitHub emails you).
 
 ## Files
 | File | Job |
 |---|---|
-| `config.py` | env vars, paths, palette |
-| `nhl_fetcher.py` | NHL API client with retries, plus `FixtureSource` for offline runs |
-| `metrics.py` | home-plate chances, on-ice 5v5 Corsi, Game Score, spotlight pick |
+| `pipeline.py` | live poller, per-night backfill, weekly job, posted-state |
+| `metrics.py` | per-game analysis: team totals, 5v5 shares, xG timeline, goalies (GSAx), three stars; weekly aggregation |
+| `cards.py` | game / team / weekly slides (1080×1350 JPEG) |
+| `content_generator.py` | Gemini captions with number/claim checking, template fallback |
+| `publisher.py` | preview / Make / Graph publishing, single image or carousel, Supabase image hosting |
+| `git_store.py` | small files on a git branch without touching the checkout |
 | `xg_model.py` + `xg_model.json` | trained xG model (pure Python at runtime) |
-| `tools/fit_xg.py`, `tools/check_parity.py` | retrain the model, verify live features match training |
-| `content_generator.py` | Gemini JSON copy, rejects invented numbers/claims, template fallback |
-| `renderer.py` | the card (wrapped text, font fallbacks, JPEG) |
-| `publisher.py` | Supabase upload → IG container → poll until ready → publish |
-| `main.py` | orchestration, dry-run by default, never posts the same game twice |
+| `nhl_fetcher.py` | NHL API client with retries; `FixtureSource` for offline runs |
+| `main.py` | command line |
 
-## Run
+## Run locally
 ```bash
 pip install -r requirements.txt
-cp .env.example .env        # fill in keys
-python main.py              # dry run: card + caption in output_posts/
-python main.py --publish    # post it
-python tests/make_fixture.py && python main.py --fixtures tests/fixtures   # offline test
+python main.py games --date 2026-10-15        # preview mode: renders to output_posts/
+python main.py weekly --end 2026-10-18
 pytest -q tests
 ```
-
-## Setup notes
-- **Fonts:** put Inter (`Inter-Regular`, `-SemiBold`, `-Bold`) in `fonts/`. Falls back to Arial/DejaVu.
-- **Image hosting:** create a *public* Supabase Storage bucket `ig-posts`; Instagram downloads the
-  image from that URL. Or set `IMAGE_HOST_BASE_URL` if you host files yourself.
-- **Instagram:** a professional (Business or Creator) account and a Meta app using *Instagram API with
-  Instagram Login* (no Facebook Page needed). The token is long-lived but expires after 60 days — refresh it.
-  Facebook-Login tokens also work; the publisher picks the right API host from the token.
-- **No Meta developer app? Post through Make.com:** set `MAKE_WEBHOOK_URL` and the bot hands the
-  hosted image URL + caption to a Make scenario (Custom webhook → Instagram for Business
-  "Create a Photo Post" → Webhook response returning `{"media_id": "<post id>"}`). The response is
-  required: without a confirmed id the run fails and the game is not marked as posted. Needs an
-  Instagram **Business** account linked to a Facebook Page. Run the workflow once with
-  "make_sample" ticked so Make learns the payload fields.
-- **Scheduling:** `.github/workflows/daily-post.yml` runs daily; add the keys as repo secrets.
 
 ## xG model
 Gradient-boosted trees (300 trees, depth 3) trained on **237,241 unblocked shots / 15,892 goals**
@@ -58,8 +67,8 @@ takeaway, shot...), and how far and fast the puck travelled from it. Empty-net s
 | old hand-set starter | 0.2572 | 0.700 | 1.52 |
 | dataset's published xG (benchmark) | 0.2155 | 0.773 | 1.12 |
 
-`tools/check_parity.py` converts real games into NHL-API JSON and confirms the bot computes every
-feature exactly as training did (50 games, 4,149 shots, 0 mismatches).
+`tools/check_parity.py` confirms the bot computes every feature exactly as training did
+(50 games, 4,149 shots, 0 mismatches).
 
 **Retrain each offseason:**
 ```bash
@@ -71,3 +80,4 @@ python tools/fit_xg.py --train <2026 file> <2027 file> --write         # ship it
 python tools/check_parity.py <2027 file>
 ```
 Training data: play-by-play compiled from the NHL API by the sportsdataverse project.
+Game Score: Dom Luszczyszyn's single-game value formula (goalies: 0.1×saves − 0.75×goals against).

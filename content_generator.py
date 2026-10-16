@@ -198,3 +198,147 @@ def build_caption(copy, post):
                 "Data: NHL play-by-play.")
     caption = f"{copy['caption'].strip()}\n\n{footnote}\n\n{' '.join(tags[:10])}"
     return caption[:CAPTION_MAX]
+
+
+# ------------------------------------------------------------- game posts ---
+def _pct0(v):
+    return "n/a" if v is None else f"{v:.0f}%"
+
+
+def _star_line(p):
+    if p["position"] == "G":
+        sv = f"{p['sv_pct']:.3f}".lstrip("0") if p["sv_pct"] is not None else "n/a"
+        return (f"{p['name']} ({p['team_abbrev']}, goalie): {p['saves']} saves on "
+                f"{p['shots_against']} shots, {sv} save percentage, "
+                f"{p['gsax']:+.2f} goals saved above expected")
+    return (f"{p['name']} ({p['team_abbrev']}): {_n(p['G'], 'goal')}, {_n(p['A'], 'assist')}, "
+            f"{_n(p['SOG'], 'shot')} on goal, {p['ixG']:.2f} individual xG, "
+            f"Game Score {p['game_score']:.2f}")
+
+
+def game_fact_sheet(game):
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    extra = {"OT": " in overtime", "SO": " in a shootout"}.get(game["outcome"], "")
+    winner, loser = (a, h) if a["won"] else (h, a)
+    lines = [
+        f"Final: {winner['name']} beat {loser['name']} {winner['score']}-{loser['score']}{extra} "
+        f"on {game['date']} ({a['abbrev']} was the road team).",
+        f"Expected goals, all situations: {a['abbrev']} {a['xg']:.2f}, {h['abbrev']} {h['xg']:.2f}.",
+        f"5v5 share of expected goals: {a['abbrev']} {_pct0(a['xg5_pct'])}, "
+        f"{h['abbrev']} {_pct0(h['xg5_pct'])}.",
+        f"5v5 shot attempts: {a['abbrev']} {a['cf5']}, {h['abbrev']} {h['cf5']}.",
+        f"Shots on goal: {a['abbrev']} {a['sog']}, {h['abbrev']} {h['sog']}.",
+        f"High-danger chances: {a['abbrev']} {a['hd']}, {h['abbrev']} {h['hd']}.",
+        f"Power play goals/opportunities: {a['abbrev']} {a['pp_goals']}/{a['pp_opps']}, "
+        f"{h['abbrev']} {h['pp_goals']}/{h['pp_opps']}.",
+    ]
+    xg_winner = a if a["xg"] > h["xg"] else h
+    lines.append(f"{xg_winner['name']} won the expected-goals battle"
+                 + (" but lost the game." if not xg_winner["won"] else " and the game."))
+    lines.append("Three stars (by Game Score):")
+    lines += [f"  {i}. {_star_line(p)}" for i, p in enumerate(game["stars"], 1)]
+    return "\n".join(lines)
+
+
+def _game_prompt(facts):
+    return f"""You write captions for an NHL analytics Instagram page. Each post is a carousel:
+slide 1 game breakdown, slides 2-3 each team's breakdown. Tone: sharp, confident, nerdy but readable.
+
+FACT SHEET (the only source of truth):
+{facts}
+
+RULES
+- Use ONLY numbers that appear in the fact sheet, written exactly as they appear. Do not round,
+  convert, total, or add any other number.
+- No claims the fact sheet can't support (no records, streaks, standings, or season context).
+- "xG" is the page's own shot-quality model; call it xG, never "official".
+
+Return JSON:
+- hook: a punchy first line for the caption, max {HOOK_MAX} characters, no emojis.
+- caption: 2-3 sentences on what the numbers say about how this game was won, then one question
+  to drive comments. Mention at least one of the three stars.
+- hashtags: 5 relevant hashtags (both teams + hockey analytics), each starting with #.
+"""
+
+
+def fallback_game_copy(game):
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    winner, loser = (a, h) if a["won"] else (h, a)
+    extra = {"OT": " in OT", "SO": " in a shootout"}.get(game["outcome"], "")
+    star = game["stars"][0] if game["stars"] else None
+    caption = (f"{winner['common_name']} {winner['score']}, {loser['common_name']} {loser['score']}"
+               f"{extra}. Expected goals: {a['abbrev']} {a['xg']:.2f}, {h['abbrev']} {h['xg']:.2f}.")
+    if star:
+        caption += f" First star: {star['name']} ({star['team_abbrev']})."
+    caption += " Swipe for both teams' breakdowns. Who was the difference-maker?"
+    hook = f"{winner['abbrev']} {winner['score']}, {loser['abbrev']} {loser['score']}{extra}"
+    return {"hook": hook[:HOOK_MAX], "caption": caption, "hashtags": []}
+
+
+def _generate(facts, prompt, fallback, attempts=3):
+    allowed = _numbers(facts)
+    if not GEMINI_API_KEY:
+        log.info("No GEMINI_API_KEY set, using template copy")
+        return fallback
+    for attempt in range(1, attempts + 1):
+        try:
+            copy = _call_gemini(prompt)
+        except Exception as exc:
+            log.warning("Gemini call failed (attempt %s): %s", attempt, str(exc)[:200])
+            if attempt < attempts:
+                time.sleep(10 * attempt)
+            continue
+        problem = _valid(copy, allowed)
+        if not problem:
+            return copy
+        log.warning("Rejected AI copy (attempt %s): %s", attempt, problem)
+        prompt += f"\n\nYour previous answer was rejected: {problem}. Fix it."
+    log.warning("Falling back to template copy")
+    return fallback
+
+
+def generate_game_copy(game):
+    facts = game_fact_sheet(game)
+    return _generate(facts, _game_prompt(facts), fallback_game_copy(game))
+
+
+def _tag(text):
+    return "#" + re.sub(r"[^A-Za-z0-9]", "", _ascii(text))
+
+
+def _assemble(body, base_tags, extra_tags, footnote):
+    tags = list(base_tags)
+    for t in extra_tags:
+        t = "#" + re.sub(r"[^A-Za-z0-9_]", "", _ascii(t.lstrip("#")))
+        if len(t) > 1 and t.lower() not in {x.lower() for x in tags}:
+            tags.append(t)
+    return f"{body.strip()}\n\n{footnote}\n\n{' '.join(tags[:10])}"[:CAPTION_MAX]
+
+
+FOOTNOTE = ("xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom "
+            "Luszczyszyn's single-game value formula. Data: NHL play-by-play.")
+
+
+def build_game_caption(copy, game):
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    body = f"{copy['hook'].strip()}\n\n{copy['caption'].strip()}"
+    return _assemble(body, ["#NHL", "#HockeyAnalytics", _tag(a["name"]), _tag(h["name"])],
+                     copy.get("hashtags", []), FOOTNOTE)
+
+
+# ------------------------------------------------------------ weekly posts ---
+def build_weekly_caption(week):
+    from cards import _range_label
+    lines = [f"The week in analytics: {_range_label(week['start'], week['end'])} "
+             f"({week['games']} games)."]
+    if week["players_top"]:
+        lines.append("\nTop skaters by Game Score:")
+        lines += [f"{i}. {p['name']} ({p['team_abbrev']}) {p['game_score']:.2f}"
+                  for i, p in enumerate(week["players_top"][:3], 1)]
+    if week["teams_top"]:
+        lines.append("\nBest 5v5 teams by share of expected goals:")
+        lines += [f"{i}. {t['name']} {t['xg5_pct']:.1f}%" for i, t in enumerate(week["teams_top"][:3], 1)]
+    if week["players_bottom"] or week["teams_bottom"]:
+        lines.append("\nSwipe for the full top and bottom 10s. Who's due for a bounce-back?")
+    return _assemble("\n".join(lines), ["#NHL", "#HockeyAnalytics", "#NHLStats", "#FancyStats"], [],
+                     FOOTNOTE)

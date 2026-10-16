@@ -29,6 +29,12 @@ IG_USER_ID = _env("IG_USER_ID")
 GRAPH_API_VERSION = _env("GRAPH_API_VERSION", "v23.0")
 IG_HANDLE = _env("IG_HANDLE", "@chirpanalytics")
 
+# --- Where posts go -----------------------------------------------------------
+# preview: render + save to the `previews` branch only (nothing is posted)
+# make:    hand image URLs + caption to a Make.com scenario (MAKE_WEBHOOK_URL)
+# graph:   post directly with the Instagram Graph API (IG_ACCESS_TOKEN + IG_USER_ID)
+POST_MODE = (_env("POST_MODE", "preview") or "preview").lower()
+
 # --- Posting through Make.com (no Meta developer app needed) ----------------
 # A Make scenario: Custom webhook -> Instagram for Business "Create a Photo Post".
 # Treat the URL like a password: anyone holding it can post to the account.
