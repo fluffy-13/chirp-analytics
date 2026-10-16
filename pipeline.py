@@ -42,6 +42,7 @@ class State:
         self.data.setdefault("weeks", {})
         self.data.setdefault("failures", {})
         self.data.setdefault("intros", {})
+        self.data.setdefault("features", {})
 
     def refresh(self):
         """Merge in anything another run recorded since we loaded (never lose an entry)."""
@@ -49,7 +50,7 @@ class State:
         if not raw:
             return
         fresh = json.loads(raw)
-        for k in ("games", "weeks", "intros"):
+        for k in ("games", "weeks", "intros", "features"):
             merged = dict(fresh.get(k, {}))
             merged.update(self.data.get(k, {}))
             self.data[k] = merged
@@ -102,7 +103,11 @@ def post_game(source, score_game, state, mode=None, bundle=None):
     bundle = bundle or load_game(source, score_game)
     game = analyze_game(bundle)
     ledger = _ledger(state)
-    context = ledger.context(game) if ledger else None
+    try:
+        context = ledger.context(game) if ledger else None
+    except Exception:
+        log.exception("Season context unavailable for %s", game["game_id"])
+        context = None
     copy = generate_game_copy(game)
     extra, extra_alts = tracker_slides(source, game, bundle)
     paths = render_game_carousel(game, context, headline=cover_headline(game, copy), extra=extra)
@@ -295,3 +300,85 @@ def run_intro(which, state, mode=None, force=False):
                                    "permalink": result.get("permalink"), "mode": result.get("mode")})
     log.info("Posted %s (%s)", INTRO_TITLES[which], result.get("mode"))
     return result
+
+
+# ------------------------------------------------------------------ features ---
+FEATURE_TITLES = {"awards": "Awards race", "rookies": "Rookie watch", "fantasy": "Fantasy pickups"}
+ROOKIE_EVERY_DAYS = 14
+
+
+def season_for(day):
+    d = date.fromisoformat(day)
+    y = d.year if d.month >= 9 else d.year - 1
+    return f"{y}{y + 1}"
+
+
+def run_feature(kind, source, state, as_of=None, mode=None, force=False):
+    """Monthly awards race, biweekly rookie watch, weekly fantasy pickups (through `as_of`)."""
+    import features
+    as_of = as_of or (datetime.now(ET).date() - timedelta(days=1)).isoformat()
+    key = f"{kind}-{as_of}"
+    state.data.setdefault("features", {})
+    if state.data["features"].get(key) and not force:
+        log.info("%s for %s already posted", kind, as_of)
+        return None
+    if kind == "rookies" and not force:
+        last = max((k.split("-", 1)[1] for k, v in state.data["features"].items()
+                    if k.startswith("rookies-") and v.get("mode") != "preview"), default=None)
+        if last and (date.fromisoformat(as_of) - date.fromisoformat(last)).days < ROOKIE_EVERY_DAYS - 1:
+            log.info("Rookie watch is every other week; last one was %s", last)
+            return None
+    season = season_for(as_of)
+    ledger = Ledger(state.store)
+    records = ledger.season_games(season, end=as_of)
+    if len(records) < 20:
+        log.info("Only %d games stored for %s; skipping %s", len(records), season, kind)
+        return None
+    snapshot = None
+    if kind == "awards":
+        prev_raw = state.store.read(f"awards/{season}.json")
+        previous = json.loads(prev_raw) if prev_raw else None
+        rookies = _rookies(source, season)
+        slides, caption, alts, snapshot = features.awards_post(records, as_of, rookies, previous)
+    elif kind == "rookies":
+        rookies = _rookies(source, season)
+        if not rookies:
+            raise RuntimeError("No rookie list from the NHL stats API")
+        built = features.rookies_post(records, as_of, rookies)
+        if not built:
+            log.info("No rookies with 2+ games yet")
+            return None
+        slides, caption, alts = built
+    else:
+        built = features.fantasy_post(records, as_of, features.established_ids(source, season))
+        if not built:
+            log.info("Not enough recent games for fantasy pickups")
+            return None
+        slides, caption, alts = built
+    from cards import _save
+    from content_generator import DISCLOSURE
+    paths = [_save(img, f"{kind}_{as_of}_{i}.jpg") for i, img in enumerate(slides, 1)]
+    caption = (f"{caption}\n\nData: NHL play-by-play, our xG model and Game Score.\n{DISCLOSURE}\n\n"
+               + {"awards": "#NHL #HockeyAnalytics #NHLAwards #HartTrophy #Norris #Vezina #Calder",
+                  "rookies": "#NHL #HockeyAnalytics #NHLRookies #CalderTrophy #Prospects",
+                  "fantasy": "#FantasyHockey #NHL #WaiverWire #FantasyHockeyAdvice #HockeyAnalytics"}[kind])
+    title = f"{FEATURE_TITLES[kind]} — {as_of}"
+    result = publish_carousel(paths, caption, key=key, title=title,
+                              meta={"feature": kind, "as_of": as_of, "alt_texts": alts}, mode=mode)
+    state.refresh()
+    state.data.setdefault("features", {})[key] = {"title": title, "media_id": result["media_id"],
+                                                  "mode": result.get("mode"), "at": _utc_now()}
+    state._save(f"Record {key}")
+    if snapshot is not None and (result.get("mode") != "preview"):
+        state.store.write({f"awards/{season}.json": json.dumps(snapshot).encode()}, "Awards snapshot")
+    log.info("Posted %s (%s)", title, result.get("mode"))
+    return result
+
+
+def _rookies(source, season):
+    from season import rookie_ids
+    try:
+        return rookie_ids(source, season)
+    except Exception as exc:
+        log.warning("Rookie list unavailable: %s", exc)
+        return None

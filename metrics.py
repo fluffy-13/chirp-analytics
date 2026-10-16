@@ -196,6 +196,44 @@ def _pp_side(code):
     return "home" if home > away else "away" if away > home else None
 
 
+def _strength_toi(pbp, on_ice, home_id):
+    """Seconds each player spent at 5v5, on the power play and shorthanded (goalies in).
+
+    The situation code on each play holds until the next play; each shift is overlapped with
+    those segments. Returns ({player_id: {"toi5", "toipp", "toish"}}, game 5v5 seconds)."""
+    segs = defaultdict(list)   # period -> [(start, end, code)]
+    by_period = defaultdict(list)
+    for p in pbp.get("plays", []):
+        pd = p.get("periodDescriptor") or {}
+        if pd.get("periodType") == "SO" or not pd.get("number"):
+            continue
+        by_period[pd["number"]].append((clock_to_sec(p.get("timeInPeriod")), p.get("sortOrder", 0),
+                                        p.get("situationCode", "")))
+    toi5_total = 0
+    for period, evs in by_period.items():
+        evs.sort()
+        for (t0, _, code), (t1, _, _) in zip(evs, evs[1:]):
+            if t1 > t0:
+                segs[period].append((t0, t1, code))
+                if code == "1551":
+                    toi5_total += t1 - t0
+    out = defaultdict(lambda: defaultdict(float))
+    for period, shifts in (on_ice or {}).items():
+        for start, end, pid, tid in shifts:
+            is_home = tid == home_id
+            for t0, t1, code in segs.get(period, ()):
+                ov = min(end, t1) - max(start, t0)
+                if ov <= 0:
+                    continue
+                if code == "1551":
+                    out[pid]["toi5"] += ov
+                    continue
+                side = _pp_side(code)
+                if side:
+                    out[pid]["toipp" if (side == "home") == is_home else "toish"] += ov
+    return out, toi5_total
+
+
 def _new_team():
     return defaultdict(float)
 
@@ -279,6 +317,11 @@ def analyze_game(bundle):
                     for key, label in (("assist1PlayerId", "A1"), ("assist2PlayerId", "A2")):
                         if d.get(key):
                             s[d[key]][label] += 1
+                    pp_team = _pp_side(sit)
+                    if pp_team and (pp_team == "home") == is_home:
+                        for key in ("scoringPlayerId", "assist1PlayerId", "assist2PlayerId"):
+                            if d.get(key):
+                                s[d[key]]["PPP"] += 1
                 if kind == "blocked-shot" and d.get("blockingPlayerId"):
                     s[d["blockingPlayerId"]]["BLK"] += 1
                     bt = team_of.get(d["blockingPlayerId"])
@@ -320,6 +363,12 @@ def analyze_game(bundle):
         prev_event = (period, sec, xg_model.API_EVENT_NAMES.get(kind, str(kind).upper()),
                       x, y, event_team)
 
+    # --- ice time by strength (5v5 / PP / SH) from shifts x situation codes ----
+    toi_split, team_toi5 = _strength_toi(pbp, on_ice, home_id)
+    for pid, parts in toi_split.items():
+        for k, v in parts.items():
+            s[pid][k] += v
+
     # --- skaters --------------------------------------------------------------
     players = []
     for side in ("awayTeam", "homeTeam"):
@@ -359,6 +408,10 @@ def analyze_game(bundle):
                     "FOW": int(g("FOW")), "FOL": int(g("FOL")),
                     "GF5": int(g("GF")), "GA5": int(g("GA")),
                     "xg_pm5": round(g("xGF") - g("xGA"), 2),
+                    "PPP": int(g("PPP")), "pim": bp.get("pim", 0) or 0,
+                    "toi_s": clock_to_sec(bp.get("toi")), "toi5_s": int(g("toi5")),
+                    "toipp_s": int(g("toipp")), "toish_s": int(g("toish")),
+                    "GV": bp.get("giveaways", 0) or 0, "TK": bp.get("takeaways", 0) or 0,
                     "game_score": round(gs, 2),
                     "gs_parts": {k: round(v, 3) for k, v in parts.items()},
                 })
@@ -427,6 +480,7 @@ def analyze_game(bundle):
             "hits": int(a["hits"]), "blocks": int(a["blocks"]),
             "giveaways": int(a["giveaways"]), "takeaways": int(a["takeaways"]),
             "pim": int(a["pim"]),
+            "toi5_s": int(team_toi5),
         }
 
     for p in players + goalies:
