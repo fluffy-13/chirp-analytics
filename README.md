@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## STL 4 @ MIN 5 — 2026-10-15
+`game-2026020116` · rendered 2026-10-16 21:45 UTC · mode: buffer
+
+<img src="game-2026020116/2026-10-15_2026020116_1_game.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_2_away.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Minnesota edged St. Louis 5-4 while winning the xG battle.
+
+Minnesota controlled 5v5 play with a 57% share of expected goals while out-chancing St. Louis 14 to 7 in high-danger chances. Matt Boldy powered the offense with a 4.52 Game Score and 3 goals on 8 shots on goal as Minnesota won the expected-goals battle 3.46 to 3.24. Even with St. Louis converting 2/2 power play opportunities, Minnesota generated 39 shots on goal to secure the win. Which player stood out most to you in this matchup?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #StLouisBlues #MinnesotaWild #MNWild #stlblues #NHLAnalytics
+```
+</details>
+
 ## Weekly report — OCT 5–11
 `week-2026-10-11` · rendered 2026-10-16 17:46 UTC · mode: preview
 
@@ -63,24 +81,6 @@ Utah controlled the flow at 5v5 with a 55% expected goals share and capitalized 
 xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
 
 #NHL #HockeyAnalytics #UtahMammoth #EdmontonOilers #DataHockey
-```
-</details>
-
-## STL 4 @ MIN 5 — 2026-10-15
-`game-2026020116` · rendered 2026-10-16 17:45 UTC · mode: preview
-
-<img src="game-2026020116/2026-10-15_2026020116_1_game.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_2_away.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_3_home.jpg" width="260">
-
-<details><summary>Caption</summary>
-
-```
-Minnesota controls play to edge St. Louis 5-4.
-
-The Minnesota Wild won the expected-goals battle and the game 5-4, driven by a 57% 5v5 share of expected goals and a 14 to 7 edge in high-danger chances. Matt Boldy dominated with a 4.52 Game Score, posting 3 goals, 1 assist, and 8 shots on goal. Did Minnesota deserve an even bigger win given their 3.46 to 3.24 expected goals advantage?
-
-xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
-
-#NHL #HockeyAnalytics #StLouisBlues #MinnesotaWild
 ```
 </details>
 
