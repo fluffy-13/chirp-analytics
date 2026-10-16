@@ -1,13 +1,8 @@
-2026-10-16 21:37:32,476 ERROR main: Buffer check failed
-Traceback (most recent call last):
-  File "/home/runner/work/chirp-analytics/chirp-analytics/main.py", line 74, in _run
-    buffer_client.check()
-  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 151, in check
-    chans = list_channels()
-            ^^^^^^^^^^^^^^^
-  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 46, in list_channels
-    for org in _gql(ORGS)["account"]["organizations"]:
-               ^^^^^^^^^^
-  File "/home/runner/work/chirp-analytics/chirp-analytics/buffer_client.py", line 24, in _gql
-    raise BufferError("BUFFER_API_KEY is not set")
-buffer_client.BufferError: BUFFER_API_KEY is not set
+2026-10-16 21:43:30,190 INFO buffer_client: Buffer channels: [('instagram', 'chirpanalytics', '6ad2997a778b240e2f2fd124')]
+2026-10-16 21:43:30,521 INFO buffer_client: Using Instagram channel: {'id': '6ad2997a778b240e2f2fd124', 'name': 'chirpanalytics', 'displayName': 'chirpanalytics', 'service': 'instagram', 'isQueuePaused': False, 'organization_id': '6ad298a9c2f0042a50c72a85'}
+2026-10-16 21:43:30,609 INFO buffer_client: schema create: ['aiAssisted', 'assets', 'channelId', 'draftId', 'dueAt', 'ideaId', 'metadata', 'mode', 'needsApproval', 'saveToDraft', 'schedulingType', 'source', 'tagIds', 'text']
+2026-10-16 21:43:30,609 INFO buffer_client: schema image: ['metadata', 'thumbnailUrl', 'url']
+2026-10-16 21:43:30,609 INFO buffer_client: schema ig: ['firstComment', 'geolocation', 'isAiGenerated', 'link', 'shouldShareToFeed', 'stickerFields', 'type']
+2026-10-16 21:43:30,609 INFO buffer_client: schema mode: ['addToQueue', 'customScheduled', 'shareNext', 'shareNow']
+2026-10-16 21:43:30,609 INFO buffer_client: schema status: ['draft', 'error', 'needs_approval', 'scheduled', 'sending', 'sent']
+2026-10-16 21:43:30,609 INFO buffer_client: schema postInput: ['id']
