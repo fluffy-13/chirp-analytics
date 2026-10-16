@@ -323,8 +323,8 @@ def run_feature(kind, source, state, as_of=None, mode=None, force=False):
         log.info("%s for %s already posted", kind, as_of)
         return None
     if kind == "rookies" and not force:
-        last = max((k.split("-", 1)[1] for k in state.data["features"] if k.startswith("rookies-")),
-                   default=None)
+        last = max((k.split("-", 1)[1] for k, v in state.data["features"].items()
+                    if k.startswith("rookies-") and v.get("mode") != "preview"), default=None)
         if last and (date.fromisoformat(as_of) - date.fromisoformat(last)).days < ROOKIE_EVERY_DAYS - 1:
             log.info("Rookie watch is every other week; last one was %s", last)
             return None

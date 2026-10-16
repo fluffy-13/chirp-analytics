@@ -335,15 +335,21 @@ def established_ids(source, season):
     import json as _json
     from config import NHL_STATS_API
     prev = f"{int(season[:4]) - 1}{season[:4]}"
-    params = {"isAggregate": "false", "isGame": "false", "start": 0, "limit": 300,
-              "sort": _json.dumps([{"property": "points", "direction": "DESC"}]),
-              "cayenneExp": f"seasonId={prev} and gameTypeId=2"}
+    ids, start = set(), 0
     try:
-        rows = source._get(f"{NHL_STATS_API}/skater/summary", params=params).get("data", [])
+        while start < 1000:
+            params = {"isAggregate": "true", "isGame": "false", "start": start, "limit": 100,
+                      "sort": _json.dumps([{"property": "points", "direction": "DESC"}]),
+                      "cayenneExp": f"seasonId={prev} and gameTypeId=2"}
+            rows = source._get(f"{NHL_STATS_API}/skater/summary", params=params).get("data", [])
+            ids |= {str(r["playerId"]) for r in rows if r.get("points", 0) >= LAST_SEASON_POINTS}
+            if not rows or rows[-1].get("points", 0) < LAST_SEASON_POINTS:
+                break
+            start += len(rows)
     except Exception as exc:
         log.warning("Last season's scorers unavailable: %s", exc)
-        return set()
-    return {str(r["playerId"]) for r in rows if r.get("points", 0) >= LAST_SEASON_POINTS}
+    log.info("Excluding %d established scorers from last season", len(ids))
+    return ids
 
 
 def fantasy_pickups(records, as_of, window=14, n=10, exclude_top=150, established=None):
