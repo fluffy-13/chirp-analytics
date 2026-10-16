@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## STL 4 @ MIN 5 — 2026-10-15
+`game-2026020116` · rendered 2026-10-16 17:45 UTC · mode: preview
+
+<img src="game-2026020116/2026-10-15_2026020116_1_game.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_2_away.jpg" width="260"> <img src="game-2026020116/2026-10-15_2026020116_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Minnesota controls play to edge St. Louis 5-4.
+
+The Minnesota Wild won the expected-goals battle and the game 5-4, driven by a 57% 5v5 share of expected goals and a 14 to 7 edge in high-danger chances. Matt Boldy dominated with a 4.52 Game Score, posting 3 goals, 1 assist, and 8 shots on goal. Did Minnesota deserve an even bigger win given their 3.46 to 3.24 expected goals advantage?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #StLouisBlues #MinnesotaWild
+```
+</details>
+
 ## SJS 3 @ NSH 2 (SO) — 2026-10-15
 `game-2026020115` · rendered 2026-10-16 17:44 UTC · mode: preview
 

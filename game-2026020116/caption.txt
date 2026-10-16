@@ -1,0 +1,7 @@
+Minnesota controls play to edge St. Louis 5-4.
+
+The Minnesota Wild won the expected-goals battle and the game 5-4, driven by a 57% 5v5 share of expected goals and a 14 to 7 edge in high-danger chances. Matt Boldy dominated with a 4.52 Game Score, posting 3 goals, 1 assist, and 8 shots on goal. Did Minnesota deserve an even bigger win given their 3.46 to 3.24 expected goals advantage?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #StLouisBlues #MinnesotaWild
