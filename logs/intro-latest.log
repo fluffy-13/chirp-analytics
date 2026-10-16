@@ -1,5 +1,5 @@
-2026-10-16 22:16:25,361 INFO publisher: Hosted 4 slides under posts/intro-goalies
-2026-10-16 22:16:36,972 INFO buffer_client: Buffer accepted post 6ad2a23a1694d771d50bdb71 (status sending)
-2026-10-16 22:16:57,326 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DeklfLjCdsS/
-2026-10-16 22:16:59,474 INFO publisher: Preview saved: intro-goalies
-2026-10-16 22:17:00,679 INFO pipeline: Posted Intro: goalies stealing games (buffer)
+2026-10-16 23:30:45,250 INFO publisher: Hosted 5 slides under posts/intro-standings
+2026-10-16 23:30:56,177 INFO buffer_client: Buffer accepted post 6ad2b3a58ac6cfe5441ff341 (status sending)
+2026-10-16 23:31:26,785 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DekuAv4iVvc/
+2026-10-16 23:31:30,017 INFO publisher: Preview saved: intro-standings
+2026-10-16 23:31:32,005 INFO pipeline: Posted Intro: the real standings (buffer)
