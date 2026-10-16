@@ -2,6 +2,35 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Intro: the real standings
+`intro-standings` · rendered 2026-10-16 23:31 UTC · mode: buffer
+
+<img src="intro-standings/intro_standings_1.jpg" width="260"> <img src="intro-standings/intro_standings_2.jpg" width="260"> <img src="intro-standings/intro_standings_3.jpg" width="260"> <img src="intro-standings/intro_standings_4.jpg" width="260"> <img src="intro-standings/intro_standings_5.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Welcome to Chirp Analytics. 🏒📊
+
+We're joining 118 games into the season, so let's start with the standings that matter most this early: who's actually controlling play.
+
+🟢 New Jersey Devils: 62.0% of 5v5 expected goals, the league's best, yet just 4-3-0.
+🟢 Carolina Hurricanes (6-1-1), Utah Mammoth (6-2-0) and Vegas Golden Knights (7-2-0) are winning and driving play.
+🟡 Seattle Kraken: 5-2-1 on 46.9% of 5v5 xG.
+🔴 Philadelphia Flyers: 0-6-3 at 34.6%, last in the league.
+
+Every game from here on gets a full breakdown within minutes of the final horn. Follow along.
+
+Swipe for all 32 teams ➡️
+
+Data: NHL play-by-play through October 15. xG = expected goals, from our model trained on 237k NHL shots.
+
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals
+```
+</details>
+
 ## Fantasy pickups — 2026-10-15
 `fantasy-2026-10-15` · rendered 2026-10-16 23:07 UTC · mode: preview
 
@@ -143,33 +172,6 @@ Over a few games most of these gaps are streaks, not skill. Our bet: the cold li
 Data: NHL play-by-play through October 15, min. 4 games.
 
 #NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey
-```
-</details>
-
-## Intro: the real standings
-`intro-standings` · rendered 2026-10-16 22:08 UTC · mode: buffer
-
-<img src="intro-standings/intro_standings_1.jpg" width="260"> <img src="intro-standings/intro_standings_2.jpg" width="260"> <img src="intro-standings/intro_standings_3.jpg" width="260"> <img src="intro-standings/intro_standings_4.jpg" width="260"> <img src="intro-standings/intro_standings_5.jpg" width="260">
-
-<details><summary>Caption</summary>
-
-```
-Welcome to Chirp Analytics. 🏒📊
-
-We're joining 118 games into the season, so let's start with the standings that matter most this early: who's actually controlling play.
-
-🟢 New Jersey Devils: 62.0% of 5v5 expected goals, the league's best, yet just 4-3-0.
-🟢 Carolina Hurricanes (6-1-1), Utah Mammoth (6-2-0) and Vegas Golden Knights (7-2-0) are winning and driving play.
-🟡 Seattle Kraken: 5-2-1 on 46.9% of 5v5 xG.
-🔴 Philadelphia Flyers: 0-6-3 at 34.6%, last in the league.
-
-Every game from here on gets a full breakdown within minutes of the final horn. Follow along.
-
-Swipe for all 32 teams ➡️
-
-Data: NHL play-by-play through October 15. xG = expected goals, from our model trained on 237k NHL shots.
-
-#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals
 ```
 </details>
 

@@ -1,5 +1,19 @@
 [
  {
+  "key": "intro-standings",
+  "title": "Intro: the real standings",
+  "mode": "buffer",
+  "caption": "Welcome to Chirp Analytics. \ud83c\udfd2\ud83d\udcca\n\nWe're joining 118 games into the season, so let's start with the standings that matter most this early: who's actually controlling play.\n\n\ud83d\udfe2 New Jersey Devils: 62.0% of 5v5 expected goals, the league's best, yet just 4-3-0.\n\ud83d\udfe2 Carolina Hurricanes (6-1-1), Utah Mammoth (6-2-0) and Vegas Golden Knights (7-2-0) are winning and driving play.\n\ud83d\udfe1 Seattle Kraken: 5-2-1 on 46.9% of 5v5 xG.\n\ud83d\udd34 Philadelphia Flyers: 0-6-3 at 34.6%, last in the league.\n\nEvery game from here on gets a full breakdown within minutes of the final horn. Follow along.\n\nSwipe for all 32 teams \u27a1\ufe0f\n\nData: NHL play-by-play through October 15. xG = expected goals, from our model trained on 237k NHL shots.\n\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.\n\n#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals",
+  "files": [
+   "intro-standings/intro_standings_1.jpg",
+   "intro-standings/intro_standings_2.jpg",
+   "intro-standings/intro_standings_3.jpg",
+   "intro-standings/intro_standings_4.jpg",
+   "intro-standings/intro_standings_5.jpg"
+  ],
+  "at": "2026-10-16 23:31 UTC"
+ },
+ {
   "key": "fantasy-2026-10-15",
   "title": "Fantasy pickups \u2014 2026-10-15",
   "mode": "preview",
@@ -79,20 +93,6 @@
    "intro-finishing/intro_finishing_4.jpg"
   ],
   "at": "2026-10-16 22:12 UTC"
- },
- {
-  "key": "intro-standings",
-  "title": "Intro: the real standings",
-  "mode": "buffer",
-  "caption": "Welcome to Chirp Analytics. \ud83c\udfd2\ud83d\udcca\n\nWe're joining 118 games into the season, so let's start with the standings that matter most this early: who's actually controlling play.\n\n\ud83d\udfe2 New Jersey Devils: 62.0% of 5v5 expected goals, the league's best, yet just 4-3-0.\n\ud83d\udfe2 Carolina Hurricanes (6-1-1), Utah Mammoth (6-2-0) and Vegas Golden Knights (7-2-0) are winning and driving play.\n\ud83d\udfe1 Seattle Kraken: 5-2-1 on 46.9% of 5v5 xG.\n\ud83d\udd34 Philadelphia Flyers: 0-6-3 at 34.6%, last in the league.\n\nEvery game from here on gets a full breakdown within minutes of the final horn. Follow along.\n\nSwipe for all 32 teams \u27a1\ufe0f\n\nData: NHL play-by-play through October 15. xG = expected goals, from our model trained on 237k NHL shots.\n\n#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals",
-  "files": [
-   "intro-standings/intro_standings_1.jpg",
-   "intro-standings/intro_standings_2.jpg",
-   "intro-standings/intro_standings_3.jpg",
-   "intro-standings/intro_standings_4.jpg",
-   "intro-standings/intro_standings_5.jpg"
-  ],
-  "at": "2026-10-16 22:08 UTC"
  },
  {
   "key": "game-2026020116",
