@@ -2,6 +2,31 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Fantasy pickups — 2026-10-15
+`fantasy-2026-10-15` · rendered 2026-10-16 23:07 UTC · mode: preview
+
+<img src="fantasy-2026-10-15/fantasy_2026-10-15_1.jpg" width="260"> <img src="fantasy-2026-10-15/fantasy_2026-10-15_2.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Waiver wire 🧲 under-the-radar adds for categories leagues (G, A, PPP, SOG, HIT, BLK), based on the last two weeks:
+
+1. Gabe Perreault (NYR, RW): Ice time +3:22 (now 16:55)
+2. Frank Nazar (CHI, C): 0.75 goals a game
+3. Maxim Shabanov (MIN, RW): 0.43 PP points a game
+4. Nick Seeler (PHI, D): Ice time +2:56 (now 20:14)
+5. Tye Kartye (NYR, LW): 2.3 hits + 0.7 blocks a game
+
+Swipe for all 10. Check availability in your league first. Who are you adding? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#FantasyHockey #NHL #WaiverWire #FantasyHockeyAdvice #HockeyAnalytics
+```
+</details>
+
 ## Awards race — 2026-10-15
 `awards-2026-10-15` · rendered 2026-10-16 23:04 UTC · mode: preview
 
@@ -24,31 +49,6 @@ Data: NHL play-by-play, our xG model and Game Score.
 Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
 
 #NHL #HockeyAnalytics #NHLAwards #HartTrophy #Norris #Vezina #Calder
-```
-</details>
-
-## Fantasy pickups — 2026-10-15
-`fantasy-2026-10-15` · rendered 2026-10-16 23:04 UTC · mode: preview
-
-<img src="fantasy-2026-10-15/fantasy_2026-10-15_1.jpg" width="260"> <img src="fantasy-2026-10-15/fantasy_2026-10-15_2.jpg" width="260">
-
-<details><summary>Caption</summary>
-
-```
-Waiver wire 🧲 under-the-radar adds for categories leagues (G, A, PPP, SOG, HIT, BLK), based on the last two weeks:
-
-1. Gabe Perreault (NYR, RW): Ice time +3:22 (now 16:55)
-2. Frank Nazar (CHI, C): 0.75 goals a game
-3. J.T. Miller (NYR, C): PP time +1:42 (now 2:20)
-4. Maxim Shabanov (MIN, RW): 0.43 PP points a game
-5. Nick Seeler (PHI, D): Ice time +2:56 (now 20:14)
-
-Swipe for all 10. Check availability in your league first. Who are you adding? 👇
-
-Data: NHL play-by-play, our xG model and Game Score.
-Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
-
-#FantasyHockey #NHL #WaiverWire #FantasyHockeyAdvice #HockeyAnalytics
 ```
 </details>
 
