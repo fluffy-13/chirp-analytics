@@ -1,5 +1,17 @@
 [
  {
+  "key": "game-2026020115",
+  "title": "SJS 3 @ NSH 2 (SO) \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "Nashville won the xG battle, but San Jose took the shootout win.\n\nNashville Predators won the expected-goals battle with 3.96 xG to SJS 3.22 xG, but Alex Nedeljkovic stole the game with +1.96 goals saved above expected. While both teams finished with a 50% 5v5 share of expected goals, San Jose Sharks pulled out the 3-2 shootout win on the road. Was Nedeljkovic the sole reason San Jose walked away with the win?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n\n#NHL #HockeyAnalytics #SanJoseSharks #NashvillePredators #SJSharks #Preds #SJSvsNSH",
+  "files": [
+   "game-2026020115/2026-10-15_2026020115_1_game.jpg",
+   "game-2026020115/2026-10-15_2026020115_2_away.jpg",
+   "game-2026020115/2026-10-15_2026020115_3_home.jpg"
+  ],
+  "at": "2026-10-16 17:44 UTC"
+ },
+ {
   "key": "game-2026020114",
   "title": "WPG 3 @ CHI 4 (OT) \u2014 2026-10-15",
   "mode": "preview",
