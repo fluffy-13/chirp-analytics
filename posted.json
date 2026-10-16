@@ -1,6 +1,12 @@
 {
  "failures": {},
  "features": {
+  "awards-2026-10-15": {
+   "at": "2026-10-16T23:04:07+00:00",
+   "media_id": "preview",
+   "mode": "preview",
+   "title": "Awards race \u2014 2026-10-15"
+  },
   "fantasy-2026-10-15": {
    "at": "2026-10-16T23:04:02+00:00",
    "media_id": "preview",
