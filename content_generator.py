@@ -306,13 +306,9 @@ def _tag(text):
     return "#" + re.sub(r"[^A-Za-z0-9]", "", _ascii(text))
 
 
-def _assemble(body, base_tags, extra_tags, footnote):
-    tags = list(base_tags)
-    for t in extra_tags:
-        t = "#" + re.sub(r"[^A-Za-z0-9_]", "", _ascii(t.lstrip("#")))
-        if len(t) > 1 and t.lower() not in {x.lower() for x in tags}:
-            tags.append(t)
-    return f"{body.strip()}\n\n{footnote}\n\n{' '.join(tags[:10])}"[:CAPTION_MAX]
+def _assemble(body, tags, footnote):
+    from hashtags import enforce, line
+    return enforce(f"{body.strip()}\n\n{footnote}\n\n{line(tags)}")[:CAPTION_MAX]
 
 
 DISCLOSURE = "Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams."
@@ -326,9 +322,12 @@ def build_game_caption(copy, game):
     a, h = game["teams"]["away"], game["teams"]["home"]
     n = game_number(game["game_id"])
     label = f"🏒 NHL Game #{n} of {SEASON_GAMES:,}\n" if n else ""
-    body = f"{label}{copy['hook'].strip()}\n\n{copy['caption'].strip()}"
-    return _assemble(body, ["#NHL", "#HockeyAnalytics", _tag(a["name"]), _tag(h["name"])],
-                     copy.get("hashtags", []), FOOTNOTE + (AI_NOTE if copy.get("ai") else ""))
+    from hashtags import TAG_RE
+    strip = lambda t: re.sub(r"[ \t]{2,}", " ", TAG_RE.sub("", t)).strip()  # our 5 tags only
+    body = f"{label}{strip(copy['hook'])}\n\n{strip(copy['caption'])}"
+    from hashtags import game_tags
+    return _assemble(body, game_tags(a["abbrev"], h["abbrev"], game["game_id"]),
+                     FOOTNOTE + (AI_NOTE if copy.get("ai") else ""))
 
 
 # ------------------------------------------------------------ weekly posts ---
@@ -345,5 +344,5 @@ def build_weekly_caption(week):
         lines += [f"{i}. {t['name']} {t['xg5_pct']:.1f}%" for i, t in enumerate(week["teams_top"][:3], 1)]
     if week["players_bottom"] or week["teams_bottom"]:
         lines.append("\nSwipe for the full top and bottom 10s. Who's due for a bounce-back?")
-    return _assemble("\n".join(lines), ["#NHL", "#HockeyAnalytics", "#NHLStats", "#FancyStats"], [],
-                     FOOTNOTE)
+    from hashtags import WEEKLY
+    return _assemble("\n".join(lines), WEEKLY, FOOTNOTE)

@@ -133,6 +133,8 @@ def send_make_sample():
 
 
 def publish(image_path, caption, post=None):
+    from hashtags import enforce
+    caption = enforce(caption)
     image_url = host_image(image_path)
     log.info("Image hosted at %s", image_url)
     if MAKE_WEBHOOK_URL:
@@ -226,6 +228,8 @@ def save_preview(image_paths, caption, key, title, mode="preview", keep=80):
 
 def publish_carousel(image_paths, caption, key, title, meta=None, mode=None):
     """Post a carousel (or save a preview). Returns a result dict with media_id."""
+    from hashtags import enforce
+    caption = enforce(caption)  # Instagram allows at most 5 hashtags
     mode = (mode or POST_MODE).lower()
     if mode == "preview":
         save_preview(image_paths, caption, key, title)

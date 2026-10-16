@@ -18,6 +18,7 @@ from cards import cover_headline, render_game_carousel, render_weekly_carousel, 
 from config import OUTPUT_DIR, POST_MODE, TIMEZONE
 from content_generator import (build_game_caption, build_weekly_caption, generate_game_copy)
 from git_store import default_store
+from hashtags import FEATURES as FEATURE_TAGS, line as hashtag_line
 from ledger import Ledger
 from trackers import tracker_slides
 from metrics import aggregate_week, analyze_game
@@ -359,9 +360,7 @@ def run_feature(kind, source, state, as_of=None, mode=None, force=False):
     from content_generator import DISCLOSURE
     paths = [_save(img, f"{kind}_{as_of}_{i}.jpg") for i, img in enumerate(slides, 1)]
     caption = (f"{caption}\n\nData: NHL play-by-play, our xG model and Game Score.\n{DISCLOSURE}\n\n"
-               + {"awards": "#NHL #HockeyAnalytics #NHLAwards #HartTrophy #Norris #Vezina #Calder",
-                  "rookies": "#NHL #HockeyAnalytics #NHLRookies #CalderTrophy #Prospects",
-                  "fantasy": "#FantasyHockey #NHL #WaiverWire #FantasyHockeyAdvice #HockeyAnalytics"}[kind])
+               + hashtag_line(FEATURE_TAGS[kind]))
     title = f"{FEATURE_TITLES[kind]} — {as_of}"
     result = publish_carousel(paths, caption, key=key, title=title,
                               meta={"feature": kind, "as_of": as_of, "alt_texts": alts}, mode=mode)

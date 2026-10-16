@@ -308,7 +308,7 @@ def standings_post(data):
         f"Data: NHL play-by-play through {_long_date(data['through'])}. xG = expected goals, from our "
         "model trained on 237k NHL shots.\n\n"
         f"{DISCLOSURE}\n\n"
-        "#NHL #HockeyAnalytics #HockeyTwitter #AdvancedStats #NHLStats #ExpectedGoals")
+        "#NHL #HockeyAnalytics #AdvancedStats #NHLStats #ExpectedGoals")
     alts = ["The real standings: 5v5 expected goals share leaders and laggards",
             "Scatter plot of every team's points percentage against 5v5 expected goals share",
             "Teams ranked 1 to 16 by 5v5 expected goals share",
@@ -434,7 +434,7 @@ def finishing_post(data):
         "scoring.\n\n"
         f"Data: NHL play-by-play through {_long_date(data['through'])}, min. {SKATER_MIN_GP} games.\n\n"
         f"{DISCLOSURE}\n\n"
-        "#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey")
+        "#NHL #HockeyAnalytics #ExpectedGoals #NHLStats #FantasyHockey")
     alts = ["Hot hands and snakebitten shooters: goals versus expected goals",
             "Top 10 skaters in goals above expected",
             "Bottom 10 skaters in goals above expected",
@@ -500,7 +500,7 @@ def goalies_post(data):
         "Swipe for the top and bottom 10 ➡️\n\n"
         f"Data: NHL play-by-play through {_long_date(data['through'])}, min. {GOALIE_MIN_GP} games.\n\n"
         f"{DISCLOSURE}\n\n"
-        "#NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats")
+        "#NHL #HockeyAnalytics #NHLGoalies #GSAx #NHLStats")
     alts = ["Goalies stealing games: goals saved above expected leaders",
             "Top 10 goalies in goals saved above expected",
             "Bottom 10 goalies in goals saved above expected",
