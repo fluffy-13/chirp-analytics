@@ -2,6 +2,24 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## CGY 2 @ VGK 6 — 2026-10-15
+`game-2026020118` · rendered 2026-10-16 17:45 UTC · mode: preview
+
+<img src="game-2026020118/2026-10-15_2026020118_1_game.jpg" width="260"> <img src="game-2026020118/2026-10-15_2026020118_2_away.jpg" width="260"> <img src="game-2026020118/2026-10-15_2026020118_3_home.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Vegas takes down Calgary 6-2 behind elite finishing.
+
+The Vegas Golden Knights secured a 6-2 victory while winning the expected-goals battle with a 4.08 mark compared to Calgary's 2.83. Even though Calgary controlled 51 percent of the 5v5 share of expected goals and generated 55 shot attempts, Vegas capitalized efficiently through standout performances like Mark Stone recording 3 goals. How did Calgary let this slip away despite holding the edge in shot attempts?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #CalgaryFlames #VegasGoldenKnights #Flames #GoalScoring
+```
+</details>
+
 ## UTA 4 @ EDM 2 — 2026-10-15
 `game-2026020117` · rendered 2026-10-16 17:45 UTC · mode: preview
 

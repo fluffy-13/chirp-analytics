@@ -1,0 +1,7 @@
+Vegas takes down Calgary 6-2 behind elite finishing.
+
+The Vegas Golden Knights secured a 6-2 victory while winning the expected-goals battle with a 4.08 mark compared to Calgary's 2.83. Even though Calgary controlled 51 percent of the 5v5 share of expected goals and generated 55 shot attempts, Vegas capitalized efficiently through standout performances like Mark Stone recording 3 goals. How did Calgary let this slip away despite holding the edge in shot attempts?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #CalgaryFlames #VegasGoldenKnights #Flames #GoalScoring
