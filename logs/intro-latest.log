@@ -1,0 +1,5 @@
+2026-10-16 22:07:59,631 INFO publisher: Hosted 5 slides under posts/intro-standings
+2026-10-16 22:08:10,988 INFO buffer_client: Buffer accepted post 6ad2a040c34368e4b0969e62 (status sending)
+2026-10-16 22:08:41,528 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DekkiGnlbfG/
+2026-10-16 22:08:44,662 INFO publisher: Preview saved: intro-standings
+2026-10-16 22:08:46,391 INFO pipeline: Posted Intro: the real standings (buffer)
