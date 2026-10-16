@@ -329,10 +329,16 @@ def analyze_game(bundle):
                 pid = bp["playerId"]
                 m = s.get(pid, {})
                 g = lambda k: m.get(k, 0)
-                gs = (0.75 * g("G") + 0.7 * g("A1") + 0.55 * g("A2") + 0.075 * g("SOG")
-                      + 0.05 * g("BLK") + 0.15 * g("PD") - 0.15 * g("PT")
-                      + 0.01 * g("FOW") - 0.01 * g("FOL") + 0.05 * g("CF") - 0.05 * g("CA")
-                      + 0.15 * g("GF") - 0.15 * g("GA"))
+                # Game Score, split into what drove it (the parts sum to the total)
+                parts = {
+                    "scoring": 0.75 * g("G") + 0.7 * g("A1") + 0.55 * g("A2"),
+                    "shots": 0.075 * g("SOG"),
+                    "play5": 0.05 * (g("CF") - g("CA")),     # 5v5 on-ice shot attempts
+                    "goals5": 0.15 * (g("GF") - g("GA")),    # 5v5 on-ice goals
+                    "other": (0.05 * g("BLK") + 0.15 * (g("PD") - g("PT"))
+                              + 0.01 * (g("FOW") - g("FOL"))),
+                }
+                gs = sum(parts.values())
                 players.append({
                     "player_id": pid,
                     "name": _full_name(roster.get(pid, {})) or (bp.get("name") or {}).get("default", ""),
@@ -349,7 +355,12 @@ def analyze_game(bundle):
                     "CF": int(g("CF")), "CA": int(g("CA")),
                     "xGF": round(g("xGF"), 2), "xGA": round(g("xGA"), 2),
                     "BLK": int(g("BLK")), "hits": bp.get("hits", 0),
+                    "PD": int(g("PD")), "PT": int(g("PT")),
+                    "FOW": int(g("FOW")), "FOL": int(g("FOL")),
+                    "GF5": int(g("GF")), "GA5": int(g("GA")),
+                    "xg_pm5": round(g("xGF") - g("xGA"), 2),
                     "game_score": round(gs, 2),
+                    "gs_parts": {k: round(v, 3) for k, v in parts.items()},
                 })
 
     # --- goalies --------------------------------------------------------------
