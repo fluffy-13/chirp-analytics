@@ -2,10 +2,15 @@
 
 Automated NHL analytics for Instagram (@chirpanalytics).
 
-- **Every game, 5–10 minutes after the final horn:** a 3-slide carousel — the game breakdown
-  (score, expected-goals flow chart, shot/chance/power-play/faceoff comparison, three stars)
-  and a breakdown for each team (xG, 5v5 shares, top performers, goalie with goals saved above
-  expected).
+- **Every game, 5–10 minutes after the final horn:** a 5-slide carousel — the game breakdown
+  (score, expected-goals flow chart, shot/chance/power-play/faceoff comparison, three stars),
+  then for each team a breakdown (xG, 5v5 shares, top performers, goalie with goals saved above
+  expected) and a **player impact** slide: every skater's Game Score split into what drove it
+  (goals + assists, shots, 5v5 shot attempts, 5v5 goals on ice, blocks/faceoffs/penalties), his
+  on-ice 5v5 xG±, flags when results and process disagree (DESERVED MORE: no points but xG± ≥ +0.4,
+  or 0.5+ individual xG with xG± ≥ 0; OUTCHANCED: points but xG± ≤ −0.4), a tick at his season
+  average and a ▲/▼ for a hot/cold run (last 5 games averaging 0.4+ above/below his season, with
+  3 of the 5 on that side; needs 5 prior games).
 - **Every Monday:** the weekly report — top and bottom 10 skaters (total Game Score) and top and
   bottom 10 teams (share of 5v5 expected goals).
 
@@ -18,6 +23,7 @@ sheet and rejected if they contain any number or claim that isn't in it (templat
 | `live.yml` | 11:50, 18:40, 23:50 ET daily | polls every 2 min while games are on; posts each final |
 | `weekly.yml` | Mondays 09:40 ET | last Monday–Sunday week |
 | `run.yml` | manual | `games` for a date, `weekly`, `live`, `buffer-check`, or `make-sample`, with a mode override |
+| `ledger.yml` | manual | backfills the season ledger (each player's Game Score per game) for a date range |
 | `dump.yml` | manual (dev) | saves a night's raw NHL JSON to the `fixtures` branch |
 
 **Where posts go** is the repo variable `POST_MODE`:
@@ -29,7 +35,7 @@ sheet and rejected if they contain any number or claim that isn't in it (templat
 - `make` — Make.com scenario via `MAKE_WEBHOOK_URL` (payload: `type`, `image_urls`, `caption`, `key`).
 - `graph` — Instagram Graph API directly (`IG_ACCESS_TOKEN`, `IG_USER_ID`).
 
-What has been posted lives on the **`state` branch** (`posted.json`), so a game or week is never
+What has been posted lives on the **`state` branch** (`posted.json`, plus `ledger.json`), so a game or week is never
 posted twice, even if runs overlap. A game that fails 4 times is skipped and the run is marked failed
 (GitHub emails you).
 
@@ -42,6 +48,8 @@ posted twice, even if runs overlap. A game that fails 4 times is skipped and the
 | `content_generator.py` | Gemini captions with number/claim checking, template fallback |
 | `publisher.py` | preview / Buffer / Make / Graph publishing, single image or carousel, Supabase image hosting |
 | `buffer_client.py` | Buffer GraphQL client: find the Instagram channel, publish now, confirm it went live |
+| `ledger.py` | season ledger on the `state` branch: season average + hot/cold runs for the impact slide |
+| `intro_cards.py` | one-off season-so-far intro posts (`python main.py intro --post standings`) |
 | `git_store.py` | small files on a git branch without touching the checkout |
 | `xg_model.py` + `xg_model.json` | trained xG model (pure Python at runtime) |
 | `nhl_fetcher.py` | NHL API client with retries; `FixtureSource` for offline runs |
