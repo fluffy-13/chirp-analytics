@@ -90,13 +90,8 @@ STATUS = """query Status($input: PostInput!) {
 }"""
 
 
-def _post_status(post_id, org_id):
-    for inp in ({"id": post_id, "organizationId": org_id}, {"id": post_id}):
-        try:
-            return _gql(STATUS, {"input": inp})["post"]
-        except BufferError as exc:
-            last = exc
-    raise last
+def _post_status(post_id, org_id=None):
+    return _gql(STATUS, {"input": {"id": post_id}})["post"]
 
 
 def create_post(image_urls, caption, alt_texts=None, wait=240, interval=10):
