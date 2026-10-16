@@ -46,6 +46,28 @@ class GitBranchStore:
         res = self._git("show", f"{self.ref}:{path}", check=False)
         return res.stdout if res.returncode == 0 else None
 
+    def read_dir(self, prefix, fetch=True):
+        """{path: bytes} for every file under prefix/ (one git call for the listing, one for data)."""
+        if fetch:
+            self.fetch()
+        if not self._head():
+            return {}
+        ls = self._git("ls-tree", "-r", "--name-only", self.ref, "--", prefix.rstrip("/") + "/",
+                       check=False)
+        paths = [p for p in ls.stdout.decode().splitlines() if p]
+        if not paths:
+            return {}
+        spec = "".join(f"{self.ref}:{p}\n" for p in paths).encode()
+        out = self._git("cat-file", "--batch", input=spec).stdout
+        files, i = {}, 0
+        for path in paths:
+            nl = out.index(b"\n", i)
+            header = out[i:nl].split()
+            size = int(header[2])
+            files[path] = out[nl + 1: nl + 1 + size]
+            i = nl + 1 + size + 1
+        return files
+
     def write(self, files, message, retries=4):
         """files: {path: bytes}. Adds/overwrites those paths on the branch and pushes."""
         for attempt in range(1, retries + 1):
@@ -82,6 +104,13 @@ class LocalStore:
     def read(self, path, fetch=True):
         p = self.dir / path
         return p.read_bytes() if p.exists() else None
+
+    def read_dir(self, prefix, fetch=True):
+        base = self.dir / prefix
+        if not base.exists():
+            return {}
+        return {str(p.relative_to(self.dir)): p.read_bytes() for p in sorted(base.rglob("*"))
+                if p.is_file()}
 
     def write(self, files, message=""):
         for path, data in files.items():

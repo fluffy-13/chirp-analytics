@@ -41,3 +41,18 @@ def test_local_store(tmp_path):
     s = LocalStore(tmp_path)
     s.write({"a/b.json": b"1"})
     assert s.read("a/b.json") == b"1" and s.read("missing") is None
+
+
+def test_read_dir_both_backends(tmp_path):
+    import subprocess
+    from git_store import GitBranchStore, LocalStore
+    remote = tmp_path / "remote.git"
+    subprocess.run(["git", "init", "-q", "--bare", str(remote)], check=True)
+    repo = tmp_path / "repo"
+    subprocess.run(["git", "init", "-q", str(repo)], check=True)
+    subprocess.run(["git", "-C", str(repo), "remote", "add", "origin", str(remote)], check=True)
+    files = {"games/1.json": b'{"a":1}', "games/2.json": b"x\ny", "other.txt": b"no"}
+    for store in (GitBranchStore("state", repo=repo), LocalStore(tmp_path / "local")):
+        store.write(files, "seed")
+        got = store.read_dir("games")
+        assert got == {"games/1.json": b'{"a":1}', "games/2.json": b"x\ny"}

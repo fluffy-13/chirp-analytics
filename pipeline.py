@@ -102,7 +102,11 @@ def post_game(source, score_game, state, mode=None, bundle=None):
     bundle = bundle or load_game(source, score_game)
     game = analyze_game(bundle)
     ledger = _ledger(state)
-    context = ledger.context(game) if ledger else None
+    try:
+        context = ledger.context(game) if ledger else None
+    except Exception:
+        log.exception("Season context unavailable for %s", game["game_id"])
+        context = None
     copy = generate_game_copy(game)
     extra, extra_alts = tracker_slides(source, game, bundle)
     paths = render_game_carousel(game, context, headline=cover_headline(game, copy), extra=extra)
