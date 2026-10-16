@@ -2,6 +2,31 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Awards race — 2026-10-15
+`awards-2026-10-15` · rendered 2026-10-16 23:04 UTC · mode: preview
+
+<img src="awards-2026-10-15/awards_2026-10-15_1.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_2.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_3.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_4.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_5.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_6.jpg" width="260"> <img src="awards-2026-10-15/awards_2026-10-15_7.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+The awards race, by the numbers (through October 15):
+🏆 Hart: Connor McDavid (EDM), 16.62 Game Score
+🏆 Norris: Evan Bouchard (EDM), 15.37 Game Score
+🏆 Vezina: Linus Ullmark (OTT), +7.23 GSAx
+🏆 Calder: Michael Brandsegg-Nygård (DET), 6.99 Game Score
+🏆 Selke: Easton Cowan (TOR), +1.67 xGA saved
+🏆 Lady Byng: Connor McDavid (EDM), 16.62 Game Score
+
+Not a prediction of the vote: this is who the stats say deserves it. Who's missing? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #NHLAwards #HartTrophy #Norris #Vezina #Calder
+```
+</details>
+
 ## Fantasy pickups — 2026-10-15
 `fantasy-2026-10-15` · rendered 2026-10-16 23:04 UTC · mode: preview
 

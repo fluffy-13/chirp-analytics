@@ -1,0 +1,14 @@
+The awards race, by the numbers (through October 15):
+🏆 Hart: Connor McDavid (EDM), 16.62 Game Score
+🏆 Norris: Evan Bouchard (EDM), 15.37 Game Score
+🏆 Vezina: Linus Ullmark (OTT), +7.23 GSAx
+🏆 Calder: Michael Brandsegg-Nygård (DET), 6.99 Game Score
+🏆 Selke: Easton Cowan (TOR), +1.67 xGA saved
+🏆 Lady Byng: Connor McDavid (EDM), 16.62 Game Score
+
+Not a prediction of the vote: this is who the stats say deserves it. Who's missing? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #NHLAwards #HartTrophy #Norris #Vezina #Calder
