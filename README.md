@@ -21,6 +21,17 @@ Automated NHL analytics for Instagram (@chirpanalytics).
 - Posts carry the NHL game number (slides + first caption line), team logos (fetched from the NHL's
   logo CDN at render time, never stored in this repo) and a short disclosure: unofficial, not
   affiliated with the NHL; AI-written captions are labelled.
+- **Feature posts** (`features.yml`):
+  - *Fantasy pickups*, Sundays 6:50 PM ET: under-the-radar adds for categories leagues
+    (G, A, PPP, SOG, HIT, BLK) — last 14 days of per-game category value plus a bonus for a growing
+    role (ice time / PP time up), excluding this season's top 150 and anyone with 45+ points last
+    season.
+  - *Rookie watch*, every other Wednesday 11:40 AM ET: Calder-eligible skaters by Game Score, the
+    last two weeks, and rookie goalies by GSAx.
+  - *Awards race*, the 1st of each month 10:40 AM ET: the 'deserved' race by our numbers — Hart
+    (Game Score), Norris (D Game Score), Vezina (GSAx), Calder (rookie Game Score), Selke (5v5
+    expected goals prevented vs. his team), Lady Byng (Game Score with ≤2 PIM, or 1 per 5 games),
+    with movement since last month.
 - **Every Monday:** the weekly report — top and bottom 10 skaters (total Game Score) and top and
   bottom 10 teams (share of 5v5 expected goals).
 
@@ -58,7 +69,11 @@ posted twice, even if runs overlap. A game that fails 4 times is skipped and the
 | `content_generator.py` | Gemini captions with number/claim checking, template fallback |
 | `publisher.py` | preview / Buffer / Make / Graph publishing, single image or carousel, Supabase image hosting |
 | `buffer_client.py` | Buffer GraphQL client: find the Instagram channel, publish now, confirm it went live |
-| `ledger.py` | season ledger on the `state` branch: season average + hot/cold runs for the impact slide |
+| `ledger.py` | season store on the `state` branch: one file per game (`games/{season}/{id}.json`) with every player's line, incl. 5v5/PP/SH ice time |
+| `season.py` | season aggregates from the store: skaters, goalies, rookie list, fantasy category values |
+| `features.py` | awards race, rookie watch and fantasy pickups slides + captions |
+| `trackers.py` | Ovechkin and Crosby tracker slides + their career logs |
+| `logos.py` | team logos from the NHL logo CDN (cached per run, never committed) |
 | `intro_cards.py` | one-off season-so-far intro posts (`python main.py intro --post standings`) |
 | `git_store.py` | small files on a git branch without touching the checkout |
 | `xg_model.py` + `xg_model.json` | trained xG model (pure Python at runtime) |
