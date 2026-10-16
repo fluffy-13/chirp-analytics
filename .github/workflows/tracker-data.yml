@@ -24,6 +24,6 @@ jobs:
           from pathlib import Path
           from git_store import GitBranchStore
           root = Path("/tmp/trackers")
-          files = {f"trackers/{p.relative_to(root)}": p.read_bytes() for p in root.rglob("*") if p.is_file()}
+          files = {f"trackers/{p.relative_to(root)}": p.read_bytes() for p in root.rglob("*") if p.is_file() and "logos" not in p.parts}
           GitBranchStore("fixtures").write(files, "Tracker data")
           PY

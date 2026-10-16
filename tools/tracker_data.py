@@ -3,7 +3,7 @@
     python tools/tracker_data.py OUT_DIR [--goals]
 
 Writes into OUT_DIR:
-  logos/{ABBR}.svg                 dark-background team logos (all 32 teams)
+  logos/{ABBR}.svg                 dark-background team logos (local dev only; never commit these)
   landing_{id}.json                NHL player landing (career totals) for Ovechkin and Crosby
   gamelog_{id}.json                every regular-season game of their careers
   leaders_points.json / leaders_goals.json   all-time regular-season leaders (top 60)

@@ -14,11 +14,12 @@ import time
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
-from cards import render_game_carousel, render_weekly_carousel, _range_label
+from cards import cover_headline, render_game_carousel, render_weekly_carousel, _range_label
 from config import OUTPUT_DIR, POST_MODE, TIMEZONE
 from content_generator import (build_game_caption, build_weekly_caption, generate_game_copy)
 from git_store import default_store
 from ledger import Ledger
+from trackers import tracker_slides
 from metrics import aggregate_week, analyze_game
 from nhl_fetcher import FINAL_STATES, GAME_TYPES, load_game
 from publisher import publish_carousel
@@ -102,15 +103,18 @@ def post_game(source, score_game, state, mode=None, bundle=None):
     game = analyze_game(bundle)
     ledger = _ledger(state)
     context = ledger.context(game) if ledger else None
-    paths = render_game_carousel(game, context)
-    caption = build_game_caption(generate_game_copy(game), game)
+    copy = generate_game_copy(game)
+    extra, extra_alts = tracker_slides(source, game, bundle)
+    paths = render_game_carousel(game, context, headline=cover_headline(game, copy), extra=extra)
+    caption = build_game_caption(copy, game)
     a, h = game["teams"]["away"], game["teams"]["home"]
-    alts = [f"Game breakdown: {_title(game)}. Expected goals {a['abbrev']} {a['xg']:.2f}, "
-            f"{h['abbrev']} {h['xg']:.2f}.",
+    alts = [f"{_title(game)}. Expected goals {a['abbrev']} {a['xg']:.2f}, {h['abbrev']} {h['xg']:.2f}.",
+            f"Game breakdown: {_title(game)}, with the expected goals flow chart and three stars.",
             f"{a['name']} team breakdown",
             f"{a['name']} player impact: every skater's Game Score split into what drove it",
             f"{h['name']} team breakdown",
             f"{h['name']} player impact: every skater's Game Score split into what drove it"]
+    alts += extra_alts
     result = publish_carousel(paths, caption, key=f"game-{game['game_id']}", title=_title(game),
                               meta={"game_id": game["game_id"], "date": game["date"],
                                     "alt_texts": alts}, mode=mode)

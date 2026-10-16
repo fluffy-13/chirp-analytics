@@ -175,7 +175,7 @@ def generate_copy(post, attempts=3):
             continue
         problem = _valid(copy, allowed)
         if not problem:
-            return copy
+            return {**copy, "ai": True}
         log.warning("Rejected AI copy (attempt %s): %s", attempt, problem)
         prompt += f"\n\nYour previous answer was rejected: {problem}. Fix it."
     log.warning("Falling back to template copy")
@@ -290,7 +290,7 @@ def _generate(facts, prompt, fallback, attempts=3):
             continue
         problem = _valid(copy, allowed)
         if not problem:
-            return copy
+            return {**copy, "ai": True}
         log.warning("Rejected AI copy (attempt %s): %s", attempt, problem)
         prompt += f"\n\nYour previous answer was rejected: {problem}. Fix it."
     log.warning("Falling back to template copy")
@@ -315,15 +315,17 @@ def _assemble(body, base_tags, extra_tags, footnote):
     return f"{body.strip()}\n\n{footnote}\n\n{' '.join(tags[:10])}"[:CAPTION_MAX]
 
 
+DISCLOSURE = "Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams."
 FOOTNOTE = ("xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom "
-            "Luszczyszyn's single-game value formula. Data: NHL play-by-play.")
+            "Luszczyszyn's single-game value formula. Data: NHL play-by-play.\n" + DISCLOSURE)
+AI_NOTE = " Caption written with AI assistance."
 
 
 def build_game_caption(copy, game):
     a, h = game["teams"]["away"], game["teams"]["home"]
     body = f"{copy['hook'].strip()}\n\n{copy['caption'].strip()}"
     return _assemble(body, ["#NHL", "#HockeyAnalytics", _tag(a["name"]), _tag(h["name"])],
-                     copy.get("hashtags", []), FOOTNOTE)
+                     copy.get("hashtags", []), FOOTNOTE + (AI_NOTE if copy.get("ai") else ""))
 
 
 # ------------------------------------------------------------ weekly posts ---

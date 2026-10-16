@@ -6,6 +6,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import logos
 from config import IG_HANDLE, OUTPUT_DIR, PALETTE as C
 from renderer import _font as _raw_font
 
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 W, H = 1080, 1350
 M = 72
 GOOD, BAD = "#00FF88", "#FF7B72"
-FOOTER = f"{IG_HANDLE}  |  xG model trained on 237k NHL shots  |  Data: NHL play-by-play"
+FOOTER = f"{IG_HANDLE}  |  Data: NHL play-by-play  |  Unofficial · not affiliated with the NHL"
 
 
 @lru_cache(maxsize=None)
@@ -195,7 +196,9 @@ def render_game_slide(game):
     # score block
     top = 118
     for t, color, align, x in ((a, away_c, "la", M), (h, home_c, "ra", W - M)):
-        d.text((x, top), t["abbrev"], fill=color, font=F("bold", 96), anchor=align)
+        if not logos.paste(img, t["abbrev"], (x, top - 6), height=104, max_w=230,
+                           anchor="lt" if align == "la" else "rt"):
+            d.text((x, top), t["abbrev"], fill=color, font=F("bold", 96), anchor=align)
         d.text((x, top + 112), t["common_name"].upper(), fill=C["muted"], font=F("semibold", 26),
                anchor=align)
     score_f = F("bold", 140)
@@ -268,8 +271,9 @@ def render_team_slide(game, side):
     img, d = _canvas(accent=color)
     _header(d, "TEAM BREAKDOWN", _pretty_date(game["date"]), color=color)
 
+    lw = logos.paste(img, t["abbrev"], (W - M, 96), height=170, max_w=230, anchor="rt")
     d.text((M, 104), t["common_name"].upper(), fill=color,
-           font=_fit(d, t["common_name"].upper(), "bold", 104, W - 2 * M, 60))
+           font=_fit(d, t["common_name"].upper(), "bold", 104, W - 2 * M - (lw + 30 if lw else 0), 60))
     place = t["name"].replace(t["common_name"], "").strip() or t["abbrev"]
     d.text((M, 226), place.upper(), fill=C["muted"], font=F("semibold", 26))
     res = "W" if t["won"] else ("OTL" if game["outcome"] in ("OT", "SO") else "L")
@@ -353,6 +357,19 @@ def impact_flag(p):
     return None
 
 
+def _short_name(d, name, font, max_w):
+    """Full name if it fits, else 'J. Pageau', else ellipsized."""
+    if d.textlength(name, font=font) <= max_w:
+        return name
+    parts = name.split()
+    if len(parts) > 1:
+        short = f"{parts[0][0]}. {' '.join(parts[1:])}"
+        if d.textlength(short, font=font) <= max_w:
+            return short
+        name = short
+    return _ellipsize(d, name, font, max_w)
+
+
 def _arrow(d, x, y, up, color, size=10):
     if up:
         d.polygon([(x, y + size), (x + size, y + size), (x + size / 2, y)], fill=color)
@@ -373,10 +390,13 @@ def render_impact_slide(game, side, context=None):
     where = "@" if not t["is_home"] else "vs"
     extra = {"OT": " (OT)", "SO": " (SO)"}.get(game["outcome"], "")
     title = t["common_name"].upper()
-    tf = _fit(d, title, "bold", 72, 600, 44)
-    d.text((M, 96), title, fill=color, font=tf)
-    d.text((W - M, 112), f"{res}  {t['score']}–{t['opp_score']}{extra}  {where} {opp['abbrev']}",
-           fill=C["text"], font=F("bold", 40), anchor="ra")
+    lw = logos.paste(img, t["abbrev"], (M, 140), height=78, max_w=110, anchor="lm")
+    tx = M + (lw + 22 if lw else 0)
+    result = f"{res}  {t['score']}–{t['opp_score']}{extra}  {where} {opp['abbrev']}"
+    rw = d.textlength(result, font=F("bold", 40))
+    tf = _fit(d, title, "bold", 72, W - M - rw - 36 - tx, 36)
+    d.text((tx, 140), title, fill=color, font=tf, anchor="lm")
+    d.text((W - M, 140), result, fill=C["text"], font=F("bold", 40), anchor="rm")
     d.text((M, 186), "Every skater's Game Score, split into what drove it", fill=C["muted"],
            font=F("regular", 24))
 
@@ -434,7 +454,7 @@ def render_impact_slide(game, side, context=None):
         if flag:
             ff = F("bold", 14)
             fw = d.textlength(flag[0], font=ff) + 16
-        name = _ellipsize(d, p["name"], name_f, avail - (fw + 10 if flag else 0))
+        name = _short_name(d, p["name"], name_f, avail - (fw + 10 if flag else 0))
         d.text((name_x + 40, cy), name, fill=C["text"], font=name_f, anchor="lm")
         if flag:
             fx = name_x + 40 + d.textlength(name, font=name_f) + 10
@@ -497,14 +517,153 @@ def render_impact_slide(game, side, context=None):
     return img
 
 
-def render_game_carousel(game, context=None):
-    """game, away team, away player impact, home team, home player impact."""
+# --------------------------------------------------------------- cover slide ---
+def _mix(c1, c2, t):
+    a, b = _hex_rgb(c1) if isinstance(c1, str) else c1, _hex_rgb(c2) if isinstance(c2, str) else c2
+    return tuple(int(x + (y - x) * t) for x, y in zip(a, b))
+
+
+def _cover_background(away_c, home_c):
+    """Diagonal blend from the away colour (top-left) to the home colour (bottom-right)."""
+    small_w, small_h = 108, 135
+    bg = Image.new("RGB", (small_w, small_h))
+    px = bg.load()
+    a_dark, h_dark = _mix(away_c, C["bg"], 0.55), _mix(home_c, C["bg"], 0.55)
+    for y in range(small_h):
+        for x in range(small_w):
+            t = (x / small_w + y / small_h) / 2          # 0 top-left .. 1 bottom-right
+            t = min(1, max(0, (t - 0.35) / 0.3))         # crisp-ish diagonal seam
+            px[x, y] = _mix(a_dark, h_dark, t)
+    return bg.resize((W, H), Image.BICUBIC)
+
+
+def _wrap_lines(d, text, font, max_w, max_lines):
+    lines, cur = [], ""
+    for word in text.split():
+        trial = f"{cur} {word}".strip()
+        if d.textlength(trial, font=font) <= max_w:
+            cur = trial
+        else:
+            lines.append(cur)
+            cur = word
+    if cur:
+        lines.append(cur)
+    if len(lines) > max_lines:
+        lines = lines[:max_lines]
+        lines[-1] = _ellipsize(d, lines[-1] + " …", font, max_w)
+    return lines
+
+
+def cover_headline(game, copy=None):
+    """The AI hook when we have one; otherwise the top performer."""
+    if copy and copy.get("ai") and copy.get("hook"):
+        return copy["hook"].strip()
+    if game["stars"]:
+        p = game["stars"][0]
+        if p["position"] == "G":
+            return f"{p['name']} led the way: {p['saves']} saves, {_signed(p['gsax'])} goals saved above expected"
+        return f"{p['name']} led the way: {p['G']}G {p['A']}A, {_num(p['game_score'])} Game Score"
+    return ""
+
+
+def render_cover_slide(game, headline=""):
+    """Slide 1: reads at grid size. Team-colour blend, logo watermarks, opaque score panel."""
+    a, h = game["teams"]["away"], game["teams"]["home"]
+    away_c, home_c = _distinct(a["color"], h["color"])
+    base = _cover_background(a["color"], h["color"]).convert("RGBA")
+    # giant logo watermarks
+    for t, xy, anchor in ((a, (-120, 40), "lt"), (h, (W + 120, H - 40), "rb")):
+        mark = logos.logo(t["abbrev"], height=620, max_w=760, opacity=0.16)
+        if mark is not None:
+            x = xy[0] if anchor[0] == "l" else xy[0] - mark.width
+            y = xy[1] if anchor[1] == "t" else xy[1] - mark.height
+            base.alpha_composite(mark, (int(x), int(y)))
+    # darken the top and bottom so the header and footer read
+    fade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    fd = ImageDraw.Draw(fade)
+    r, g, b = _hex_rgb(C["bg"])
+    for i in range(260):
+        alpha = int(235 * (i / 260) ** 1.6)
+        fd.line([(0, H - 260 + i), (W, H - 260 + i)], fill=(r, g, b, alpha))
+    for i in range(170):
+        fd.line([(0, i), (W, i)], fill=(r, g, b, int(200 * (1 - i / 170) ** 1.4)))
+    base.alpha_composite(fade)
+    # opaque panel
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    od = ImageDraw.Draw(overlay)
+    p_top, p_bot = 240, 950
+    od.rounded_rectangle([M - 24, p_top, W - M + 24, p_bot], radius=28, fill=(*_hex_rgb(C["bg"]), 232),
+                         outline=(*_hex_rgb(C["panel_border"]), 255), width=2)
+    base.alpha_composite(overlay)
+    img = base.convert("RGB")
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, W, 14], fill=C["accent"])
+    status = {"OT": "FINAL · OT", "SO": "FINAL · SHOOTOUT"}.get(game["outcome"], "FINAL")
+    _header(d, f"GAME BREAKDOWN  //  {status}", _pretty_date(game["date"]))
+    d.text((M, 110), "Chirp Analytics", fill=C["text"], font=F("bold", 30))
+
+    # logos + scores
+    cy = p_top + 190
+    for t, color, x, anchor in ((a, away_c, M + 135, "mm"), (h, home_c, W - M - 135, "mm")):
+        if not logos.paste(img, t["abbrev"], (x, cy), height=190, max_w=220, anchor="mm"):
+            d.text((x, cy), t["abbrev"], fill=color, font=F("bold", 96), anchor="mm")
+        d.text((x, cy + 140), t["common_name"].upper(), fill=C["muted"], font=F("semibold", 28),
+               anchor="mm")
+    sf = F("bold", 150)
+    d.text((W / 2 - 40, cy), str(a["score"]), fill=C["text"] if a["won"] else C["muted"], font=sf,
+           anchor="rm")
+    d.text((W / 2, cy), "–", fill=C["faint"], font=F("bold", 70), anchor="mm")
+    d.text((W / 2 + 40, cy), str(h["score"]), fill=C["text"] if h["won"] else C["muted"], font=sf,
+           anchor="lm")
+    # xG strip
+    y = cy + 200
+    d.line([(M + 10, y), (W - M - 10, y)], fill=C["panel_border"], width=2)
+    y += 30
+    d.text((W / 2, y), "EXPECTED GOALS", fill=C["muted"], font=F("semibold", 24), anchor="mt")
+    xf = F("bold", 64)
+    d.text((W / 2 - 40, y + 40), f"{a['xg']:.2f}", fill=away_c, font=xf, anchor="ra")
+    d.text((W / 2, y + 52), "–", fill=C["faint"], font=F("bold", 44), anchor="ma")
+    d.text((W / 2 + 40, y + 40), f"{h['xg']:.2f}", fill=home_c, font=xf, anchor="la")
+    # three quick comparisons
+    y += 150
+    pp = lambda t: f"{t['pp_goals']}/{t['pp_opps']}"
+    cols = [("SHOTS", str(a["sog"]), str(h["sog"])),
+            ("HIGH-DANGER", str(a["hd"]), str(h["hd"])),
+            ("POWER PLAY", pp(a), pp(h))]
+    cw = (W - 2 * M) / 3
+    for i, (label, av, hv) in enumerate(cols):
+        cx = M + cw * (i + 0.5)
+        d.text((cx, y), label, fill=C["muted"], font=F("semibold", 20), anchor="mt")
+        vf = F("bold", 38)
+        d.text((cx - 16, y + 34), av, fill=away_c, font=vf, anchor="ra")
+        d.text((cx, y + 40), "–", fill=C["faint"], font=F("bold", 28), anchor="ma")
+        d.text((cx + 16, y + 34), hv, fill=home_c, font=vf, anchor="la")
+
+    # headline under the panel
+    if headline:
+        hf = F("bold", 44)
+        lines = _wrap_lines(d, headline, hf, W - 2 * M, 3)
+        y = p_bot + 40
+        for line in lines:
+            d.text((M, y), line, fill=C["text"], font=hf)
+            y += 56
+    d.text((W - M, H - 120), "SWIPE FOR THE BREAKDOWN  →", fill=C["accent"], font=F("bold", 30),
+           anchor="ra")
+    _footer(d)
+    return img
+
+
+def render_game_carousel(game, context=None, headline="", extra=None):
+    """cover, game, away team, away player impact, home team, home player impact (+ extras)."""
     gid, day = game["game_id"], game["date"][:10]
-    paths = [_save(render_game_slide(game), f"{day}_{gid}_1_game.jpg"),
+    paths = [_save(render_cover_slide(game, headline), f"{day}_{gid}_0_cover.jpg"),
+             _save(render_game_slide(game), f"{day}_{gid}_1_game.jpg"),
              _save(render_team_slide(game, "away"), f"{day}_{gid}_2_away.jpg"),
              _save(render_impact_slide(game, "away", context), f"{day}_{gid}_3_away_impact.jpg"),
              _save(render_team_slide(game, "home"), f"{day}_{gid}_4_home.jpg"),
              _save(render_impact_slide(game, "home", context), f"{day}_{gid}_5_home_impact.jpg")]
+    for i, (name, img) in enumerate(extra or [], 6):
+        paths.append(_save(img, f"{day}_{gid}_{i}_{name}.jpg"))
     log.info("Rendered carousel for %s: %s", gid, ", ".join(p.name for p in paths))
     return paths
 
@@ -528,22 +687,23 @@ def render_weekly_cover(week):
     if week["players_top"]:
         p = week["players_top"][0]
         cards.append(("TOP SKATER", p["name"], f"{p['team_abbrev']}  ·  {_num(p['game_score'])} Game Score",
-                      p["color"]))
+                      p["color"], p["team_abbrev"]))
     if week["teams_top"]:
         t = week["teams_top"][0]
         cards.append(("BEST 5V5 TEAM", t["name"], f"{t['xg5_pct']:.1f}% of 5v5 expected goals",
-                      t["color"]))
+                      t["color"], t["abbrev"]))
     if week["players_bottom"]:
         p = week["players_bottom"][0]
         cards.append(("COLDEST SKATER", p["name"], f"{p['team_abbrev']}  ·  {_num(p['game_score'])} Game Score",
-                      p["color"]))
+                      p["color"], p["team_abbrev"]))
     y = 500
-    for label, title, sub, color in cards:
+    for label, title, sub, color, abbrev in cards:
         _panel(d, [M - 24, y, W - M + 24, y + 196])
         d.rectangle([M - 24, y + 24, M - 16, y + 172], fill=color)
+        lw = logos.paste(img, abbrev, (W - M, y + 98), height=120, max_w=150, anchor="rm")
         d.text((M + 8, y + 28), label, fill=C["muted"], font=F("semibold", 24))
-        d.text((M + 8, y + 66), _ellipsize(d, title, F("bold", 52), W - 2 * M - 20), fill=C["text"],
-               font=F("bold", 52))
+        d.text((M + 8, y + 66), _ellipsize(d, title, F("bold", 52), W - 2 * M - 20 - (lw + 20 if lw else 0)),
+               fill=C["text"], font=F("bold", 52))
         d.text((M + 8, y + 134), sub, fill=C["body"], font=F("regular", 28))
         y += 222
     d.text((W - M, H - 120), "SWIPE  →", fill=C["accent"], font=F("bold", 30), anchor="ra")
@@ -570,10 +730,14 @@ def _list_slide(title, subtitle, header_cols, rows, accent):
         if r["rank"] % 2 == 1:
             d.rounded_rectangle([M - 20, y - 8, W - M + 20, y + row_h - 14], radius=12, fill="#161A21")
         d.text((M, y + 14), f"{r['rank']}", fill=accent, font=F("bold", 36))
+        nx = M + 70
+        if r.get("logo") and logos.paste(img, r["logo"], (nx + 24, y + 37), height=50, max_w=56,
+                                         anchor="mm"):
+            nx += 66
         name_f = F("bold", 32)
-        d.text((M + 70, y + 2), _ellipsize(d, r["main"], name_f, col_xs[0] - M - 150), fill=C["text"],
+        d.text((nx, y + 2), _ellipsize(d, r["main"], name_f, col_xs[0] - nx - 80), fill=C["text"],
                font=name_f)
-        d.text((M + 70, y + 44), r["tag"], fill=r["tag_color"], font=F("semibold", 22))
+        d.text((nx, y + 44), r["tag"], fill=r["tag_color"], font=F("semibold", 22))
         for x, val in zip(col_xs, r["cols"]):
             d.text((x, y + 18), val, fill=C["body"], font=F("regular", 28), anchor="ma")
         d.text((W - M, y + 10), r["value"], fill=r.get("value_color", C["text"]), font=F("bold", 44),
@@ -588,14 +752,15 @@ def render_weekly_carousel(week):
     slides = [render_weekly_cover(week)]
 
     def player_rows(players, color):
-        return [{"rank": i, "main": p["name"],
+        return [{"rank": i, "main": p["name"], "logo": p["team_abbrev"],
                  "tag": f"{p['team_abbrev']}  ·  {p['position']}", "tag_color": p["color"],
                  "cols": [str(p["gp"]), f"{p['G']}-{p['A']}"],
                  "value": _num(p["game_score"]), "value_color": color}
                 for i, p in enumerate(players, 1)]
 
     def team_rows(teams, color):
-        return [{"rank": i, "main": t["name"], "tag": t["record"], "tag_color": t["color"],
+        return [{"rank": i, "main": t["name"], "logo": t.get("abbrev"), "tag": t["record"],
+                 "tag_color": t["color"],
                  "cols": [str(t["gp"]), f"{t['cf5_pct']:.0f}%" if t["cf5_pct"] is not None else "–"],
                  "value": f"{t['xg5_pct']:.1f}%", "value_color": color}
                 for i, t in enumerate(teams, 1)]
