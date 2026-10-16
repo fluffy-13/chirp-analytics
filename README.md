@@ -2,6 +2,31 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Intro: goalies stealing games
+`intro-goalies` · rendered 2026-10-16 22:16 UTC · mode: buffer
+
+<img src="intro-goalies/intro_goalies_1.jpg" width="260"> <img src="intro-goalies/intro_goalies_2.jpg" width="260"> <img src="intro-goalies/intro_goalies_3.jpg" width="260"> <img src="intro-goalies/intro_goalies_4.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Goalies stealing games, and goalies giving them away. 🧱🥅
+
+GSAx = expected goals faced minus goals allowed. It rewards stopping the hard ones.
+
+🧱 Linus Ullmark: +7.23 GSAx, .949. The Ottawa Senators are 6-2-0 with 46.2% of 5v5 xG.
+🧱 Jake Oettinger: +6.45.
+🚨 Kevin Lankinen: 29 goals on 17.60 expected (−11.40).
+🚨 Dustin Wolf: −8.30, and the Calgary Flames are 1-6-0.
+
+Swipe for the top and bottom 10 ➡️
+
+Data: NHL play-by-play through October 15, min. 3 games.
+
+#NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats
+```
+</details>
+
 ## Intro: hot hands vs. snakebitten
 `intro-finishing` · rendered 2026-10-16 22:12 UTC · mode: buffer
 
