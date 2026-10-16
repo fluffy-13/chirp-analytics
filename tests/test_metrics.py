@@ -65,7 +65,8 @@ def test_gemini_skips_retired_models(monkeypatch):
         def generate_content(self, model, contents, config):
             calls.append(model)
             if model != "gemini-3.6-flash":
-                raise RuntimeError("404 NOT_FOUND. model is no longer available")
+                raise RuntimeError("404 NOT_FOUND" if model != "gemini-flash-latest"
+                                   else "503 UNAVAILABLE high demand")
             return type("R", (), {"text": '{"hook": "h", "caption": "c", "hashtags": []}'})()
 
     monkeypatch.setattr(genai, "Client", lambda api_key: type("C", (), {"models": FakeModels()})())
@@ -75,4 +76,4 @@ def test_gemini_skips_retired_models(monkeypatch):
     assert calls == ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash"]
     calls.clear()
     cg._call_gemini("p")
-    assert calls == ["gemini-3.6-flash"]  # remembers the working model
+    assert calls[0] == "gemini-3.6-flash"  # tries the last working model first

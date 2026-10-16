@@ -2,6 +2,7 @@
 import json
 import logging
 import re
+import time
 import unicodedata
 
 from config import GEMINI_API_KEY, GEMINI_MODEL, GEMINI_MODEL_FALLBACKS, IG_HANDLE
@@ -84,7 +85,7 @@ _working_model = None
 
 def _model_candidates():
     if _working_model:
-        return [_working_model]
+        return [_working_model] + [m for m in GEMINI_MODEL_FALLBACKS if m != _working_model]
     seen, out = set(), []
     for m in ([GEMINI_MODEL] if GEMINI_MODEL else []) + GEMINI_MODEL_FALLBACKS:
         if m and m not in seen:
@@ -93,9 +94,12 @@ def _model_candidates():
     return out
 
 
-def _is_model_missing(exc):
+def _should_try_next_model(exc):
+    """Retired model (404) or a busy one (503 / 429): move on to the next candidate."""
     text = str(exc)
-    return "404" in text or "NOT_FOUND" in text or "no longer available" in text
+    return any(k in text for k in ("404", "NOT_FOUND", "no longer available",
+                                   "503", "UNAVAILABLE", "high demand",
+                                   "429", "RESOURCE_EXHAUSTED"))
 
 
 def _call_gemini(prompt):
@@ -111,8 +115,9 @@ def _call_gemini(prompt):
         try:
             resp = client.models.generate_content(model=model, contents=prompt, config=config)
         except Exception as exc:
-            if _is_model_missing(exc):
-                log.info("Gemini model %s unavailable, trying the next one", model)
+            if _should_try_next_model(exc):
+                log.info("Gemini model %s unavailable (%s), trying the next one",
+                         model, str(exc)[:60])
                 last_exc = exc
                 continue
             raise
@@ -136,7 +141,7 @@ def fallback_copy(post):
     return {"hook": hook[:HOOK_MAX], "caption": caption, "hashtags": []}
 
 
-def generate_copy(post, attempts=2):
+def generate_copy(post, attempts=3):
     facts = fact_sheet(post)
     allowed = _numbers(facts)
     if not GEMINI_API_KEY:
@@ -147,7 +152,9 @@ def generate_copy(post, attempts=2):
         try:
             copy = _call_gemini(prompt)
         except Exception as exc:  # network/SDK/JSON errors
-            log.warning("Gemini call failed (attempt %s): %s", attempt, exc)
+            log.warning("Gemini call failed (attempt %s): %s", attempt, str(exc)[:200])
+            if attempt < attempts:
+                time.sleep(15 * attempt)  # busy models usually recover within a minute
             continue
         problem = _valid(copy, allowed)
         if not problem:
