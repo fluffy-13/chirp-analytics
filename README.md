@@ -2,6 +2,33 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Intro: hot hands vs. snakebitten
+`intro-finishing` · rendered 2026-10-16 23:35 UTC · mode: buffer
+
+<img src="intro-finishing/intro_finishing_1.jpg" width="260"> <img src="intro-finishing/intro_finishing_2.jpg" width="260"> <img src="intro-finishing/intro_finishing_3.jpg" width="260"> <img src="intro-finishing/intro_finishing_4.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Who's finishing, and who's due? 🔥🥶
+
+Goals above expected = goals minus the expected goals from every shot a player took.
+
+🔥 Kirill Kaprizov: 9 goals on 3.51 xG (+5.49), the most above expected in the league.
+🔥 Evan Bouchard: 6 goals on 1.17 xG, as a defenceman.
+🥶 Zach Benson: 0 goals on 2.54 xG.
+🥶 Jack Hughes: 2 goals on 4.10 xG, #5 in the league in expected goals.
+
+Over a few games most of these gaps are streaks, not skill. Our bet: the cold list starts scoring.
+
+Data: NHL play-by-play through October 15, min. 4 games.
+
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey
+```
+</details>
+
 ## Intro: the real standings
 `intro-standings` · rendered 2026-10-16 23:31 UTC · mode: buffer
 
@@ -147,31 +174,6 @@ Swipe for the top and bottom 10 ➡️
 Data: NHL play-by-play through October 15, min. 3 games.
 
 #NHL #HockeyAnalytics #Goalies #GSAx #AdvancedStats #NHLStats
-```
-</details>
-
-## Intro: hot hands vs. snakebitten
-`intro-finishing` · rendered 2026-10-16 22:12 UTC · mode: buffer
-
-<img src="intro-finishing/intro_finishing_1.jpg" width="260"> <img src="intro-finishing/intro_finishing_2.jpg" width="260"> <img src="intro-finishing/intro_finishing_3.jpg" width="260"> <img src="intro-finishing/intro_finishing_4.jpg" width="260">
-
-<details><summary>Caption</summary>
-
-```
-Who's finishing, and who's due? 🔥🥶
-
-Goals above expected = goals minus the expected goals from every shot a player took.
-
-🔥 Kirill Kaprizov: 9 goals on 3.51 xG (+5.49), the most above expected in the league.
-🔥 Evan Bouchard: 6 goals on 1.17 xG, as a defenceman.
-🥶 Zach Benson: 0 goals on 2.54 xG.
-🥶 Jack Hughes: 2 goals on 4.10 xG, #5 in the league in expected goals.
-
-Over a few games most of these gaps are streaks, not skill. Our bet: the cold list starts scoring.
-
-Data: NHL play-by-play through October 15, min. 4 games.
-
-#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey
 ```
 </details>
 

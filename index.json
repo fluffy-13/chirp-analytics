@@ -1,5 +1,18 @@
 [
  {
+  "key": "intro-finishing",
+  "title": "Intro: hot hands vs. snakebitten",
+  "mode": "buffer",
+  "caption": "Who's finishing, and who's due? \ud83d\udd25\ud83e\udd76\n\nGoals above expected = goals minus the expected goals from every shot a player took.\n\n\ud83d\udd25 Kirill Kaprizov: 9 goals on 3.51 xG (+5.49), the most above expected in the league.\n\ud83d\udd25 Evan Bouchard: 6 goals on 1.17 xG, as a defenceman.\n\ud83e\udd76 Zach Benson: 0 goals on 2.54 xG.\n\ud83e\udd76 Jack Hughes: 2 goals on 4.10 xG, #5 in the league in expected goals.\n\nOver a few games most of these gaps are streaks, not skill. Our bet: the cold list starts scoring.\n\nData: NHL play-by-play through October 15, min. 4 games.\n\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.\n\n#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey",
+  "files": [
+   "intro-finishing/intro_finishing_1.jpg",
+   "intro-finishing/intro_finishing_2.jpg",
+   "intro-finishing/intro_finishing_3.jpg",
+   "intro-finishing/intro_finishing_4.jpg"
+  ],
+  "at": "2026-10-16 23:35 UTC"
+ },
+ {
   "key": "intro-standings",
   "title": "Intro: the real standings",
   "mode": "buffer",
@@ -80,19 +93,6 @@
    "intro-goalies/intro_goalies_4.jpg"
   ],
   "at": "2026-10-16 22:16 UTC"
- },
- {
-  "key": "intro-finishing",
-  "title": "Intro: hot hands vs. snakebitten",
-  "mode": "buffer",
-  "caption": "Who's finishing, and who's due? \ud83d\udd25\ud83e\udd76\n\nGoals above expected = goals minus the expected goals from every shot a player took.\n\n\ud83d\udd25 Kirill Kaprizov: 9 goals on 3.51 xG (+5.49), the most above expected in the league.\n\ud83d\udd25 Evan Bouchard: 6 goals on 1.17 xG, as a defenceman.\n\ud83e\udd76 Zach Benson: 0 goals on 2.54 xG.\n\ud83e\udd76 Jack Hughes: 2 goals on 4.10 xG, #5 in the league in expected goals.\n\nOver a few games most of these gaps are streaks, not skill. Our bet: the cold list starts scoring.\n\nData: NHL play-by-play through October 15, min. 4 games.\n\n#NHL #HockeyAnalytics #ExpectedGoals #AdvancedStats #NHLStats #FantasyHockey",
-  "files": [
-   "intro-finishing/intro_finishing_1.jpg",
-   "intro-finishing/intro_finishing_2.jpg",
-   "intro-finishing/intro_finishing_3.jpg",
-   "intro-finishing/intro_finishing_4.jpg"
-  ],
-  "at": "2026-10-16 22:12 UTC"
  },
  {
   "key": "game-2026020116",
