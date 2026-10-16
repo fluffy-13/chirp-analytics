@@ -18,7 +18,10 @@ ROOT = Path(__file__).resolve().parent
 
 # --- AI copy ---------------------------------------------------------------
 GEMINI_API_KEY = _env("GEMINI_API_KEY")
-GEMINI_MODEL = _env("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = _env("GEMINI_MODEL")  # optional override; otherwise the first available below
+# Tried in order; a model Google has retired (404) is skipped automatically.
+GEMINI_MODEL_FALLBACKS = ["gemini-3.8-flash", "gemini-flash-latest", "gemini-3.6-flash",
+                          "gemini-3.5-flash-lite"]
 
 # --- Instagram Graph API -----------------------------------------------------
 IG_ACCESS_TOKEN = _env("IG_ACCESS_TOKEN")

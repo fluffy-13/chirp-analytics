@@ -4,7 +4,7 @@ import logging
 import re
 import unicodedata
 
-from config import GEMINI_API_KEY, GEMINI_MODEL, IG_HANDLE
+from config import GEMINI_API_KEY, GEMINI_MODEL, GEMINI_MODEL_FALLBACKS, IG_HANDLE
 
 log = logging.getLogger(__name__)
 
@@ -79,21 +79,48 @@ Return JSON:
 """
 
 
+_working_model = None
+
+
+def _model_candidates():
+    if _working_model:
+        return [_working_model]
+    seen, out = set(), []
+    for m in ([GEMINI_MODEL] if GEMINI_MODEL else []) + GEMINI_MODEL_FALLBACKS:
+        if m and m not in seen:
+            seen.add(m)
+            out.append(m)
+    return out
+
+
+def _is_model_missing(exc):
+    text = str(exc)
+    return "404" in text or "NOT_FOUND" in text or "no longer available" in text
+
+
 def _call_gemini(prompt):
+    global _working_model
     from google import genai
     from google.genai import types
 
     client = genai.Client(api_key=GEMINI_API_KEY)
-    resp = client.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=SCHEMA,
-            temperature=0.8,
-        ),
-    )
-    return json.loads(resp.text)
+    config = types.GenerateContentConfig(response_mime_type="application/json",
+                                         response_schema=SCHEMA, temperature=0.8)
+    last_exc = None
+    for model in _model_candidates():
+        try:
+            resp = client.models.generate_content(model=model, contents=prompt, config=config)
+        except Exception as exc:
+            if _is_model_missing(exc):
+                log.info("Gemini model %s unavailable, trying the next one", model)
+                last_exc = exc
+                continue
+            raise
+        if _working_model != model:
+            log.info("Using Gemini model %s", model)
+        _working_model = model
+        return json.loads(resp.text)
+    raise RuntimeError(f"No Gemini model available: {last_exc}")
 
 
 def fallback_copy(post):
