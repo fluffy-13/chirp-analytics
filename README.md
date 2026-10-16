@@ -1,0 +1,38 @@
+# Latest card — run 38938720887 (2026-10-16T17:19Z)
+![card](2026-10-15_2026020116_matt-boldy.jpg)
+
+```
+Matt Boldy put up a 4.52 Game Score while logging 24:51 time on ice on 2026-10-15 as STL scored 4 and MIN scored 5. He finished well above expectation by scoring 3 goals on 0.65 individual xG, while team shot attempts were 24-10 in his team's favour (71% CF) at 5v5 while he was on the ice. Can Boldy maintain this high level of play driver performance?
+
+xG = our shot-quality model, trained on 237k NHL shots from the last two seasons. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #MinnesotaWild #MattBoldy #NHLAnalytics #AdvancedStats```
+
+## Run log
+```
+2026-10-16 17:19:16,117 INFO pipeline: Spotlight: Matt Boldy (MIN) Game Score 4.52, ixG 0.65
+2026-10-16 17:19:16,435 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:18,235 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:18,236 INFO content_generator: Gemini model gemini-3.8-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:18,236 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:18,649 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:18,649 INFO content_generator: Gemini model gemini-flash-latest unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:18,650 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:19,014 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:19,015 INFO content_generator: Gemini model gemini-3.6-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:19,015 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:19,304 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:19,305 INFO content_generator: Gemini model gemini-3.5-flash-lite unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:19,305 WARNING content_generator: Gemini call failed (attempt 1): No Gemini model available: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'sta
+2026-10-16 17:19:34,332 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:34,761 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:34,762 INFO content_generator: Gemini model gemini-3.8-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:34,762 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:39,170 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent "HTTP/1.1 503 Service Unavailable"
+2026-10-16 17:19:39,170 INFO content_generator: Gemini model gemini-flash-latest unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-16 17:19:39,170 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-16 17:19:49,002 INFO httpx: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent "HTTP/1.1 200 OK"
+2026-10-16 17:19:49,012 INFO content_generator: Using Gemini model gemini-3.6-flash
+2026-10-16 17:19:49,038 INFO renderer: Card saved: /home/runner/work/chirp-analytics/chirp-analytics/output_posts/2026-10-15_2026020116_matt-boldy.jpg
+2026-10-16 17:19:49,039 INFO pipeline: Dry run — card and caption written to /home/runner/work/chirp-analytics/chirp-analytics/output_posts
+```

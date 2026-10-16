@@ -1,0 +1,5 @@
+Matt Boldy put up a 4.52 Game Score while logging 24:51 time on ice on 2026-10-15 as STL scored 4 and MIN scored 5. He finished well above expectation by scoring 3 goals on 0.65 individual xG, while team shot attempts were 24-10 in his team's favour (71% CF) at 5v5 while he was on the ice. Can Boldy maintain this high level of play driver performance?
+
+xG = our shot-quality model, trained on 237k NHL shots from the last two seasons. Data: NHL play-by-play.
+
+#NHL #HockeyAnalytics #MinnesotaWild #MattBoldy #NHLAnalytics #AdvancedStats
