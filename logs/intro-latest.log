@@ -1,5 +1,5 @@
-2026-10-16 22:12:12,737 INFO publisher: Hosted 4 slides under posts/intro-finishing
-2026-10-16 22:12:24,118 INFO buffer_client: Buffer accepted post 6ad2a13d1c7e49ea4c276e95 (status sending)
-2026-10-16 22:12:44,462 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DeklALqibrP/
-2026-10-16 22:12:46,993 INFO publisher: Preview saved: intro-finishing
-2026-10-16 22:12:48,698 INFO pipeline: Posted Intro: hot hands vs. snakebitten (buffer)
+2026-10-16 22:16:25,361 INFO publisher: Hosted 4 slides under posts/intro-goalies
+2026-10-16 22:16:36,972 INFO buffer_client: Buffer accepted post 6ad2a23a1694d771d50bdb71 (status sending)
+2026-10-16 22:16:57,326 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DeklfLjCdsS/
+2026-10-16 22:16:59,474 INFO publisher: Preview saved: intro-goalies
+2026-10-16 22:17:00,679 INFO pipeline: Posted Intro: goalies stealing games (buffer)
