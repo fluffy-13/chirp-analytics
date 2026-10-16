@@ -34,6 +34,11 @@ pytest -q tests
 - **Instagram:** a professional (Business or Creator) account and a Meta app using *Instagram API with
   Instagram Login* (no Facebook Page needed). The token is long-lived but expires after 60 days — refresh it.
   Facebook-Login tokens also work; the publisher picks the right API host from the token.
+- **No Meta developer app? Post through Make.com:** set `MAKE_WEBHOOK_URL` and the bot hands the
+  hosted image URL + caption to a Make scenario (Custom webhook → Instagram for Business
+  "Create a Photo Post", optional Webhook response returning `{"media_id": "..."}`). Needs an
+  Instagram **Business** account linked to a Facebook Page. Run the workflow once with
+  "make_sample" ticked so Make learns the payload fields.
 - **Scheduling:** `.github/workflows/daily-post.yml` runs daily; add the keys as repo secrets.
 
 ## xG model

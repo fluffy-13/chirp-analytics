@@ -26,6 +26,11 @@ IG_USER_ID = _env("IG_USER_ID")
 GRAPH_API_VERSION = _env("GRAPH_API_VERSION", "v23.0")
 IG_HANDLE = _env("IG_HANDLE", "@chirpanalytics")
 
+# --- Posting through Make.com (no Meta developer app needed) ----------------
+# A Make scenario: Custom webhook -> Instagram for Business "Create a Photo Post".
+# Treat the URL like a password: anyone holding it can post to the account.
+MAKE_WEBHOOK_URL = _env("MAKE_WEBHOOK_URL")
+
 # --- Image hosting (Instagram fetches the image from a public URL) -----------
 # Option A: Supabase Storage public bucket (uploaded automatically)
 SUPABASE_URL = _env("SUPABASE_URL")

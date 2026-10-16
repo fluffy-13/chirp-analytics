@@ -1,4 +1,9 @@
-"""Hosts the image publicly, then runs the Instagram container → poll → publish flow."""
+"""Hosts the image publicly, then posts it.
+
+Two routes, picked automatically:
+  * MAKE_WEBHOOK_URL set  -> hand image URL + caption to a Make.com scenario that posts it
+  * otherwise             -> Instagram Graph API directly (needs a Meta developer app token)
+"""
 import logging
 import time
 from pathlib import Path
@@ -6,7 +11,7 @@ from pathlib import Path
 import requests
 
 from config import (GRAPH_API_VERSION, IG_ACCESS_TOKEN, IG_USER_ID, IMAGE_HOST_BASE_URL,
-                    SUPABASE_BUCKET, SUPABASE_SERVICE_KEY, SUPABASE_URL)
+                    MAKE_WEBHOOK_URL, SUPABASE_BUCKET, SUPABASE_SERVICE_KEY, SUPABASE_URL)
 
 log = logging.getLogger(__name__)
 
@@ -66,9 +71,55 @@ def _wait_until_ready(container_id, timeout=180, interval=4):
     raise PublishError(f"Container {container_id} not ready after {timeout}s")
 
 
-def publish(image_path, caption):
+def _make_payload(image_url, caption, post=None, sample=False):
+    post = post or {}
+    return {"image_url": image_url, "caption": caption, "sample": sample,
+            "game_id": post.get("game_id"), "player": post.get("player_name"),
+            "date": post.get("date")}
+
+
+def _post_to_make(payload, timeout=200):
+    """POST to the Make webhook. Returns the parsed JSON reply, or {} for a plain 'Accepted'."""
+    resp = requests.post(MAKE_WEBHOOK_URL, json=payload, timeout=timeout)
+    if resp.status_code >= 400:
+        raise PublishError(f"Make webhook returned {resp.status_code}: {resp.text[:300]}")
+    try:
+        body = resp.json()
+    except ValueError:
+        body = {}
+    if isinstance(body, dict) and body.get("error"):
+        raise PublishError(f"Make scenario reported an error: {body['error']}")
+    return body if isinstance(body, dict) else {}
+
+
+def publish_via_make(image_url, caption, post=None):
+    body = _post_to_make(_make_payload(image_url, caption, post))
+    media_id = body.get("media_id") or body.get("id")
+    if not media_id:
+        log.warning("Make accepted the post but sent no media id back; add a Webhook response "
+                    "module to the scenario to confirm posts")
+    log.info("Handed to Make: media_id=%s", media_id or "unconfirmed")
+    return {"media_id": media_id or "via-make", "permalink": body.get("permalink"),
+            "image_url": image_url}
+
+
+def send_make_sample():
+    """Teach Make the payload shape. Run BEFORE adding the Instagram module to the scenario."""
+    if not MAKE_WEBHOOK_URL:
+        raise PublishError("MAKE_WEBHOOK_URL is not set")
+    _post_to_make(_make_payload(
+        "https://cxmkjvnrovgkeslypmix.supabase.co/storage/v1/object/public/ig-posts/sample.jpg",
+        "Sample caption from Chirp Analytics (not a real post).",
+        {"game_id": 0, "player_name": "Sample Player", "date": "2026-01-01"}, sample=True),
+        timeout=60)
+    log.info("Sample payload sent to Make")
+
+
+def publish(image_path, caption, post=None):
     image_url = host_image(image_path)
     log.info("Image hosted at %s", image_url)
+    if MAKE_WEBHOOK_URL:
+        return publish_via_make(image_url, caption, post)
     container = _graph("POST", f"{IG_USER_ID}/media", image_url=image_url, caption=caption)
     _wait_until_ready(container["id"])
     media = _graph("POST", f"{IG_USER_ID}/media_publish", creation_id=container["id"])

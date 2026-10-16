@@ -62,7 +62,7 @@ def run(date, source, publish=False):
         return {"image": str(image_path), "caption": caption}
 
     from publisher import publish as ig_publish
-    result = ig_publish(image_path, caption)
+    result = ig_publish(image_path, caption, post)
     state["posted_game_ids"].append(post["game_id"])
     state["history"].append({
         "game_id": post["game_id"], "player": post["player_name"], "date": date,
@@ -78,9 +78,19 @@ def main(argv=None):
     ap.add_argument("--date", default=default_target_date(), help="YYYY-MM-DD (default: yesterday ET)")
     ap.add_argument("--publish", action="store_true", help="actually post to Instagram")
     ap.add_argument("--fixtures", help="directory of saved API JSON for offline runs")
+    ap.add_argument("--make-sample", action="store_true",
+                    help="send a sample payload to the Make webhook (scenario setup only)")
     args = ap.parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    if args.make_sample:
+        from publisher import send_make_sample
+        try:
+            send_make_sample()
+        except Exception:
+            log.exception("Sending the Make sample failed")
+            return 1
+        return 0
     source = FixtureSource(args.fixtures) if args.fixtures else LiveSource()
     try:
         run(args.date, source, publish=args.publish)
