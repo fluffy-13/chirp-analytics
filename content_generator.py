@@ -322,8 +322,11 @@ AI_NOTE = " Caption written with AI assistance."
 
 
 def build_game_caption(copy, game):
+    from cards import SEASON_GAMES, game_number
     a, h = game["teams"]["away"], game["teams"]["home"]
-    body = f"{copy['hook'].strip()}\n\n{copy['caption'].strip()}"
+    n = game_number(game["game_id"])
+    label = f"🏒 NHL Game #{n} of {SEASON_GAMES:,}\n" if n else ""
+    body = f"{label}{copy['hook'].strip()}\n\n{copy['caption'].strip()}"
     return _assemble(body, ["#NHL", "#HockeyAnalytics", _tag(a["name"]), _tag(h["name"])],
                      copy.get("hashtags", []), FOOTNOTE + (AI_NOTE if copy.get("ai") else ""))
 

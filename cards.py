@@ -191,7 +191,7 @@ def render_game_slide(game):
     away_c, home_c = _distinct(a["color"], h["color"])
     img, d = _canvas()
     status = {"OT": "FINAL · OT", "SO": "FINAL · SHOOTOUT"}.get(game["outcome"], "FINAL")
-    _header(d, f"GAME BREAKDOWN  //  {status}", _pretty_date(game["date"]))
+    _header(d, f"{_game_label(game)}  //  {status}", _pretty_date(game["date"]))
 
     # score block
     top = 118
@@ -517,6 +517,21 @@ def render_impact_slide(game, side, context=None):
     return img
 
 
+# --------------------------------------------------------------- game number ---
+SEASON_GAMES = 1312  # 32 teams x 82 games / 2
+
+
+def game_number(game_id):
+    """NHL game number for a regular-season game id (2026020116 -> 116), else None."""
+    s = str(game_id)
+    return int(s[6:]) if len(s) == 10 and s[4:6] == "02" else None
+
+
+def _game_label(game):
+    n = game_number(game["game_id"])
+    return f"NHL GAME #{n}" if n else "GAME BREAKDOWN"
+
+
 # --------------------------------------------------------------- cover slide ---
 def _mix(c1, c2, t):
     a, b = _hex_rgb(c1) if isinstance(c1, str) else c1, _hex_rgb(c2) if isinstance(c2, str) else c2
@@ -599,7 +614,7 @@ def render_cover_slide(game, headline=""):
     d = ImageDraw.Draw(img)
     d.rectangle([0, 0, W, 14], fill=C["accent"])
     status = {"OT": "FINAL · OT", "SO": "FINAL · SHOOTOUT"}.get(game["outcome"], "FINAL")
-    _header(d, f"GAME BREAKDOWN  //  {status}", _pretty_date(game["date"]))
+    _header(d, f"{_game_label(game)}  //  {status}", _pretty_date(game["date"]))
     d.text((M, 110), "Chirp Analytics", fill=C["text"], font=F("bold", 30))
 
     # logos + scores

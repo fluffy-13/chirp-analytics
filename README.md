@@ -2,7 +2,8 @@
 
 Automated NHL analytics for Instagram (@chirpanalytics).
 
-- **Every game, 5–10 minutes after the final horn:** a 5-slide carousel — the game breakdown
+- **Every game, 5–10 minutes after the final horn:** a cover slide (team-colour blend, logos,
+  score, xG, the AI headline) and then the game breakdown
   (score, expected-goals flow chart, shot/chance/power-play/faceoff comparison, three stars),
   then for each team a breakdown (xG, 5v5 shares, top performers, goalie with goals saved above
   expected) and a **player impact** slide: every skater's Game Score split into what drove it
@@ -11,6 +12,15 @@ Automated NHL analytics for Instagram (@chirpanalytics).
   or 0.5+ individual xG with xG± ≥ 0; OUTCHANCED: points but xG± ≤ −0.4), a tick at his season
   average and a ▲/▼ for a hot/cold run (last 5 games averaging 0.4+ above/below his season, with
   3 of the 5 on that side; needs 5 prior games).
+- **Trackers** (an extra slide in their teams' games): *Ovi's Farewell Tour* in Capitals games
+  (career goals, milestones, goals vs. tonight's opponent, goalies he's scored on, final visits,
+  games left, PP/GW/OT goals with all-time ranks) and *Crosby: Chasing History* in Penguins games
+  (the all-time points ladder around him, pace, assists rank). Career logs live on the `state`
+  branch (`trackers/{player_id}.json`), seeded once with `tools/backfill_trackers.py` and topped up
+  from the NHL game log on every post.
+- Posts carry the NHL game number (slides + first caption line), team logos (fetched from the NHL's
+  logo CDN at render time, never stored in this repo) and a short disclosure: unofficial, not
+  affiliated with the NHL; AI-written captions are labelled.
 - **Every Monday:** the weekly report — top and bottom 10 skaters (total Game Score) and top and
   bottom 10 teams (share of 5v5 expected goals).
 
