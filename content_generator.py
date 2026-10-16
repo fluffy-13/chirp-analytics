@@ -34,11 +34,20 @@ def fact_sheet(post):
         f"Game: {post['matchup']} on {post['date']}",
         f"Player: {post['player_name']} ({post['position']}, {post['team']})",
         f"Headline stat: {post['headline_value']} {post['headline_label']}",
-        *[f"- {b}" for b in post["sub_bullets"]],
-        f"Goals {p['G']}, assists {p['A']}, shots on goal {p['SOG']}, shot attempts {p['iCF']}",
-        f"Individual xG {p['ixG']:.2f}, Game Score {p['game_score']:.2f}, TOI {p['toi']}",
-        "Team xG: " + ", ".join(f"{k} {v:.2f}" for k, v in post["team_xg"].items()),
+        f"HIS OWN (individual) stats: {p['G']} goals, {p['A']} assists, {p['SOG']} shots on goal, "
+        f"{p['iCF']} shot attempts, {p['iHD']} attempts from the home-plate area, "
+        f"{p['ixG']:.2f} individual xG, {p['toi']} time on ice, Game Score {p['game_score']:.2f}",
     ]
+    on_ice = p["CF"] + p["CA"]
+    if on_ice:
+        lines.append(f"ON-ICE at 5v5 (all players, both teams, while he was on the ice): "
+                     f"shot attempts {p['CF']}-{p['CA']} in his team's favour "
+                     f"({100 * p['CF'] / on_ice:.0f}% CF)")
+    lines.append("TEAM totals for the game, xG: "
+                 + ", ".join(f"{k} {v:.2f}" for k, v in post["team_xg"].items()))
+    if p["G"] and p["ixG"] and p["G"] > p["ixG"]:
+        lines.append(f"Context: he scored {p['G']} goals on {p['ixG']:.2f} individual xG "
+                     f"(finishing above expectation).")
     return "\n".join(lines)
 
 
@@ -71,6 +80,9 @@ FACT SHEET (the only source of truth):
 RULES
 - Use ONLY numbers that appear in the fact sheet, written exactly as they appear. Do not round, convert, rank, or add any other number (no league ranks, season totals, or percentages that aren't listed).
 - Do not claim anything not supported by the fact sheet (no records, streaks, or "best of the season").
+- Keep the categories straight: HIS OWN stats are his alone; ON-ICE stats count every shot by both
+  teams while he was on the ice (never call them his, or his line's, individual numbers); TEAM
+  totals are the whole team's.
 - "xG" here is the page's own shot-quality model; call it xG, never "official".
 
 Return JSON:
