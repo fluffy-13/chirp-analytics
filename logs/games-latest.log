@@ -1,5 +1,6 @@
-2026-10-16 22:39:55,401 INFO google_genai.models: AFC is enabled with max remote calls: 10.
-2026-10-16 22:40:23,032 INFO content_generator: Using Gemini model gemini-3.8-flash
-2026-10-16 22:40:23,351 INFO cards: Rendered carousel for 2026020109: 2026-10-15_2026020109_0_cover.jpg, 2026-10-15_2026020109_1_game.jpg, 2026-10-15_2026020109_2_away.jpg, 2026-10-15_2026020109_3_away_impact.jpg, 2026-10-15_2026020109_4_home.jpg, 2026-10-15_2026020109_5_home_impact.jpg
-2026-10-16 22:40:26,372 INFO publisher: Preview saved: game-2026020109
-2026-10-16 22:40:27,861 INFO pipeline: Posted NYI 1 @ OTT 2 (SO) — 2026-10-15 (preview)
+2026-10-17 02:06:09,884 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 02:06:24,241 INFO content_generator: Using Gemini model gemini-3.8-flash
+2026-10-17 02:06:24,761 INFO cards: Rendered carousel for 2026020109: 2026-10-15_2026020109_0_cover.jpg, 2026-10-15_2026020109_1_game.jpg, 2026-10-15_2026020109_2_away.jpg, 2026-10-15_2026020109_3_away_impact.jpg, 2026-10-15_2026020109_4_home.jpg, 2026-10-15_2026020109_5_home_impact.jpg
+2026-10-17 02:06:30,792 INFO animations: Video 2026-10-15_2026020109_replay_slide.mp4: 445 frames (14.8s)
+2026-10-17 02:06:32,883 INFO publisher: Preview saved: game-2026020109
+2026-10-17 02:06:34,152 INFO pipeline: Posted NYI 1 @ OTT 2 (SO) — 2026-10-15 (preview)
