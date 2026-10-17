@@ -1,17 +1,19 @@
 name: Feature posts
 
 # Fantasy pickups Sunday 6:50 PM ET, rookie watch every other Wednesday 11:40 AM ET (the job
-# runs weekly and skips the off week), awards race on the 1st of each month 10:40 AM ET.
+# runs weekly and skips the off week), awards race on the 1st of each month 10:40 AM ET,
+# top lines Thursdays 11:40 AM ET.
 on:
   schedule:
     - cron: "50 22 * * 0"   # fantasy
     - cron: "40 15 * * 3"   # rookies (biweekly, decided in code)
     - cron: "40 14 1 * *"   # awards
+    - cron: "40 15 * * 4"   # top lines (Thursday)
   workflow_dispatch:
     inputs:
       feature:
         type: choice
-        options: [fantasy, rookies, awards]
+        options: [fantasy, rookies, awards, lines]
       mode:
         type: choice
         options: [default, preview, buffer]
@@ -53,6 +55,7 @@ jobs:
             "50 22 * * 0") FEATURE=fantasy ;;
             "40 15 * * 3") FEATURE=rookies ;;
             "40 14 1 * *") FEATURE=awards ;;
+            "40 15 * * 4") FEATURE=lines ;;
             *) FEATURE="${{ inputs.feature }}" ;;
           esac
           ARGS="$FEATURE"

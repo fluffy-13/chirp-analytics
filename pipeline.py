@@ -323,7 +323,8 @@ def run_intro(which, state, mode=None, force=False):
 
 
 # ------------------------------------------------------------------ features ---
-FEATURE_TITLES = {"awards": "Awards race", "rookies": "Rookie watch", "fantasy": "Fantasy pickups"}
+FEATURE_TITLES = {"awards": "Awards race", "rookies": "Rookie watch", "fantasy": "Fantasy pickups",
+                  "lines": "Top lines"}
 ROOKIE_EVERY_DAYS = 14
 
 
@@ -367,6 +368,12 @@ def run_feature(kind, source, state, as_of=None, mode=None, force=False):
         built = features.rookies_post(records, as_of, rookies)
         if not built:
             log.info("No rookies with 2+ games yet")
+            return None
+        slides, caption, alts = built
+    elif kind == "lines":
+        built = features.lines_post(records, as_of)
+        if not built:
+            log.info("Not enough line data yet")
             return None
         slides, caption, alts = built
     else:

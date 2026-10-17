@@ -27,6 +27,7 @@ FEATURES = {
     "awards": ["#NHL", "#NHLAwards", "#HartTrophy", "#Vezina", "#HockeyAnalytics"],
     "rookies": ["#NHL", "#NHLRookies", "#CalderTrophy", "#NHLProspects", "#HockeyAnalytics"],
     "fantasy": ["#FantasyHockey", "#WaiverWire", "#FantasyHockeyAdvice", "#NHL", "#HockeyAnalytics"],
+    "lines": ["#NHL", "#HockeyAnalytics", "#NHLLines", "#FantasyHockey", "#AdvancedStats"],
 }
 
 # a hashtag needs a letter: "#5 in xG" and "NHL Game #116" are not tags

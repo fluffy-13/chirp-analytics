@@ -66,8 +66,12 @@ def _table(kicker, right, title, subtitle, cols, rows, accent, row_h=92, note=No
         else:
             nx += 14
         name_f = F("bold", 32)
-        d.text((nx, mid - 20), _short_name(d, r["name"], name_f, x1 - nx - 70), fill=C["text"],
-               font=name_f, anchor="lm")
+        if r.get("fit"):  # a line / pair: shrink to fit rather than abbreviate
+            name_f = _fit(d, r["name"], "bold", 32, x1 - nx - 70, 22)
+            shown = r["name"]
+        else:
+            shown = _short_name(d, r["name"], name_f, x1 - nx - 70)
+        d.text((nx, mid - 20), shown, fill=C["text"], font=name_f, anchor="lm")
         d.text((nx, mid + 22), _ellipsize(d, r["tag"], F("semibold", 21), x1 - nx - 60),
                fill=r.get("tag_color", C["muted"]), font=F("semibold", 21), anchor="lm")
         d.text((x1, mid), r["c1"], fill=C["body"], font=F("regular", 28), anchor="mm")
@@ -426,3 +430,88 @@ def fantasy_post(records, as_of, established=None):
                        for i, p in enumerate(picks[:5], 1)) +
                "\nSwipe for all 10. Check availability in your league first. Who are you adding? 👇")
     return [cover, table], caption, ["Fantasy pickups cover: top 3 adds", "Top 10 fantasy pickups"]
+
+
+# -------------------------------------------------------------------- lines ---
+LINES_GOLD = "#00C2FF"
+
+
+def _line_name(u):
+    return "  ·  ".join(u["last"])
+
+
+def _min(sec):
+    return f"{sec / 60:.0f}"
+
+
+def lines_post(records, as_of, week_days=7, top=10):
+    """Weekly Top Lines: season's best forward lines and D pairs by 5v5 xG share, plus the line
+    of the week (most 5v5 expected goals margin over the last 7 days)."""
+    tg = S.team_games(records)
+    max_gp = max(tg.values() or [1])
+    min_toi = max(2400, 300 * max_gp)          # 40 min early on, ~5 min a game later
+    season_units = S.lines(records)
+    since = (Date.fromisoformat(as_of) - timedelta(days=week_days - 1)).isoformat()
+    week_units = S.lines([r for r in records if r["date"] >= since])
+    fwd = sorted((u for u in season_units.values() if u["kind"] == "F" and u["toi"] >= min_toi),
+                 key=lambda u: -u["xg_pct"])[:top]
+    pairs = sorted((u for u in season_units.values() if u["kind"] == "D" and u["toi"] >= min_toi),
+                   key=lambda u: -u["xg_pct"])[:top]
+    week = sorted((u for u in week_units.values() if u["kind"] == "F" and u["toi"] >= 1200),
+                  key=lambda u: -u["xg_pm"])[:5]
+    if not fwd or not pairs:
+        return None
+    label = _label(as_of)
+
+    def rows(units, with_gp=False):
+        return [{"rank": i, "logo": u["team"], "name": _line_name(u), "fit": True,
+                 "tag": f"{u['team']}  ·  {_min(u['toi'])} min together at 5v5" +
+                        (f"  ·  {u['gp']} GP" if with_gp else ""),
+                 "tag_color": _team_col(u["team"]),
+                 "c1": f"{u['xgf']:.1f}–{u['xga']:.1f}", "c2": f"{u['gf']}–{u['ga']}",
+                 "value": f"{u['xg_pct']:.1f}%", "value_color": LINES_GOLD}
+                for i, u in enumerate(units, 1)]
+
+    cards = [("BEST FORWARD LINE", _line_name(fwd[0]), f"{fwd[0]['xg_pct']:.1f}% of 5v5 expected goals  ·  "
+              f"{_min(fwd[0]['toi'])} min", fwd[0]["team"], _team_col(fwd[0]["team"])),
+             ("BEST D PAIR", _line_name(pairs[0]), f"{pairs[0]['xg_pct']:.1f}% of 5v5 expected goals  ·  "
+              f"{_min(pairs[0]['toi'])} min", pairs[0]["team"], _team_col(pairs[0]["team"]))]
+    if week:
+        w = week[0]
+        cards.append(("LINE OF THE WEEK", _line_name(w), f"{_signed(w['xg_pm'])} 5v5 xG margin  ·  "
+                      f"goals {w['gf']}–{w['ga']}", w["team"], _team_col(w["team"])))
+    cover = _cover(f"TOP LINES  //  {label}", f"{len(records)} GAMES", "WHO'S CLICKING", "TOP LINES",
+                   "Forward lines and D pairs, by share of 5v5 expected goals", LINES_GOLD, cards, h=170)
+    cols = ["LINE", "xGF–xGA", "GF–GA", "5V5 xG%"]
+    note = (f"Season to date, min. {_min(min_toi)} minutes together at 5v5. xGF–xGA = expected goals "
+            "for and against while they were on the ice together; GF–GA = actual goals.")
+    slides = [cover,
+              _table(f"TOP LINES  //  {label}", "SEASON", "TOP 10 FORWARD LINES",
+                     "Share of 5v5 expected goals while the trio is on the ice", cols, rows(fwd),
+                     LINES_GOLD, note=note),
+              _table(f"TOP LINES  //  {label}", "SEASON", "TOP 10 D PAIRS",
+                     "Share of 5v5 expected goals while the pair is on the ice",
+                     ["PAIR"] + cols[1:], rows(pairs), LINES_GOLD, note=note)]
+    alts = ["Top lines cover: best forward line, best defence pair, line of the week",
+            "Top 10 forward lines by 5v5 expected goals share", "Top 10 defence pairs by 5v5 expected goals share"]
+    if week:
+        wrows = [{"rank": i, "logo": u["team"], "name": _line_name(u), "fit": True,
+                  "tag": f"{u['team']}  ·  {_min(u['toi'])} min  ·  {u['gp']} GP",
+                  "tag_color": _team_col(u["team"]), "c1": f"{u['xgf']:.1f}–{u['xga']:.1f}",
+                  "c2": f"{u['gf']}–{u['ga']}", "value": _signed(u["xg_pm"]), "value_color": LINES_GOLD}
+                 for i, u in enumerate(week, 1)]
+        slides.append(_table(f"TOP LINES  //  {label}", "LAST 7 DAYS", "LINES OF THE WEEK",
+                             "Biggest 5v5 expected-goals margin over the last 7 days (min. 20 min)",
+                             ["LINE", "xGF–xGA", "GF–GA", "xG MARGIN"], wrows, LINES_GOLD, row_h=150))
+        alts.append("Forward lines of the week by 5v5 expected goals margin")
+    f0, p0 = fwd[0], pairs[0]
+    caption = (f"Top lines 🔥 through {Date.fromisoformat(as_of).strftime('%B %-d')}: who's clicking at 5-on-5.\n\n"
+               f"🥇 Best line: {' – '.join(f0['last'])} ({f0['team']}), {f0['xg_pct']:.1f}% of 5v5 xG "
+               f"in {_min(f0['toi'])} minutes together.\n"
+               f"🛡️ Best pair: {' – '.join(p0['last'])} ({p0['team']}), {p0['xg_pct']:.1f}%.\n")
+    if week:
+        w = week[0]
+        caption += (f"📈 Line of the week: {' – '.join(w['last'])} ({w['team']}), "
+                    f"{_signed(w['xg_pm'])} xG margin.\n")
+    caption += "\nWhich line is your team's best? 👇"
+    return slides, caption, alts

@@ -53,8 +53,10 @@ def encode_game(game):
                 "sa": g["shots_against"], "sv": g["saves"], "ga": g["goals_against"],
                 "xga": g["xga"], "toi": _sec(g.get("toi")), "dec": g.get("decision")}
         gk[str(g["player_id"])] = [vals[f] for f in GK_FIELDS]
+    ln = [[u["team"], u["kind"], u["players"], u.get("last") or u["names"], u["toi"], u["cf"], u["ca"],
+           u["xgf"], u["xga"], u["gf"], u["ga"]] for u in game.get("lines", [])]
     return {"id": game["game_id"], "date": game["date"][:10], "outcome": game["outcome"],
-            "teams": teams, "sk": sk, "gk": gk}
+            "teams": teams, "sk": sk, "gk": gk, "ln": ln}
 
 
 def _sec(clock):

@@ -123,3 +123,27 @@ def category_values(players, min_gp=3):
         p["z"] = {c: (p["rates"][c] - stats[c][0]) / stats[c][1] for c in CATS}
         p["value"] = sum(p["z"].values())
     return pool
+
+
+# ----------------------------------------------------------------- lines ---
+def lines(records):
+    """(team, kind, player ids) -> 5v5 totals for forward lines (kind F) and D pairs (kind D)."""
+    out = {}
+    for rec in records:
+        for team, kind, pids, last, toi, cf, ca, xgf, xga, gf, ga in rec.get("ln", []):
+            key = (team, kind, tuple(pids))
+            u = out.setdefault(key, {"team": team, "kind": kind, "players": list(pids), "last": last,
+                                     "toi": 0, "cf": 0, "ca": 0, "xgf": 0.0, "xga": 0.0, "gf": 0, "ga": 0,
+                                     "gp": 0})
+            u["last"] = last
+            u["gp"] += 1
+            for k, v in (("toi", toi), ("cf", cf), ("ca", ca), ("xgf", xgf), ("xga", xga), ("gf", gf),
+                         ("ga", ga)):
+                u[k] += v
+    for u in out.values():
+        tot = u["xgf"] + u["xga"]
+        u["xg_pct"] = 100 * u["xgf"] / tot if tot else 50.0
+        u["xg_pm"] = u["xgf"] - u["xga"]
+        cft = u["cf"] + u["ca"]
+        u["cf_pct"] = 100 * u["cf"] / cft if cft else 50.0
+    return out

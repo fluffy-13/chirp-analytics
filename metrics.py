@@ -231,7 +231,53 @@ def _strength_toi(pbp, on_ice, home_id):
                 side = _pp_side(code)
                 if side:
                     out[pid]["toipp" if (side == "home") == is_home else "toish"] += ov
-    return out, toi5_total
+    return out, toi5_total, segs
+
+
+def _units(segs, on_ice, positions, fives):
+    """5v5 forward lines (exactly 3 F on) and defence pairs (exactly 2 D on), per team.
+
+    Second-by-second from the shifts: who was on together at 5v5, for how long, and the shot
+    attempts, expected goals and goals for/against while they were. A second s covers (s-1, s],
+    the same convention _players_on_ice uses for events.
+    Returns {(team_id, "F"|"D", (sorted player ids)): {toi, cf, ca, xgf, xga, gf, ga}}."""
+    units = defaultdict(lambda: defaultdict(float))
+    present = {}   # (period, second) -> {team_id: ([F], [D])}
+    for period, shifts in (on_ice or {}).items():
+        five_secs = set()
+        for t0, t1, code in segs.get(period, ()):
+            if code == "1551":
+                five_secs.update(range(t0 + 1, t1 + 1))
+        if not five_secs:
+            continue
+        grid = defaultdict(lambda: defaultdict(lambda: ([], [])))
+        for start, end, pid, tid in shifts:
+            pos = positions.get(pid)
+            if pos not in ("C", "L", "R", "D"):
+                continue
+            for sec in range(start + 1, end + 1):
+                if sec in five_secs:
+                    grid[sec][tid][1 if pos == "D" else 0].append(pid)
+        for sec, teams in grid.items():
+            present[(period, sec)] = teams
+            for tid, (fwd, dee) in teams.items():
+                if len(fwd) == 3:
+                    units[(tid, "F", tuple(sorted(fwd)))]["toi"] += 1
+                if len(dee) == 2:
+                    units[(tid, "D", tuple(sorted(dee)))]["toi"] += 1
+    for period, sec, team, xg, goal in fives:
+        teams = present.get((period, sec))
+        if not teams:
+            continue
+        for tid, (fwd, dee) in teams.items():
+            side = "f" if tid == team else "a"
+            for kind, group, n in (("F", fwd, 3), ("D", dee, 2)):
+                if len(group) == n:
+                    u = units[(tid, kind, tuple(sorted(group)))]
+                    u["c" + side] += 1
+                    u["xg" + side] += xg
+                    u["g" + side] += 1 if goal else 0
+    return units
 
 
 def _new_team():
@@ -250,6 +296,7 @@ def analyze_game(bundle):
     goalie_xga = defaultdict(float)
     goalie_ga = defaultdict(int)
     timeline = []       # (elapsed sec, team id, xG, is goal, scorer id)
+    fives = []          # 5v5 attempts: (period, sec, team id, xG, is goal)
     last_attempt = {}   # team -> (period, sec, y) of its previous attempt, blocked included
     prev_event = None   # (period, sec, canonical type, x, y, team) — previous play in the period
     team_xg = defaultdict(float)
@@ -332,6 +379,8 @@ def analyze_game(bundle):
                     bt = team_of.get(d["blockingPlayerId"])
                     if bt in T:
                         T[bt]["blocks"] += 1
+                if is_5v5(sit):
+                    fives.append((period, sec, team, xg, kind == "goal"))
                 if is_5v5(sit) and on_ice:
                     for pid, tid in _players_on_ice(on_ice, period, sec):
                         side_ = "F" if tid == team else "A"
@@ -369,7 +418,9 @@ def analyze_game(bundle):
                       x, y, event_team)
 
     # --- ice time by strength (5v5 / PP / SH) from shifts x situation codes ----
-    toi_split, team_toi5 = _strength_toi(pbp, on_ice, home_id)
+    toi_split, team_toi5, segs = _strength_toi(pbp, on_ice, home_id)
+    positions = {pid: r.get("positionCode") for pid, r in roster.items()}
+    unit_stats = _units(segs, on_ice, positions, fives)
     for pid, parts in toi_split.items():
         for k, v in parts.items():
             s[pid][k] += v
@@ -507,6 +558,14 @@ def analyze_game(bundle):
         "goalies": goalies,
         "stars": stars,
         "game_length": game_len,
+        "lines": [{"team": (away_t if tid == away_id else home_t)["abbrev"], "kind": kind,
+                   "players": list(pids), "names": [names.get(pid, "") for pid in pids],
+                   "last": [((roster.get(pid) or {}).get("lastName") or {}).get("default", "")
+                            for pid in pids],
+                   "toi": int(u["toi"]), "cf": int(u["cf"]), "ca": int(u["ca"]),
+                   "xgf": round(u["xgf"], 3), "xga": round(u["xga"], 3),
+                   "gf": int(u["gf"]), "ga": int(u["ga"])}
+                  for (tid, kind, pids), u in unit_stats.items() if u["toi"] >= 30],
         "timeline": [{"t": t, "side": "home" if tid == home_id else "away", "xg": round(xg, 3),
                       "goal": goal, "scorer": names.get(sc, ""), "shooter_id": sc, "x": nx, "y": ny}
                      for t, tid, xg, goal, sc, nx, ny in timeline],

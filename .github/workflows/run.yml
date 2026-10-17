@@ -6,7 +6,7 @@ on:
       command:
         description: "What to run"
         type: choice
-        options: [games, weekly, live, night, intro, awards, rookies, fantasy, buffer-check, make-sample]
+        options: [games, weekly, live, night, intro, awards, rookies, fantasy, lines, buffer-check, make-sample]
         default: games
       date:
         description: "games: game night / awards, rookies, fantasy: through date (YYYY-MM-DD, blank = yesterday)"
