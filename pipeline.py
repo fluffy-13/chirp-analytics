@@ -203,9 +203,17 @@ def _start_time(g):
         return None
 
 
+LIVE = {"budget_spent": False}   # read by main.py: True -> start a follow-on run
+
+
 def run_live(source, state, mode=None, poll=120, max_runtime=5.6 * 3600, shift_wait=360,
-             lookahead=6 * 3600, now=None, sleep=time.sleep):
-    """Poll until every game in the window is posted (or the runtime budget is spent)."""
+             lookahead=16 * 3600, now=None, sleep=time.sleep):
+    """Poll until every game in the window is posted (or the runtime budget is spent).
+
+    GitHub often starts scheduled runs late or drops them, so a run doesn't exit just because
+    puck drop is hours away: it waits (posting the slate story on time), and if it runs out of
+    budget with games still to post, LIVE["budget_spent"] tells the workflow to chain a new run."""
+    LIVE["budget_spent"] = False
     now = now or (lambda: datetime.now(timezone.utc))
     started = now()
     first_final = {}
@@ -221,7 +229,8 @@ def run_live(source, state, mode=None, poll=120, max_runtime=5.6 * 3600, shift_w
         except Exception:
             log.exception("Slate story check failed")
         if (t - started).total_seconds() > max_runtime:
-            log.info("Runtime budget spent; the next scheduled run takes over")
+            log.info("Runtime budget spent; handing over to a follow-on run")
+            LIVE["budget_spent"] = True
             break
         pending = 0
         for day in slate_dates(t.astimezone(ET)):

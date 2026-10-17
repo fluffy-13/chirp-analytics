@@ -158,6 +158,16 @@ def test_live_gives_up_after_repeated_failures(env):
     assert gave_up == [MIN_GAME] and not state.done("games", MIN_GAME)
 
 
+def test_live_waits_for_later_games_and_flags_a_follow_on_run(env):
+    src, state, clock, _ = env
+    src.states = {MIN_GAME: "LIVE", SO_GAME: "OFF"}   # never ends within this run's budget
+    pipeline.run_live(src, state, now=clock.now, sleep=clock.sleep, poll=600, max_runtime=3600)
+    assert pipeline.LIVE["budget_spent"] and state.done("games", SO_GAME)
+    src.states[MIN_GAME] = "FINAL"
+    pipeline.run_live(src, state, now=clock.now, sleep=clock.sleep)
+    assert not pipeline.LIVE["budget_spent"] and state.done("games", MIN_GAME)
+
+
 def test_slate_includes_last_night_after_midnight():
     et = pipeline.ET
     late = datetime(2026, 10, 16, 0, 45, tzinfo=et)

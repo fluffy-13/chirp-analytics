@@ -17,6 +17,7 @@ Add --fixtures DIR to run offline on saved API JSON. Where posts go is POST_MODE
 import argparse
 import logging
 import sys
+from pathlib import Path
 
 from nhl_fetcher import FixtureSource, LiveSource, default_target_date
 
@@ -25,7 +26,7 @@ log = logging.getLogger("main")
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check",
+    ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check", "buffer-status",
                                             "intro", "awards", "rookies", "fantasy", "lines", "night"])
     ap.add_argument("--date", default=None, help="game night YYYY-MM-DD (games; default yesterday ET)")
     ap.add_argument("--game-id", default=None)
@@ -83,6 +84,14 @@ def _run(args):
             log.exception("Buffer check failed")
             return 1
 
+    if args.command == "buffer-status":
+        import buffer_status
+        try:
+            return buffer_status.run()
+        except Exception:
+            log.exception("Buffer status check failed")
+            return 1
+
     if args.command == "make-sample":
         from publisher import send_make_sample
         try:
@@ -110,6 +119,8 @@ def _run(args):
         if args.command == "live":
             gave_up = pipeline.run_live(source, state, mode=args.mode,
                                         max_runtime=args.max_runtime * 3600)
+            if pipeline.LIVE["budget_spent"]:
+                Path("continue-live").write_text("1")  # live.yml dispatches the next run
             if gave_up:
                 log.error("Gave up on games after repeated failures: %s", gave_up)
                 return 1

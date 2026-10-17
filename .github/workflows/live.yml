@@ -7,7 +7,9 @@ on:
   schedule:
     # Hourly from 11:10 AM to 2:10 AM ET (EDT). GitHub can start scheduled runs late or skip
     # them, so every hour is a backup for the last; extra runs queue behind the active one
-    # (concurrency below) and exit within a minute when there's nothing to post.
+    # (concurrency below) and exit within a minute when there's nothing to post. A run that
+    # starts before puck drop waits for the games, and one that runs out of time with games
+    # still to post starts the next run itself, so one run that fires carries the whole night.
     - cron: "10 15-23 * * *"
     - cron: "10 0-6 * * *"
   workflow_dispatch:
@@ -18,6 +20,7 @@ concurrency:
 
 permissions:
   contents: write   # state + previews branches
+  actions: write    # chain a follow-on run when this one runs out of time
 
 jobs:
   live:
@@ -43,3 +46,12 @@ jobs:
           BUFFER_API_KEY: ${{ secrets.BUFFER_API_KEY }}
           BUFFER_CHANNEL_ID: ${{ vars.BUFFER_CHANNEL_ID }}
         run: python main.py live --max-runtime 5.6
+      - name: Chain the next run if games are still to come
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f continue-live ]; then
+            gh workflow run live.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
+            echo "Started a follow-on run"
+          fi
