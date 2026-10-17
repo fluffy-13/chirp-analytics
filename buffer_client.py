@@ -160,3 +160,20 @@ def check():
                 log.info("schema %s: %s", k, [f["name"] for f in v["inputFields"]])
     except BufferError as exc:
         log.info("Schema introspection not available: %s", exc)
+    try:  # every asset / Instagram / video type, with fields or enum values
+        names = [t["name"] for t in _gql("query { __schema { types { name } } }")["__schema"]["types"]]
+        wanted = [n for n in names if any(k in n.lower() for k in ("asset", "instagram", "video", "reel"))]
+        log.info("schema types: %s", wanted)
+        for n in wanted:
+            t = _gql('query($n: String!) { __type(name: $n) { kind inputFields { name type { name kind '
+                     'ofType { name kind ofType { name } } } } fields { name } enumValues { name } } }',
+                     {"n": n})["__type"]
+            if t:
+                vals = (t.get("enumValues") and [e["name"] for e in t["enumValues"]]) or \
+                       (t.get("inputFields") and [(f["name"], f["type"]["name"] or
+                                                   (f["type"]["ofType"] or {}).get("name"))
+                                                  for f in t["inputFields"]]) or \
+                       [f["name"] for f in (t.get("fields") or [])]
+                log.info("type %s (%s): %s", n, t["kind"], vals)
+    except Exception as exc:
+        log.info("Type listing not available: %s", exc)
