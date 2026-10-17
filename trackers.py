@@ -373,7 +373,48 @@ def _ovi_slide(source, game, bundle):
     sched = _schedule(source, "WSH", season)
     img = render_ovi(game, clog, row, sched, ranks)
     clog.save(f"Tracker: Ovechkin {game['game_id']}")
-    return ("ovi", img), (f"Ovechkin farewell tour tracker: {t['g']} career goals")
+    event = _ovi_event(game, clog, row, ranks, sched) if row and row["g"] else None
+    return ("ovi", img), (f"Ovechkin farewell tour tracker: {t['g']} career goals"), event
+
+
+def _ovi_event(game, clog, row, ranks, sched):
+    """Data for the Ovechkin goal Reel."""
+    t = clog.totals()
+    gid = str(game["game_id"])
+    before_counts = {}
+    for k, r in clog.games.items():
+        if k != gid:
+            for g in r.get("gk", []):
+                if g:
+                    before_counts[g] = before_counts.get(g, 0) + 1
+    victims_before = len(before_counts)
+    shots = sorted((e for e in game["timeline"] if e.get("shooter_id") == OVI and e["goal"]),
+                   key=lambda e: e["t"])
+    names = clog.data["goalies"]
+    goals, seen = [], dict(before_counts)
+    for i, g in enumerate(row.get("gk", [])):
+        e = shots[i] if i < len(shots) else {}
+        if not g:
+            line = "Empty-netter"
+        else:
+            who = names.get(str(g)) or "?"
+            seen[g] = seen.get(g, 0) + 1
+            if seen[g] == 1:
+                victims_before += 1
+                line = f"New victim #{victims_before}: {who}"
+            else:
+                line = f"{who}: goal #{seen[g]} against him"
+        goals.append({"x": e.get("x"), "y": e.get("y"), "xg": e.get("xg", 0.1), "line": line})
+    nxt = (t["g"] // 50 + 1) * 50
+    day = game["date"][:10]
+    left = [g for g in sched if (g["gameDate"], g["id"]) > (day, game["game_id"])]
+    extra = f"{len(left)} REGULAR-SEASON GAMES LEFT"
+    if not row["home"] and not any(g["homeTeam"]["abbrev"] == row["opp"] for g in left):
+        extra = f"FINAL REGULAR-SEASON VISIT TO {CITY.get(row['opp'], row['opp']).upper()}"
+    return {"kind": "ovi", "date": day, "game_id": game["game_id"], "before": t["g"] - row["g"],
+            "after": t["g"], "opp": row["opp"], "home": row["home"], "goals": goals,
+            "record": ranks.get("goals") == 1, "next_milestone": nxt, "to_next": nxt - t["g"],
+            "extra": extra}
 
 
 def _crosby_slide(source, game, bundle):
@@ -406,20 +447,39 @@ def _crosby_slide(source, game, bundle):
     a_rank, _ = _rank(_leaders(source, "assists"), "assists", CROSBY, t["a"])
     img = render_crosby(game, clog, row, ladder, rank, pace, a_rank)
     clog.save(f"Tracker: Crosby {game['game_id']}")
-    return ("crosby", img), f"Sidney Crosby all-time points tracker: {t['p']:,} career points, #{rank}"
+    event = None
+    if row and (row["g"] + row["a"]):
+        before = t["p"] - row["g"] - row["a"]
+        passed = [r for r in board if r["playerId"] != CROSBY and before <= r["points"] < t["p"]]
+        if passed:
+            lo = max(0, idx - 2)
+            rows = board[lo: idx + 1 + len(passed) + 1][:7]
+            above = [r for r in board[:idx]]
+            event = {"kind": "crosby", "date": day, "game_id": game["game_id"], "before": before,
+                     "after": t["p"], "rank_after": idx + 1,
+                     "board": [{"name": r["skaterFullName"], "points": r["points"],
+                                "me": r["playerId"] == CROSBY} for r in rows],
+                     "passed": [r["skaterFullName"] for r in sorted(passed, key=lambda r: r["points"])],
+                     "next_name": above[-1]["skaterFullName"] if above else None,
+                     "to_next": (above[-1]["points"] - t["p"]) if above else None}
+    return (("crosby", img), f"Sidney Crosby all-time points tracker: {t['p']:,} career points, #{rank}",
+            event)
 
 
-def tracker_slides(source, game, bundle):
-    """[(name, image)], [alt text] for any tracker that applies to this game. Never raises."""
+def tracker_slides(source, game, bundle, events=None):
+    """[(name, image)], [alt text] for any tracker that applies to this game. Never raises.
+    Milestone events (Ovechkin goal, Crosby passing someone) are appended to `events`."""
     slides, alts = [], []
     abbrevs = {game["teams"]["away"]["abbrev"], game["teams"]["home"]["abbrev"]}
     for pid, team, fn in ((OVI, "WSH", _ovi_slide), (CROSBY, "PIT", _crosby_slide)):
         if team not in abbrevs or not hasattr(source, "_get"):
             continue
         try:
-            slide, alt = fn(source, game, bundle)
+            slide, alt, event = fn(source, game, bundle)
             slides.append(slide)
             alts.append(alt)
+            if event and events is not None:
+                events.append(event)
         except Exception:
             log.exception("Tracker for %s skipped", pid)
     return slides, alts

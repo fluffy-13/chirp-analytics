@@ -294,7 +294,12 @@ def analyze_game(bundle):
                     if goalie:
                         goalie_xga[goalie] += xg
                     if xg or kind == "goal":
-                        timeline.append((t, team, xg, kind == "goal", shooter))
+                        nx = ny = None
+                        if x is not None and y is not None:
+                            net_x = attacked_net_x(x, d.get("zoneCode"), is_home,
+                                                   play.get("homeTeamDefendingSide"))
+                            nx, ny = (x, y) if net_x > 0 else (-x, -y)  # attacking +x
+                        timeline.append((t, team, xg, kind == "goal", shooter, nx, ny))
                     if xg and x is not None and y is not None:
                         dist, ang = shot_geometry(x, y, d.get("zoneCode"), is_home,
                                                   play.get("homeTeamDefendingSide"))
@@ -503,8 +508,8 @@ def analyze_game(bundle):
         "stars": stars,
         "game_length": game_len,
         "timeline": [{"t": t, "side": "home" if tid == home_id else "away", "xg": round(xg, 3),
-                      "goal": goal, "scorer": names.get(sc, "")}
-                     for t, tid, xg, goal, sc in timeline],
+                      "goal": goal, "scorer": names.get(sc, ""), "shooter_id": sc, "x": nx, "y": ny}
+                     for t, tid, xg, goal, sc, nx, ny in timeline],
     }
 
 

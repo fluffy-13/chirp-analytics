@@ -31,12 +31,13 @@ def host_image(path, folder=None):
     name = f"{folder.strip('/')}/{path.name}" if folder else path.name
     if SUPABASE_URL and SUPABASE_SERVICE_KEY:
         url = f"{SUPABASE_URL}/storage/v1/object/{SUPABASE_BUCKET}/{name}"
-        headers = {"apikey": SUPABASE_SERVICE_KEY, "Content-Type": "image/jpeg", "x-upsert": "true"}
+        ctype = "video/mp4" if path.suffix.lower() == ".mp4" else "image/jpeg"
+        headers = {"apikey": SUPABASE_SERVICE_KEY, "Content-Type": ctype, "x-upsert": "true"}
         if SUPABASE_SERVICE_KEY.startswith("eyJ"):
             # legacy service_role JWT; new sb_secret_ keys go in `apikey` only and the
             # gateway builds the Authorization header itself
             headers["Authorization"] = f"Bearer {SUPABASE_SERVICE_KEY}"
-        resp = requests.post(url, data=path.read_bytes(), timeout=30, headers=headers)
+        resp = requests.post(url, data=path.read_bytes(), timeout=180, headers=headers)
         if resp.status_code >= 400:
             raise PublishError(f"Supabase upload failed: {resp.status_code} {resp.text[:200]}")
         return f"{SUPABASE_URL}/storage/v1/object/public/{SUPABASE_BUCKET}/{name}"
@@ -226,6 +227,23 @@ def save_preview(image_paths, caption, key, title, mode="preview", keep=80):
     log.info("Preview saved: %s", key)
 
 
+def publish_reel(video_path, caption, key, title, meta=None, mode=None, thumb_ms=None):
+    """Post a Reel (vertical video). Returns a result dict with media_id."""
+    from hashtags import enforce
+    caption = enforce(caption)
+    mode = (mode or POST_MODE).lower()
+    if mode == "preview":
+        save_preview([video_path], caption, key, title)
+        return {"media_id": "preview", "permalink": None, "mode": "preview"}
+    url = host_image(video_path, folder="reels/" + key.replace(":", "-"))
+    if mode == "buffer":
+        from buffer_client import create_post
+        result = create_post([url], caption, post_type="reel", thumb_ms=thumb_ms)
+    else:
+        raise PublishError(f"Reels aren't supported in {mode} mode yet")
+    return {**result, "mode": mode}
+
+
 def publish_carousel(image_paths, caption, key, title, meta=None, mode=None):
     """Post a carousel (or save a preview). Returns a result dict with media_id."""
     from hashtags import enforce
@@ -239,7 +257,8 @@ def publish_carousel(image_paths, caption, key, title, meta=None, mode=None):
     log.info("Hosted %d slides under %s", len(urls), folder)
     if mode == "buffer":
         from buffer_client import create_post
-        result = create_post(urls, caption, alt_texts=(meta or {}).get("alt_texts"))
+        result = create_post(urls, caption, alt_texts=(meta or {}).get("alt_texts"),
+                             thumb_ms=(meta or {}).get("thumb_ms"))
     elif mode == "make":
         if not MAKE_WEBHOOK_URL:
             raise PublishError("POST_MODE=make but MAKE_WEBHOOK_URL is not set")

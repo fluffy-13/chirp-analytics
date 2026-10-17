@@ -73,6 +73,16 @@ def env(tmp_path, monkeypatch):
     monkeypatch.setattr(cards, "OUTPUT_DIR", tmp_path / "out")
     monkeypatch.setattr(publisher, "_preview_store", LocalStore(tmp_path / "previews"))
     monkeypatch.setattr(pipeline, "generate_game_copy", content_generator.fallback_game_copy)
+    # animations are tested in test_animations.py; here a placeholder file keeps tests fast
+    import reels
+
+    def fake_video(*a, **k):
+        p = tmp_path / "out" / f"stub_{len(list((tmp_path / 'out').glob('stub_*')))}.mp4"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(b"mp4")
+        return p
+    for name in ("render_game_replay", "render_ovi_goal", "render_crosby_climb", "render_spotlight"):
+        monkeypatch.setattr(reels.A, name, fake_video)
     state = pipeline.State(LocalStore(tmp_path / "state"))
     # 11:30pm ET on Oct 15 -> slate is Oct 15
     clock = Clock(datetime(2026, 10, 16, 3, 30, tzinfo=timezone.utc))
@@ -110,8 +120,12 @@ def test_live_posts_when_final_and_stops(env):
     assert state.done("games", SO_GAME) and state.done("games", MIN_GAME)
     assert calls["n"] == 3  # posted on the very next poll after going final, then exited
     index = json.loads((tmp / "previews" / "index.json").read_text())
-    assert {e["key"] for e in index} == {f"game-{MIN_GAME}", f"game-{SO_GAME}"}
-    assert len(index[0]["files"]) == 6
+    # both games, then the night's Reels once everything on the slate is final
+    assert {e["key"] for e in index} == {f"game-{MIN_GAME}", f"game-{SO_GAME}",
+                                         "gotn-2026-10-15", "spot-2026-10-15"}
+    games = [e for e in index if e["key"].startswith("game-")]
+    assert all(len(e["files"]) == 7 for e in games)  # cover, replay video, game, 2x team, 2x impact
+    assert state.data["reels"]["gotn-2026-10-15"]["mode"] == "preview"
 
 
 def test_live_waits_for_shift_data_then_gives_up_waiting(env):

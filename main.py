@@ -9,6 +9,7 @@
   python main.py buffer-check                  # Buffer setup: list channels + schema (posts nothing)
   python main.py intro --post standings        # one-off season-so-far posts: standings|finishing|goalies
   python main.py awards|rookies|fantasy        # features through yesterday (or --date YYYY-MM-DD)
+  python main.py night --date 2026-10-16       # game-of-the-night + spotlight Reels for a finished night
 
 Add --fixtures DIR to run offline on saved API JSON. Where posts go is POST_MODE
 (preview by default — nothing is posted), or override with --mode preview|buffer|make|graph.
@@ -25,7 +26,7 @@ log = logging.getLogger("main")
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument("command", choices=["live", "games", "weekly", "make-sample", "buffer-check",
-                                            "intro", "awards", "rookies", "fantasy"])
+                                            "intro", "awards", "rookies", "fantasy", "night"])
     ap.add_argument("--date", default=None, help="game night YYYY-MM-DD (games; default yesterday ET)")
     ap.add_argument("--game-id", default=None)
     ap.add_argument("--end", default=None, help="week ending YYYY-MM-DD (weekly; a Sunday)")
@@ -120,6 +121,9 @@ def _run(args):
                 return 1
         elif args.command == "weekly":
             pipeline.run_weekly(source, state, end=args.end, mode=args.mode, force=args.force)
+        elif args.command == "night":
+            import reels
+            reels.end_of_night(source, args.date or default_target_date(), state, mode=args.mode)
         elif args.command in ("awards", "rookies", "fantasy"):
             pipeline.run_feature(args.command, source, state, as_of=args.date, mode=args.mode,
                                  force=args.force)

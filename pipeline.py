@@ -20,6 +20,7 @@ from content_generator import (build_game_caption, build_weekly_caption, generat
 from git_store import default_store
 from hashtags import FEATURES as FEATURE_TAGS, line as hashtag_line
 from ledger import Ledger
+import reels
 from trackers import tracker_slides
 from metrics import aggregate_week, analyze_game
 from nhl_fetcher import FINAL_STATES, GAME_TYPES, load_game
@@ -44,6 +45,7 @@ class State:
         self.data.setdefault("failures", {})
         self.data.setdefault("intros", {})
         self.data.setdefault("features", {})
+        self.data.setdefault("reels", {})
 
     def refresh(self):
         """Merge in anything another run recorded since we loaded (never lose an entry)."""
@@ -51,7 +53,7 @@ class State:
         if not raw:
             return
         fresh = json.loads(raw)
-        for k in ("games", "weeks", "intros", "features"):
+        for k in ("games", "weeks", "intros", "features", "reels"):
             merged = dict(fresh.get(k, {}))
             merged.update(self.data.get(k, {}))
             self.data[k] = merged
@@ -110,8 +112,10 @@ def post_game(source, score_game, state, mode=None, bundle=None):
         log.exception("Season context unavailable for %s", game["game_id"])
         context = None
     copy = generate_game_copy(game)
-    extra, extra_alts = tracker_slides(source, game, bundle)
+    events = []
+    extra, extra_alts = tracker_slides(source, game, bundle, events)
     paths = render_game_carousel(game, context, headline=cover_headline(game, copy), extra=extra)
+    replay = reels.replay_slide(game)  # animated shot map + xG race, or None
     caption = build_game_caption(copy, game)
     a, h = game["teams"]["away"], game["teams"]["home"]
     alts = [f"{_title(game)}. Expected goals {a['abbrev']} {a['xg']:.2f}, {h['abbrev']} {h['xg']:.2f}.",
@@ -121,9 +125,19 @@ def post_game(source, score_game, state, mode=None, bundle=None):
             f"{h['name']} team breakdown",
             f"{h['name']} player impact: every skater's Game Score split into what drove it"]
     alts += extra_alts
-    result = publish_carousel(paths, caption, key=f"game-{game['game_id']}", title=_title(game),
-                              meta={"game_id": game["game_id"], "date": game["date"],
-                                    "alt_texts": alts}, mode=mode)
+    meta = {"game_id": game["game_id"], "date": game["date"], "alt_texts": alts}
+    result = None
+    if replay:
+        try:
+            result = publish_carousel(paths[:1] + [replay] + paths[1:], caption,
+                                      key=f"game-{game['game_id']}", title=_title(game),
+                                      meta={**meta, "alt_texts": alts[:1] + [reels.REPLAY_ALT] + alts[1:],
+                                            "thumb_ms": reels.REPLAY_THUMB_MS}, mode=mode)
+        except Exception:
+            log.exception("Carousel with the replay video failed; posting the still slides")
+    if result is None:
+        result = publish_carousel(paths, caption, key=f"game-{game['game_id']}", title=_title(game),
+                                  meta=meta, mode=mode)
     state.record("games", game["game_id"], {"title": _title(game), "media_id": result["media_id"],
                                             "permalink": result.get("permalink"),
                                             "mode": result.get("mode")})
@@ -134,6 +148,8 @@ def post_game(source, score_game, state, mode=None, bundle=None):
             ledger.save(f"Ledger: {_title(game)}")
         except Exception:  # season context is a nice-to-have; never fail a posted game over it
             log.exception("Could not update the ledger for %s", game["game_id"])
+    for ev in events:  # Ovechkin goal / Crosby climb Reels
+        reels.post_milestone(ev, state, mode)
     return result
 
 
@@ -234,6 +250,8 @@ def run_live(source, state, mode=None, poll=120, max_runtime=5.6 * 3600, shift_w
                         pending += 1
         if not pending:
             log.info("Nothing left to post in this window")
+            for day in slate_dates(t.astimezone(ET)):
+                reels.end_of_night(source, day.isoformat(), state, mode)
             break
         sleep(poll)
     return gave_up

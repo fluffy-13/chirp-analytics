@@ -94,15 +94,24 @@ def _post_status(post_id, org_id=None):
     return _gql(STATUS, {"input": {"id": post_id}})["post"]
 
 
-def create_post(image_urls, caption, alt_texts=None, wait=240, interval=10):
-    """Publish now. Returns {"media_id", "permalink", "status"}; raises if Buffer rejects it."""
+def _asset(url, alt, thumb_ms=None):
+    if url.lower().endswith(".mp4"):
+        return {"video": {"url": url, "metadata": {"thumbnailOffset": int(thumb_ms or 0)}}}
+    return {"image": {"url": url, "metadata": {"altText": alt or "Chirp Analytics slide"}}}
+
+
+def create_post(image_urls, caption, alt_texts=None, wait=240, interval=10, post_type="post",
+                thumb_ms=None):
+    """Publish now. post_type: "post" (single/carousel, images and/or videos) or "reel".
+    Returns {"media_id", "permalink", "status"}; raises if Buffer rejects it."""
     ch = instagram_channel()
     alt_texts = alt_texts or [""] * len(image_urls)
-    assets = [{"image": {"url": url, "metadata": {"altText": alt or "Chirp Analytics slide"}}}
-              for url, alt in zip(image_urls, alt_texts)]
+    assets = [_asset(url, alt, thumb_ms) for url, alt in zip(image_urls, alt_texts)]
+    if any(a.get("video") for a in assets):
+        wait = max(wait, 600)  # Instagram processes video before it goes live
     data = _gql(CREATE, {"input": {
         "text": caption, "channelId": ch["id"], "schedulingType": "automatic", "mode": "shareNow",
-        "assets": assets, "metadata": {"instagram": {"type": "post", "shouldShareToFeed": True}},
+        "assets": assets, "metadata": {"instagram": {"type": post_type, "shouldShareToFeed": True}},
     }})
     res = data.get("createPost") or {}
     if res.get("__typename") != "PostActionSuccess":

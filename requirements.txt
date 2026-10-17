@@ -4,3 +4,4 @@ google-genai>=1.0
 python-dotenv>=1.0
 pytest>=8.0
 cairosvg>=2.7
+imageio-ffmpeg>=0.5

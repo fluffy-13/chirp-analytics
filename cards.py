@@ -538,9 +538,9 @@ def _mix(c1, c2, t):
     return tuple(int(x + (y - x) * t) for x, y in zip(a, b))
 
 
-def _cover_background(away_c, home_c):
+def _cover_background(away_c, home_c, size=(W, H)):
     """Diagonal blend from the away colour (top-left) to the home colour (bottom-right)."""
-    small_w, small_h = 108, 135
+    small_w, small_h = size[0] // 10, size[1] // 10
     bg = Image.new("RGB", (small_w, small_h))
     px = bg.load()
     a_dark, h_dark = _mix(away_c, C["bg"], 0.55), _mix(home_c, C["bg"], 0.55)
@@ -549,7 +549,7 @@ def _cover_background(away_c, home_c):
             t = (x / small_w + y / small_h) / 2          # 0 top-left .. 1 bottom-right
             t = min(1, max(0, (t - 0.35) / 0.3))         # crisp-ish diagonal seam
             px[x, y] = _mix(a_dark, h_dark, t)
-    return bg.resize((W, H), Image.BICUBIC)
+    return bg.resize(size, Image.BICUBIC)
 
 
 def _wrap_lines(d, text, font, max_w, max_lines):
@@ -582,33 +582,34 @@ def cover_headline(game, copy=None):
 
 
 def cover_canvas(left_color, right_color, left_abbrev=None, right_abbrev=None, panel=(240, 950),
-                 accent=C["accent"]):
+                 accent=C["accent"], size=(W, H)):
     """Shared cover look: diagonal colour blend, giant logo watermarks, dark fades top and
     bottom, and an opaque panel. Returns (RGB image, draw)."""
-    base = _cover_background(left_color, right_color).convert("RGBA")
-    for ab, xy, anchor in ((left_abbrev, (-120, 40), "lt"), (right_abbrev, (W + 120, H - 40), "rb")):
+    cw, ch = size
+    base = _cover_background(left_color, right_color, size).convert("RGBA")
+    for ab, xy, anchor in ((left_abbrev, (-120, 40), "lt"), (right_abbrev, (cw + 120, ch - 40), "rb")):
         mark = logos.logo(ab, height=620, max_w=760, opacity=0.16) if ab else None
         if mark is not None:
             x = xy[0] if anchor[0] == "l" else xy[0] - mark.width
             y = xy[1] if anchor[1] == "t" else xy[1] - mark.height
             base.alpha_composite(mark, (int(x), int(y)))
-    fade = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    fade = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
     fd = ImageDraw.Draw(fade)
     r, g, b = _hex_rgb(C["bg"])
     for i in range(260):
-        fd.line([(0, H - 260 + i), (W, H - 260 + i)], fill=(r, g, b, int(235 * (i / 260) ** 1.6)))
+        fd.line([(0, ch - 260 + i), (cw, ch - 260 + i)], fill=(r, g, b, int(235 * (i / 260) ** 1.6)))
     for i in range(170):
-        fd.line([(0, i), (W, i)], fill=(r, g, b, int(200 * (1 - i / 170) ** 1.4)))
+        fd.line([(0, i), (cw, i)], fill=(r, g, b, int(200 * (1 - i / 170) ** 1.4)))
     base.alpha_composite(fade)
     if panel:
-        overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        overlay = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
         ImageDraw.Draw(overlay).rounded_rectangle(
-            [M - 24, panel[0], W - M + 24, panel[1]], radius=28, fill=(*_hex_rgb(C["bg"]), 232),
+            [M - 24, panel[0], cw - M + 24, panel[1]], radius=28, fill=(*_hex_rgb(C["bg"]), 232),
             outline=(*_hex_rgb(C["panel_border"]), 255), width=2)
         base.alpha_composite(overlay)
     img = base.convert("RGB")
     d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, W, 14], fill=accent)
+    d.rectangle([0, 0, cw, 14], fill=accent)
     return img, d
 
 
