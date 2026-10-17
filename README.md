@@ -21,6 +21,9 @@ Automated NHL analytics for Instagram (@chirpanalytics).
     (rising up the all-time points ladder) right after those teams' game posts.
   - Video failures never block a post: the carousel falls back to still slides. Encoding uses
     ffmpeg, or the bundled `imageio-ffmpeg` binary when the runner has none.
+- **Stories** (`stories.py`, 1080x1920, no captions/stickers via the API): *tonight's slate* about
+  3 hours before the first puck drop (records, 5v5 xG share, xG favourite), a *final-score story*
+  minutes after each game, and *last night's scores* with expected goals once the slate is done.
 - **Trackers** (an extra slide in their teams' games): *Ovi's Farewell Tour* in Capitals games
   (career goals, milestones, goals vs. tonight's opponent, goalies he's scored on, final visits,
   games left, PP/GW/OT goals with all-time ranks) and *Crosby: Chasing History* in Penguins games

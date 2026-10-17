@@ -21,6 +21,7 @@ from git_store import default_store
 from hashtags import FEATURES as FEATURE_TAGS, line as hashtag_line
 from ledger import Ledger
 import reels
+import stories
 from trackers import tracker_slides
 from metrics import aggregate_week, analyze_game
 from nhl_fetcher import FINAL_STATES, GAME_TYPES, load_game
@@ -46,6 +47,7 @@ class State:
         self.data.setdefault("intros", {})
         self.data.setdefault("features", {})
         self.data.setdefault("reels", {})
+        self.data.setdefault("stories", {})
 
     def refresh(self):
         """Merge in anything another run recorded since we loaded (never lose an entry)."""
@@ -53,7 +55,7 @@ class State:
         if not raw:
             return
         fresh = json.loads(raw)
-        for k in ("games", "weeks", "intros", "features", "reels"):
+        for k in ("games", "weeks", "intros", "features", "reels", "stories"):
             merged = dict(fresh.get(k, {}))
             merged.update(self.data.get(k, {}))
             self.data[k] = merged
@@ -148,6 +150,7 @@ def post_game(source, score_game, state, mode=None, bundle=None):
             ledger.save(f"Ledger: {_title(game)}")
         except Exception:  # season context is a nice-to-have; never fail a posted game over it
             log.exception("Could not update the ledger for %s", game["game_id"])
+    stories.post_final(game, state, copy, mode)
     for ev in events:  # Ovechkin goal / Crosby climb Reels
         reels.post_milestone(ev, state, mode)
     return result
@@ -207,8 +210,16 @@ def run_live(source, state, mode=None, poll=120, max_runtime=5.6 * 3600, shift_w
     started = now()
     first_final = {}
     gave_up = []
+    season_records = None
     while True:
         t = now()
+        try:  # tonight's slate story, ~3 hours before the first puck drop
+            if season_records is None:
+                season_records = Ledger(state.store).season_games(season_for(t.astimezone(ET).date().isoformat()))
+            stories.maybe_post_slate(source, t.astimezone(ET).date().isoformat(), state, season_records,
+                                     mode, now=t)
+        except Exception:
+            log.exception("Slate story check failed")
         if (t - started).total_seconds() > max_runtime:
             log.info("Runtime budget spent; the next scheduled run takes over")
             break

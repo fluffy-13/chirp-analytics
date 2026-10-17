@@ -122,6 +122,7 @@ def test_live_posts_when_final_and_stops(env):
     index = json.loads((tmp / "previews" / "index.json").read_text())
     # both games, then the night's Reels once everything on the slate is final
     assert {e["key"] for e in index} == {f"game-{MIN_GAME}", f"game-{SO_GAME}",
+                                         f"final-{MIN_GAME}", f"final-{SO_GAME}", "board-2026-10-15",
                                          "gotn-2026-10-15", "spot-2026-10-15"}
     games = [e for e in index if e["key"].startswith("game-")]
     assert all(len(e["files"]) == 7 for e in games)  # cover, replay video, game, 2x team, 2x impact

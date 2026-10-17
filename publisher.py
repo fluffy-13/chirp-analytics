@@ -244,6 +244,23 @@ def publish_reel(video_path, caption, key, title, meta=None, mode=None, thumb_ms
     return {**result, "mode": mode}
 
 
+def publish_story(image_paths, key, title, mode=None):
+    """Post story frames in order (one Instagram story each). Stories carry no caption."""
+    mode = (mode or POST_MODE).lower()
+    if mode == "preview":
+        save_preview(image_paths, "(story — no caption)", key, title)
+        return {"media_ids": ["preview"], "mode": "preview"}
+    if mode != "buffer":
+        raise PublishError(f"Stories aren't supported in {mode} mode yet")
+    from buffer_client import create_post
+    ids = []
+    for p in image_paths:
+        url = host_image(p, folder="stories/" + key.replace(":", "-"))
+        res = create_post([url], "", alt_texts=[title], post_type="story", wait=60)
+        ids.append(res["media_id"])
+    return {"media_ids": ids, "mode": mode}
+
+
 def publish_carousel(image_paths, caption, key, title, meta=None, mode=None):
     """Post a carousel (or save a preview). Returns a result dict with media_id."""
     from hashtags import enforce

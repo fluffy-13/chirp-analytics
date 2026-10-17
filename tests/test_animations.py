@@ -49,3 +49,22 @@ def test_nightly_reels_wait_for_the_morning():
     assert reels.morning_after("2026-10-16", late_night) == "2026-10-17T15:30:00Z"  # 11:30 AM EDT
     after_noon = datetime(2026, 10, 17, 17, 0, tzinfo=timezone.utc)
     assert reels.morning_after("2026-10-16", after_noon) is None  # too late: post now
+
+
+def test_slate_waits_until_three_hours_before_puck_drop(tmp_path, monkeypatch):
+    from datetime import datetime, timezone
+    import publisher
+    import stories
+    from git_store import LocalStore
+    import pipeline
+    monkeypatch.setattr(cards, "OUTPUT_DIR", tmp_path)
+    monkeypatch.setattr(publisher, "_preview_store", LocalStore(tmp_path / "previews"))
+    state = pipeline.State(LocalStore(tmp_path / "state"))
+    src = FakeSource()
+    src.states = {k: "FUT" for k in src.states}   # both Oct 15 games still to come (7 PM ET start)
+    early = datetime(2026, 10, 15, 18, 0, tzinfo=timezone.utc)   # 2 PM ET
+    stories.maybe_post_slate(src, "2026-10-15", state, [], now=early)
+    assert not stories._done(state, "slate-2026-10-15")
+    on_time = datetime(2026, 10, 15, 20, 5, tzinfo=timezone.utc)  # 4:05 PM ET
+    stories.maybe_post_slate(src, "2026-10-15", state, [], now=on_time)
+    assert state.data["stories"]["slate-2026-10-15"]["frames"] == 1

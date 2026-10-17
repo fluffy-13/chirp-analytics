@@ -116,8 +116,9 @@ def end_of_night(source, day, state, mode=None):
     """Game of the night + player spotlight, once every game on `day` is final."""
     from metrics import analyze_game
     from nhl_fetcher import FINAL_STATES, GAME_TYPES, load_game
+    import stories
     gkey, skey = f"gotn-{day}", f"spot-{day}"
-    if _done(state, gkey) and _done(state, skey):
+    if _done(state, gkey) and _done(state, skey) and stories._done(state, f"board-{day}"):
         return
     try:
         games = [g for g in source.score(day).get("games", []) if g.get("gameType") in GAME_TYPES]
@@ -134,6 +135,7 @@ def end_of_night(source, day, state, mode=None):
             log.exception("End of night: skipping %s", g["id"])
     if not analyses:
         return
+    stories.post_scoreboard(day, analyses, state, mode)
     if not _done(state, gkey):
         try:
             game = max(analyses, key=lambda g: A.drama(g)[0])
