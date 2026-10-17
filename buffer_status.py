@@ -18,11 +18,12 @@ def run(state=None):
     changed, errors = 0, []
     for kind in KINDS:
         for key, info in sorted(state.data.get(kind, {}).items()):
-            if not isinstance(info, dict) or info.get("mode") != "buffer" or not info.get("media_id"):
+            ids = info.get("media_ids") or info.get("media_id") if isinstance(info, dict) else None
+            if not ids or info.get("mode") != "buffer":
                 continue
             if info.get("permalink") and kind != "reels":
                 continue
-            ids = info["media_id"] if isinstance(info["media_id"], list) else [info["media_id"]]
+            ids = ids if isinstance(ids, list) else [ids]
             for pid in ids:
                 try:
                     post = buffer_client._post_status(pid, org)
