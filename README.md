@@ -12,6 +12,15 @@ Automated NHL analytics for Instagram (@chirpanalytics).
   or 0.5+ individual xG with xG± ≥ 0; OUTCHANCED: points but xG± ≤ −0.4), a tick at his season
   average and a ▲/▼ for a hot/cold run (last 5 games averaging 0.4+ above/below his season, with
   3 of the 5 on that side; needs 5 prior games).
+- **Animated** (silent MP4, text on screen; `animations.py`, `reels.py`):
+  - *Replay slide* in every game carousel (slide 2): every shot appears on the rink in game order,
+    sized by xG, synced with the expected-goals race and the score.
+  - *Game of the Night* Reel once every game on the slate is final (biggest upset, OT/shootout,
+    most chances), plus a *Player of the Night* Reel for the best hat trick / 4+ point game.
+  - *Ovi goal* Reel (career-goal odometer, goalies beaten, next milestone) and *Crosby climb* Reel
+    (rising up the all-time points ladder) right after those teams' game posts.
+  - Video failures never block a post: the carousel falls back to still slides. Encoding uses
+    ffmpeg, or the bundled `imageio-ffmpeg` binary when the runner has none.
 - **Trackers** (an extra slide in their teams' games): *Ovi's Farewell Tour* in Capitals games
   (career goals, milestones, goals vs. tonight's opponent, goalies he's scored on, final visits,
   games left, PP/GW/OT goals with all-time ranks) and *Crosby: Chasing History* in Penguins games
