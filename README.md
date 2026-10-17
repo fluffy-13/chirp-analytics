@@ -2,6 +2,26 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## BOS 4 @ ANA 2 — 2026-10-16
+`game-2026020120` · rendered 2026-10-17 04:43 UTC · mode: buffer
+
+<img src="game-2026020120/2026-10-16_2026020120_0_cover.jpg" width="260"> <img src="game-2026020120/2026-10-16_2026020120_1_game.jpg" width="260"> <img src="game-2026020120/2026-10-16_2026020120_2_away.jpg" width="260"> <img src="game-2026020120/2026-10-16_2026020120_3_away_impact.jpg" width="260"> <img src="game-2026020120/2026-10-16_2026020120_4_home.jpg" width="260"> <img src="game-2026020120/2026-10-16_2026020120_5_home_impact.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+🏒 NHL Game #120 of 1,312
+Boston edges Anaheim 4-2 behind special teams efficiency
+
+The Boston Bruins took a 4-2 win on the road against the Anaheim Ducks by dominating the special teams battle, going 3/4 on the power play while Anaheim went 0/4. Both teams finished even at 50% in 5v5 share of expected goals, but Elias Lindholm led the way for Boston with 1 goal, 1 assist, and a 1.60 Game Score. Can Anaheim clean up their undisciplined play next time?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.
+
+#NHL #HockeyAnalytics #NHLBruins #FlyTogether #NHLStats
+```
+</details>
+
 ## PIT 2 @ COL 5 — 2026-10-16
 `game-2026020119` · rendered 2026-10-17 03:42 UTC · mode: buffer
 
