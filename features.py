@@ -67,8 +67,12 @@ def _table(kicker, right, title, subtitle, cols, rows, accent, row_h=92, note=No
             nx += 14
         name_f = F("bold", 32)
         if r.get("fit"):  # a line / pair: shrink to fit rather than abbreviate
-            name_f = _fit(d, r["name"], "bold", 32, x1 - nx - 70, 22)
+            room = x1 - nx - 80
             shown = r["name"]
+            if d.textlength(shown, font=F("bold", 26)) > room:
+                shown = shown.replace("  ·  ", " · ")
+            name_f = _fit(d, shown, "bold", 32, room, 17)
+            shown = _ellipsize(d, shown, name_f, room)
         else:
             shown = _short_name(d, r["name"], name_f, x1 - nx - 70)
         d.text((nx, mid - 20), shown, fill=C["text"], font=name_f, anchor="lm")
