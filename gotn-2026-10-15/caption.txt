@@ -1,0 +1,9 @@
+🎬 Game of the Night: SJS 3 @ NSH 2 (SO)
+Needed a shootout: SJS 3.22 xG vs NSH 3.96.
+
+Every shot, sized by its expected-goals value, as the xG race plays out. Full breakdown on our page.
+
+xG = our shot-quality model, trained on 237k NHL shots. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #TheFutureIsTeal #Smashville #HockeyStats

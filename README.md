@@ -2,6 +2,26 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Game of the night — 2026-10-15
+`gotn-2026-10-15` · rendered 2026-10-17 02:06 UTC · mode: preview
+
+<img src="gotn-2026-10-15/2026-10-15_2026020115_replay_reel.mp4" width="260">
+
+<details><summary>Caption</summary>
+
+```
+🎬 Game of the Night: SJS 3 @ NSH 2 (SO)
+Needed a shootout: SJS 3.22 xG vs NSH 3.96.
+
+Every shot, sized by its expected-goals value, as the xG race plays out. Full breakdown on our page.
+
+xG = our shot-quality model, trained on 237k NHL shots. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #TheFutureIsTeal #Smashville #HockeyStats
+```
+</details>
+
 ## Intro: goalies stealing games
 `intro-goalies` · rendered 2026-10-16 23:39 UTC · mode: buffer
 

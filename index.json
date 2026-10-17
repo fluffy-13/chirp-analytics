@@ -1,5 +1,15 @@
 [
  {
+  "key": "gotn-2026-10-15",
+  "title": "Game of the night \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "\ud83c\udfac Game of the Night: SJS 3 @ NSH 2 (SO)\nNeeded a shootout: SJS 3.22 xG vs NSH 3.96.\n\nEvery shot, sized by its expected-goals value, as the xG race plays out. Full breakdown on our page.\n\nxG = our shot-quality model, trained on 237k NHL shots. Data: NHL play-by-play.\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.\n\n#NHL #HockeyAnalytics #TheFutureIsTeal #Smashville #HockeyStats",
+  "files": [
+   "gotn-2026-10-15/2026-10-15_2026020115_replay_reel.mp4"
+  ],
+  "at": "2026-10-17 02:06 UTC"
+ },
+ {
   "key": "intro-goalies",
   "title": "Intro: goalies stealing games",
   "mode": "buffer",
