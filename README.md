@@ -2,6 +2,26 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## NYI 1 @ OTT 2 (SO) — 2026-10-15
+`game-2026020109` · rendered 2026-10-17 02:06 UTC · mode: preview
+
+<img src="game-2026020109/2026-10-15_2026020109_0_cover.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_replay_slide.mp4" width="260"> <img src="game-2026020109/2026-10-15_2026020109_1_game.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_2_away.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_3_away_impact.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_4_home.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_5_home_impact.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+🏒 NHL Game #109 of 1,312
+Ottawa took the quality battle to secure the shootout win.
+
+While New York owned 5v5 shot attempts at 45 to 30, Ottawa won the all-situations xG battle 3.23 to 1.83 on the back of a 12 to 6 edge in high-danger chances. Top star Ridly Greig posted a 1.55 Game Score with 1 goal, while Linus Ullmark helped seal it with +0.83 goals saved above expected. Which team's underlying process do you trust more moving forward?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.
+
+#NHL #HockeyAnalytics #Isles #GoSensGo #ExpectedGoals
+```
+</details>
+
 ## Spotlight: Matt Boldy — 2026-10-15
 `spot-2026-10-15` · rendered 2026-10-17 02:06 UTC · mode: preview
 
@@ -196,25 +216,6 @@ Data: NHL play-by-play, our xG model and Game Score.
 Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
 
 #NHL #HockeyAnalytics #NHLRookies #CalderTrophy #Prospects
-```
-</details>
-
-## NYI 1 @ OTT 2 (SO) — 2026-10-15
-`game-2026020109` · rendered 2026-10-16 22:40 UTC · mode: preview
-
-<img src="game-2026020109/2026-10-15_2026020109_0_cover.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_1_game.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_2_away.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_3_away_impact.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_4_home.jpg" width="260"> <img src="game-2026020109/2026-10-15_2026020109_5_home_impact.jpg" width="260">
-
-<details><summary>Caption</summary>
-
-```
-Quality over volume decided this one in Ottawa.
-
-Ottawa earned the 2-1 shootout victory by prioritizing shot quality over pure quantity, creating 12 high-danger chances to New York's 6 and winning the all-situations xG battle 3.23 to 1.83. Linus Ullmark stabilized the crease with 20 saves on 21 shots, posting a .952 save percentage and +0.83 goals saved above expected to hold off the Islanders' 45 5v5 shot attempts. Does Linus Ullmark get your vote for the night's best performer, or does Ridly Greig take it after posting a 1.55 Game Score?
-
-xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
-Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.
-
-#NHL #HockeyAnalytics #NewYorkIslanders #OttawaSenators #GoSensGoIslesOttawaSenatorsNewYorkIslandersHockeyAnalytics
 ```
 </details>
 

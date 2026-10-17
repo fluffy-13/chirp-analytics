@@ -1,5 +1,21 @@
 [
  {
+  "key": "game-2026020109",
+  "title": "NYI 1 @ OTT 2 (SO) \u2014 2026-10-15",
+  "mode": "preview",
+  "caption": "\ud83c\udfd2 NHL Game #109 of 1,312\nOttawa took the quality battle to secure the shootout win.\n\nWhile New York owned 5v5 shot attempts at 45 to 30, Ottawa won the all-situations xG battle 3.23 to 1.83 on the back of a 12 to 6 edge in high-danger chances. Top star Ridly Greig posted a 1.55 Game Score with 1 goal, while Linus Ullmark helped seal it with +0.83 goals saved above expected. Which team's underlying process do you trust more moving forward?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.\n\n#NHL #HockeyAnalytics #Isles #GoSensGo #ExpectedGoals",
+  "files": [
+   "game-2026020109/2026-10-15_2026020109_0_cover.jpg",
+   "game-2026020109/2026-10-15_2026020109_replay_slide.mp4",
+   "game-2026020109/2026-10-15_2026020109_1_game.jpg",
+   "game-2026020109/2026-10-15_2026020109_2_away.jpg",
+   "game-2026020109/2026-10-15_2026020109_3_away_impact.jpg",
+   "game-2026020109/2026-10-15_2026020109_4_home.jpg",
+   "game-2026020109/2026-10-15_2026020109_5_home_impact.jpg"
+  ],
+  "at": "2026-10-17 02:06 UTC"
+ },
+ {
   "key": "spot-2026-10-15",
   "title": "Spotlight: Matt Boldy \u2014 2026-10-15",
   "mode": "preview",
@@ -98,21 +114,6 @@
    "rookies-2026-10-15/rookies_2026-10-15_4.jpg"
   ],
   "at": "2026-10-16 23:03 UTC"
- },
- {
-  "key": "game-2026020109",
-  "title": "NYI 1 @ OTT 2 (SO) \u2014 2026-10-15",
-  "mode": "preview",
-  "caption": "Quality over volume decided this one in Ottawa.\n\nOttawa earned the 2-1 shootout victory by prioritizing shot quality over pure quantity, creating 12 high-danger chances to New York's 6 and winning the all-situations xG battle 3.23 to 1.83. Linus Ullmark stabilized the crease with 20 saves on 21 shots, posting a .952 save percentage and +0.83 goals saved above expected to hold off the Islanders' 45 5v5 shot attempts. Does Linus Ullmark get your vote for the night's best performer, or does Ridly Greig take it after posting a 1.55 Game Score?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.\n\n#NHL #HockeyAnalytics #NewYorkIslanders #OttawaSenators #GoSensGoIslesOttawaSenatorsNewYorkIslandersHockeyAnalytics",
-  "files": [
-   "game-2026020109/2026-10-15_2026020109_0_cover.jpg",
-   "game-2026020109/2026-10-15_2026020109_1_game.jpg",
-   "game-2026020109/2026-10-15_2026020109_2_away.jpg",
-   "game-2026020109/2026-10-15_2026020109_3_away_impact.jpg",
-   "game-2026020109/2026-10-15_2026020109_4_home.jpg",
-   "game-2026020109/2026-10-15_2026020109_5_home_impact.jpg"
-  ],
-  "at": "2026-10-16 22:40 UTC"
  },
  {
   "key": "game-2026020116",
