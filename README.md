@@ -37,6 +37,9 @@ Automated NHL analytics for Instagram (@chirpanalytics).
     season.
   - *Rookie watch*, every other Wednesday 11:40 AM ET: Calder-eligible skaters by Game Score, the
     last two weeks, and rookie goalies by GSAx.
+  - *Top lines*, Thursdays 11:40 AM ET: the season's best 5v5 forward lines and D pairs by share
+    of expected goals (min. 40 minutes together early on, ~5 min a game later) and the lines of the
+    week (biggest 5v5 xG margin over 7 days). Line combos come from the shift data, second by second.
   - *Awards race*, the 1st of each month 10:40 AM ET: the 'deserved' race by our numbers — Hart
     (Game Score), Norris (D Game Score), Vezina (GSAx), Calder (rookie Game Score), Selke (5v5
     expected goals prevented vs. his team), Lady Byng (Game Score with ≤2 PIM, or 1 per 5 games),
