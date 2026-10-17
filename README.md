@@ -2,6 +2,25 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Spotlight: Matt Boldy — 2026-10-15
+`spot-2026-10-15` · rendered 2026-10-17 02:06 UTC · mode: preview
+
+<img src="spot-2026-10-15/2026-10-15_2026020116_spotlight.mp4" width="260">
+
+<details><summary>Caption</summary>
+
+```
+⭐ Player of the Night: Matt Boldy (MIN), hat trick.
+
+3G 1A, 8 shots, 0.65 xG and a 4.52 Game Score vs STL.
+
+xG = our shot-quality model, trained on 237k NHL shots. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #MNWild #HatTrick #MattBoldy
+```
+</details>
+
 ## Game of the night — 2026-10-15
 `gotn-2026-10-15` · rendered 2026-10-17 02:06 UTC · mode: preview
 
