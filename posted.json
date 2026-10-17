@@ -29,7 +29,7 @@
    "title": "BUF 5 @ TOR 4 (OT) \u2014 2026-10-15"
   },
   "2026020109": {
-   "at": "2026-10-17T02:06:33+00:00",
+   "at": "2026-10-16T22:40:26+00:00",
    "media_id": "preview",
    "mode": "preview",
    "permalink": null,
@@ -97,6 +97,13 @@
    "mode": "preview",
    "permalink": null,
    "title": "CGY 2 @ VGK 6 \u2014 2026-10-15"
+  },
+  "2026020119": {
+   "at": "2026-10-17T03:42:21+00:00",
+   "media_id": "6ad2ee70c34368e4b0a5ed0c",
+   "mode": "buffer",
+   "permalink": "https://www.instagram.com/p/DelKt2ejtlG/",
+   "title": "PIT 2 @ COL 5 \u2014 2026-10-16"
   }
  },
  "intros": {
@@ -120,22 +127,6 @@
    "mode": "buffer",
    "permalink": "https://www.instagram.com/p/DekuAv4iVvc/",
    "title": "Intro: the real standings"
-  }
- },
- "reels": {
-  "gotn-2026-10-15": {
-   "at": "2026-10-17T02:06:14+00:00",
-   "media_id": "preview",
-   "mode": "preview",
-   "permalink": null,
-   "title": "Game of the night \u2014 2026-10-15"
-  },
-  "spot-2026-10-15": {
-   "at": "2026-10-17T02:06:21+00:00",
-   "media_id": "preview",
-   "mode": "preview",
-   "permalink": null,
-   "title": "Spotlight: Matt Boldy \u2014 2026-10-15"
   }
  },
  "weeks": {
