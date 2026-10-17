@@ -1,6 +1,8 @@
-2026-10-17 02:06:12,274 INFO animations: Video 2026-10-15_2026020115_replay_reel.mp4: 466 frames (15.5s)
-2026-10-17 02:06:14,325 INFO publisher: Preview saved: gotn-2026-10-15
-2026-10-17 02:06:15,535 INFO reels: Posted reel Game of the night — 2026-10-15 (preview)
-2026-10-17 02:06:20,099 INFO animations: Video 2026-10-15_2026020116_spotlight.mp4: 300 frames (10.0s)
-2026-10-17 02:06:21,433 INFO publisher: Preview saved: spot-2026-10-15
-2026-10-17 02:06:22,588 INFO reels: Posted reel Spotlight: Matt Boldy — 2026-10-15 (preview)
+2026-10-17 07:09:51,587 INFO animations: Video 2026-10-16_2026020120_replay_reel.mp4: 466 frames (15.5s)
+2026-10-17 07:09:54,532 INFO buffer_client: Buffer accepted post 6ad31f4250252c7767d3c7c8 (status scheduled)
+2026-10-17 07:09:54,532 INFO buffer_client: Scheduled for 2026-10-17T15:30:00Z
+2026-10-17 07:09:56,328 INFO reels: Posted reel Game of the night — 2026-10-16 (buffer)
+2026-10-17 07:09:59,851 INFO animations: Video 2026-10-16_2026020119_spotlight.mp4: 300 frames (10.0s)
+2026-10-17 07:10:01,304 INFO buffer_client: Buffer accepted post 6ad31f495461d2b5e498cec2 (status scheduled)
+2026-10-17 07:10:01,304 INFO buffer_client: Scheduled for 2026-10-17T15:45:00Z
+2026-10-17 07:10:03,237 INFO reels: Posted reel Spotlight: Nathan MacKinnon — 2026-10-16 (buffer)
