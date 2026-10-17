@@ -147,16 +147,18 @@
    "at": "2026-10-17T07:09:54+00:00",
    "media_id": "6ad31f4250252c7767d3c7c8",
    "mode": "buffer",
-   "permalink": null,
+   "permalink": "https://www.instagram.com/reel/DembwpDDyNF/",
    "scheduled_for": "2026-10-17T15:30:00Z",
+   "status": "sent",
    "title": "Game of the night \u2014 2026-10-16"
   },
   "spot-2026-10-16": {
    "at": "2026-10-17T07:10:01+00:00",
    "media_id": "6ad31f495461d2b5e498cec2",
    "mode": "buffer",
-   "permalink": null,
+   "permalink": "https://www.instagram.com/reel/DemddxpEa1Q/",
    "scheduled_for": "2026-10-17T15:45:00Z",
+   "status": "sent",
    "title": "Spotlight: Nathan MacKinnon \u2014 2026-10-16"
   }
  },
@@ -170,6 +172,7 @@
     "6ad3a9ae0b0d72757ae85400"
    ],
    "mode": "buffer",
+   "status": "sent",
    "title": "Tonight's slate \u2014 2026-10-17"
   }
  },
