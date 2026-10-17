@@ -2,6 +2,29 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## Top lines — 2026-10-16
+`lines-2026-10-16` · rendered 2026-10-17 12:02 UTC · mode: preview
+
+<img src="lines-2026-10-16/lines_2026-10-16_1.jpg" width="260"> <img src="lines-2026-10-16/lines_2026-10-16_2.jpg" width="260"> <img src="lines-2026-10-16/lines_2026-10-16_3.jpg" width="260"> <img src="lines-2026-10-16/lines_2026-10-16_4.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+Top lines 🔥 through October 16: who's clicking at 5-on-5.
+
+🥇 Best line: Draisaitl – McDavid – Podkolzin (EDM), 69.7% of 5v5 xG in 56 minutes together.
+🛡️ Best pair: Ekholm – Bouchard (EDM), 69.5%.
+📈 Line of the week: Kadri – Nelson – Landeskog (COL), +1.73 xG margin.
+
+Which line is your team's best? 👇
+
+Data: NHL play-by-play, our xG model and Game Score.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams.
+
+#NHL #HockeyAnalytics #NHLLines #FantasyHockey #AdvancedStats
+```
+</details>
+
 ## BOS 4 @ ANA 2 — 2026-10-16
 `game-2026020120` · rendered 2026-10-17 04:43 UTC · mode: buffer
 
