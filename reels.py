@@ -45,10 +45,26 @@ def _record(state, key, info):
     state._save(f"Record reel {key}")
 
 
-def _publish(state, key, path, caption, title, mode, thumb_ms):
-    res = publish_reel(path, caption, key=key, title=title, mode=mode, thumb_ms=thumb_ms)
+MORNING = (11, 30)   # nightly Reels go out the next day at 11:30 AM ET, not at 1 AM
+
+
+def morning_after(day, now=None):
+    """ISO time for the morning after `day` (ET), or None if that's already past."""
+    from datetime import date, time, timedelta
+    from zoneinfo import ZoneInfo
+    et = ZoneInfo("America/New_York")
+    due = datetime.combine(date.fromisoformat(day) + timedelta(days=1), time(*MORNING), tzinfo=et)
+    now = now or datetime.now(timezone.utc)
+    if due <= now + timedelta(minutes=10):
+        return None
+    return due.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _publish(state, key, path, caption, title, mode, thumb_ms, due_at=None):
+    res = publish_reel(path, caption, key=key, title=title, mode=mode, thumb_ms=thumb_ms, due_at=due_at)
     _record(state, key, {"title": title, "media_id": res["media_id"],
-                         "permalink": res.get("permalink"), "mode": res.get("mode")})
+                         "permalink": res.get("permalink"), "mode": res.get("mode"),
+                         "scheduled_for": res.get("scheduled_for")})
     log.info("Posted reel %s (%s)", title, res.get("mode"))
     return res
 
@@ -131,7 +147,7 @@ def end_of_night(source, day, state, mode=None):
                     f"{reason}.\n\nEvery shot, sized by its expected-goals value, as the xG race plays "
                     f"out. Full breakdown on our page.")
             _publish(state, gkey, path, _caption(body, game_tags(a["abbrev"], h["abbrev"], game["game_id"])),
-                     f"Game of the night — {day}", mode, 14500)
+                     f"Game of the night — {day}", mode, 14500, due_at=morning_after(day))
         except Exception:
             log.exception("Game of the night reel failed for %s", day)
     if not _done(state, skey):
@@ -151,7 +167,11 @@ def end_of_night(source, day, state, mode=None):
                         f"{'vs' if team['is_home'] else '@'} {opp['abbrev']}.")
                 tags = ["#NHL", "#HockeyAnalytics", TEAM_TAGS.get(team["abbrev"], "#NHLStats"),
                         "#HatTrick" if p["G"] >= 3 else "#NHLStats", _name_tag(p["name"])]
+                due = morning_after(day)
+                if due:  # 15 minutes after the game of the night, not on top of it
+                    due = (datetime.fromisoformat(due.replace("Z", "+00:00"))
+                           .replace(minute=MORNING[1] + 15).isoformat().replace("+00:00", "Z"))
                 _publish(state, skey, path, _caption(body, tags), f"Spotlight: {p['name']} — {day}",
-                         mode, 9000)
+                         mode, 9000, due_at=due)
         except Exception:
             log.exception("Spotlight reel failed for %s", day)

@@ -40,3 +40,12 @@ def test_spotlight_and_picker(tmp_path, monkeypatch):
     assert A.render_spotlight(game, p, why, seconds=1.0).exists()
     score, reason = A.drama(game)
     assert score > 0 and reason
+
+
+def test_nightly_reels_wait_for_the_morning():
+    from datetime import datetime, timezone
+    import reels
+    late_night = datetime(2026, 10, 17, 5, 30, tzinfo=timezone.utc)   # 1:30 AM ET
+    assert reels.morning_after("2026-10-16", late_night) == "2026-10-17T15:30:00Z"  # 11:30 AM EDT
+    after_noon = datetime(2026, 10, 17, 17, 0, tzinfo=timezone.utc)
+    assert reels.morning_after("2026-10-16", after_noon) is None  # too late: post now

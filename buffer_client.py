@@ -101,7 +101,7 @@ def _asset(url, alt, thumb_ms=None):
 
 
 def create_post(image_urls, caption, alt_texts=None, wait=240, interval=10, post_type="post",
-                thumb_ms=None):
+                thumb_ms=None, due_at=None):
     """Publish now. post_type: "post" (single/carousel, images and/or videos) or "reel".
     Returns {"media_id", "permalink", "status"}; raises if Buffer rejects it."""
     ch = instagram_channel()
@@ -109,15 +109,22 @@ def create_post(image_urls, caption, alt_texts=None, wait=240, interval=10, post
     assets = [_asset(url, alt, thumb_ms) for url, alt in zip(image_urls, alt_texts)]
     if any(a.get("video") for a in assets):
         wait = max(wait, 600)  # Instagram processes video before it goes live
-    data = _gql(CREATE, {"input": {
+    post_input = {
         "text": caption, "channelId": ch["id"], "schedulingType": "automatic", "mode": "shareNow",
         "assets": assets, "metadata": {"instagram": {"type": post_type, "shouldShareToFeed": True}},
-    }})
+    }
+    if due_at:  # Buffer publishes it at that time
+        post_input.update(mode="customScheduled", dueAt=due_at)
+    data = _gql(CREATE, {"input": post_input})
     res = data.get("createPost") or {}
     if res.get("__typename") != "PostActionSuccess":
         raise BufferError(f"Buffer refused the post: {res.get('message') or res}")
     post = res["post"]
     log.info("Buffer accepted post %s (status %s)", post["id"], post.get("status"))
+    if due_at:
+        log.info("Scheduled for %s", due_at)
+        return {"media_id": post["id"], "permalink": None, "status": post.get("status"),
+                "scheduled_for": due_at}
     deadline = time.time() + wait
     while time.time() < deadline and not post.get("externalLink"):
         status = str(post.get("status", "")).lower()

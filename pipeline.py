@@ -250,7 +250,8 @@ def run_live(source, state, mode=None, poll=120, max_runtime=5.6 * 3600, shift_w
                         pending += 1
         if not pending:
             log.info("Nothing left to post in this window")
-            for day in slate_dates(t.astimezone(ET)):
+            today = t.astimezone(ET).date()
+            for day in (today - timedelta(days=1), today):  # last night too, in case a run was missed
                 reels.end_of_night(source, day.isoformat(), state, mode)
             break
         sleep(poll)

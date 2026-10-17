@@ -1,13 +1,15 @@
 name: Game night (live)
 
 # Polls every 2 minutes while games are on and posts each game's carousel as soon as it's
-# final (typically 5-10 minutes after the horn). Three staggered starts cover matinees,
-# the evening slate and late West-coast games; overlapping runs queue instead of doubling up.
+# final (typically 5-10 minutes after the horn). When the slate is done it also builds the
+# night's Reels (scheduled in Buffer for 11:30 AM ET the next morning).
 on:
   schedule:
-    - cron: "50 15 * * *"   # 11:50 ET (EDT) — weekend/holiday matinees
-    - cron: "40 22 * * *"   # 18:40 ET — evening slate
-    - cron: "50 3 * * *"    # 23:50 ET — late games
+    # Hourly from 11:10 AM to 2:10 AM ET (EDT). GitHub can start scheduled runs late or skip
+    # them, so every hour is a backup for the last; extra runs queue behind the active one
+    # (concurrency below) and exit within a minute when there's nothing to post.
+    - cron: "10 15-23 * * *"
+    - cron: "10 0-6 * * *"
   workflow_dispatch:
 
 concurrency:

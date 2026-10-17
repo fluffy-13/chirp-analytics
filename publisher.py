@@ -227,7 +227,7 @@ def save_preview(image_paths, caption, key, title, mode="preview", keep=80):
     log.info("Preview saved: %s", key)
 
 
-def publish_reel(video_path, caption, key, title, meta=None, mode=None, thumb_ms=None):
+def publish_reel(video_path, caption, key, title, meta=None, mode=None, thumb_ms=None, due_at=None):
     """Post a Reel (vertical video). Returns a result dict with media_id."""
     from hashtags import enforce
     caption = enforce(caption)
@@ -238,7 +238,7 @@ def publish_reel(video_path, caption, key, title, meta=None, mode=None, thumb_ms
     url = host_image(video_path, folder="reels/" + key.replace(":", "-"))
     if mode == "buffer":
         from buffer_client import create_post
-        result = create_post([url], caption, post_type="reel", thumb_ms=thumb_ms)
+        result = create_post([url], caption, post_type="reel", thumb_ms=thumb_ms, due_at=due_at)
     else:
         raise PublishError(f"Reels aren't supported in {mode} mode yet")
     return {**result, "mode": mode}
