@@ -1,0 +1,24 @@
+2026-10-17 03:31:08,030 WARNING nhl_fetcher: Retrying https://api-web.nhle.com/v1/score/2026-10-16 in 2s (('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')))
+2026-10-17 03:41:11,184 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 03:41:28,251 INFO content_generator: Using Gemini model gemini-3.8-flash
+2026-10-17 03:41:33,541 INFO cards: Rendered carousel for 2026020119: 2026-10-16_2026020119_0_cover.jpg, 2026-10-16_2026020119_1_game.jpg, 2026-10-16_2026020119_2_away.jpg, 2026-10-16_2026020119_3_away_impact.jpg, 2026-10-16_2026020119_4_home.jpg, 2026-10-16_2026020119_5_home_impact.jpg, 2026-10-16_2026020119_6_crosby.jpg
+2026-10-17 03:41:35,728 INFO publisher: Hosted 7 slides under posts/game-2026020119
+2026-10-17 03:41:47,195 INFO buffer_client: Buffer accepted post 6ad2ee70c34368e4b0a5ed0c (status sending)
+2026-10-17 03:42:17,651 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DelKt2ejtlG/
+2026-10-17 03:42:20,755 INFO publisher: Preview saved: game-2026020119
+2026-10-17 03:42:22,411 INFO pipeline: Posted PIT 2 @ COL 5 — 2026-10-16 (buffer)
+2026-10-17 04:42:25,838 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 04:42:26,033 INFO content_generator: Gemini model gemini-3.8-flash unavailable (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '), trying the next one
+2026-10-17 04:42:26,033 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 04:42:26,141 INFO content_generator: Gemini model gemini-flash-latest unavailable (429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': '), trying the next one
+2026-10-17 04:42:26,141 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 04:42:27,368 INFO content_generator: Gemini model gemini-3.6-flash unavailable (503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This mo), trying the next one
+2026-10-17 04:42:27,368 INFO google_genai.models: AFC is enabled with max remote calls: 10.
+2026-10-17 04:42:28,231 INFO content_generator: Using Gemini model gemini-3.5-flash-lite
+2026-10-17 04:42:28,560 INFO cards: Rendered carousel for 2026020120: 2026-10-16_2026020120_0_cover.jpg, 2026-10-16_2026020120_1_game.jpg, 2026-10-16_2026020120_2_away.jpg, 2026-10-16_2026020120_3_away_impact.jpg, 2026-10-16_2026020120_4_home.jpg, 2026-10-16_2026020120_5_home_impact.jpg
+2026-10-17 04:42:31,097 INFO publisher: Hosted 6 slides under posts/game-2026020120
+2026-10-17 04:42:42,278 INFO buffer_client: Buffer accepted post 6ad2fcb81c7e49ea4c39207d (status sending)
+2026-10-17 04:43:12,734 INFO buffer_client: Live on Instagram: https://www.instagram.com/p/DelRr_NkUFV/
+2026-10-17 04:43:14,762 INFO publisher: Preview saved: game-2026020120
+2026-10-17 04:43:16,377 INFO pipeline: Posted BOS 4 @ ANA 2 — 2026-10-16 (buffer)
+2026-10-17 04:43:17,722 INFO pipeline: Nothing left to post in this window
