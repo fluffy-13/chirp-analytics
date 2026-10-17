@@ -1,5 +1,21 @@
 [
  {
+  "key": "game-2026020119",
+  "title": "PIT 2 @ COL 5 \u2014 2026-10-16",
+  "mode": "buffer",
+  "caption": "\ud83c\udfd2 NHL Game #119 of 1,312\nColorado takes the xG battle and a 5-2 win over Pittsburgh.\n\nColorado won the expected-goals battle with 4.63 all-situations xG to Pittsburgh's 3.23, driven by a 52% 5v5 share of expected goals. Nathan MacKinnon fueled the attack with a 3.98 Game Score, collecting 1 goal, 3 assists, and 9 shots on goal. Special teams sealed the margin as Colorado went 1/4 on the power play while shutting down Pittsburgh's power play at 0/3. Which Avalanche performance stood out the most to you?\n\nxG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.\nUnofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.\n\n#NHL #HockeyAnalytics #LetsGoPens #GoAvsGo #Crosby",
+  "files": [
+   "game-2026020119/2026-10-16_2026020119_0_cover.jpg",
+   "game-2026020119/2026-10-16_2026020119_1_game.jpg",
+   "game-2026020119/2026-10-16_2026020119_2_away.jpg",
+   "game-2026020119/2026-10-16_2026020119_3_away_impact.jpg",
+   "game-2026020119/2026-10-16_2026020119_4_home.jpg",
+   "game-2026020119/2026-10-16_2026020119_5_home_impact.jpg",
+   "game-2026020119/2026-10-16_2026020119_6_crosby.jpg"
+  ],
+  "at": "2026-10-17 03:42 UTC"
+ },
+ {
   "key": "game-2026020109",
   "title": "NYI 1 @ OTT 2 (SO) \u2014 2026-10-15",
   "mode": "preview",

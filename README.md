@@ -2,6 +2,26 @@
 
 Newest first. Slides and caption exactly as they would post.
 
+## PIT 2 @ COL 5 — 2026-10-16
+`game-2026020119` · rendered 2026-10-17 03:42 UTC · mode: buffer
+
+<img src="game-2026020119/2026-10-16_2026020119_0_cover.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_1_game.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_2_away.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_3_away_impact.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_4_home.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_5_home_impact.jpg" width="260"> <img src="game-2026020119/2026-10-16_2026020119_6_crosby.jpg" width="260">
+
+<details><summary>Caption</summary>
+
+```
+🏒 NHL Game #119 of 1,312
+Colorado takes the xG battle and a 5-2 win over Pittsburgh.
+
+Colorado won the expected-goals battle with 4.63 all-situations xG to Pittsburgh's 3.23, driven by a 52% 5v5 share of expected goals. Nathan MacKinnon fueled the attack with a 3.98 Game Score, collecting 1 goal, 3 assists, and 9 shots on goal. Special teams sealed the margin as Colorado went 1/4 on the power play while shutting down Pittsburgh's power play at 0/3. Which Avalanche performance stood out the most to you?
+
+xG = our shot-quality model, trained on 237k NHL shots. Game Score = Dom Luszczyszyn's single-game value formula. Data: NHL play-by-play.
+Unofficial fan analytics, not affiliated with or endorsed by the NHL or its teams. Caption written with AI assistance.
+
+#NHL #HockeyAnalytics #LetsGoPens #GoAvsGo #Crosby
+```
+</details>
+
 ## NYI 1 @ OTT 2 (SO) — 2026-10-15
 `game-2026020109` · rendered 2026-10-17 02:06 UTC · mode: preview
 
