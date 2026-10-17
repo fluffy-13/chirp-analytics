@@ -162,7 +162,7 @@ def check():
         log.info("Schema introspection not available: %s", exc)
     try:  # every asset / Instagram / video type, with fields or enum values
         names = [t["name"] for t in _gql("query { __schema { types { name } } }")["__schema"]["types"]]
-        wanted = [n for n in names if any(k in n.lower() for k in ("asset", "instagram", "video", "reel"))]
+        wanted = [n for n in names if any(k in n.lower() for k in ("asset", "instagram", "video", "reel", "posttype"))]
         log.info("schema types: %s", wanted)
         for n in wanted:
             t = _gql('query($n: String!) { __type(name: $n) { kind inputFields { name type { name kind '
