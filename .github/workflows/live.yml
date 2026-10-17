@@ -52,6 +52,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ -f continue-live ]; then
-            gh workflow run live.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
+            gh api "repos/$GITHUB_REPOSITORY/actions/workflows/live.yml/dispatches" -f ref="$GITHUB_REF_NAME"
             echo "Started a follow-on run"
           fi
